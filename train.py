@@ -6,6 +6,7 @@
 """
 
 import argparse
+import os
 import random
 
 import numpy as np
@@ -20,14 +21,14 @@ from lavis.common.optims import (
     LinearWarmupCosineLRScheduler,
     LinearWarmupStepLRScheduler,
 )
+from lavis.common.registry import registry
 from lavis.common.utils import now
 
 # imports modules for registration
 from lavis.datasets.builders import *
-from data.builders import *
 from lavis.models import *
 from lavis.processors import *
-from lavis.runners.runner_base import RunnerBase
+from lavis.runners import *
 from lavis.tasks import *
 
 
@@ -61,6 +62,15 @@ def setup_seeds(config):
     cudnn.deterministic = True
 
 
+def get_runner_class(cfg):
+    """
+    Get runner class from config. Default to epoch-based runner.
+    """
+    runner_cls = registry.get_runner_class(cfg.run_cfg.get("runner", "runner_base"))
+
+    return runner_cls
+
+
 def main():
     # allow auto-dl completes on main process without timeout when using NCCL backend.
     # os.environ["NCCL_BLOCKING_WAIT"] = "1"
@@ -79,14 +89,14 @@ def main():
 
     cfg.pretty_print()
 
-    task = tasks.setup_task(cfg)  # vqa
+    task = tasks.setup_task(cfg)
     datasets = task.build_datasets(cfg)
     model = task.build_model(cfg)
 
-    runner = RunnerBase(
+    runner = get_runner_class(cfg)(
         cfg=cfg, job_id=job_id, task=task, model=model, datasets=datasets
     )
-    runner.evaluate(skip_reload=True)
+    runner.train()
 
 
 if __name__ == "__main__":

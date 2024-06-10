@@ -22,133 +22,11 @@ from utils import set_logger, AverageMeter
 from torch.utils.tensorboard import SummaryWriter
 import logging
 import numpy as np
-from FTP import SGDP, AdamP
-from adamh import AdamH
 import warnings
 warnings.filterwarnings("ignore")
 from omegaconf import OmegaConf
 from lavis.common.registry import registry
-
-def create_eval_data(split):
-    # Read the input JSONL file
-    with open(split2data[split], 'r') as f:
-        batch_data = [json.loads(line) for line in f]
-
-    clean_batch_data = []
-    not_exit = []
-    for idx, item in enumerate(batch_data):
-        if idx % 10000 == 0:
-            logging.info(f"Processing {idx}/{len(batch_data)}")
-        path = id2path[item["image_id"]]
-        # check path exists
-        if not os.path.exists(path):
-            not_exit.append(item["image_id"])
-        else:
-            clean_batch_data.append(item)
-    return clean_batch_data
-
-def load_and_process_image(item):
-    # Load and preprocess the image
-    raw_image = Image.open(id2path[item["image_id"]]).convert("RGB").resize((224, 224))    
-    processed_image = vis_processors["eval"](raw_image).unsqueeze(0).to(device)
-    return processed_image, item["question"], item["data_id"]
-
-def process_images_in_batches(model, batch_data, batch_size, prompt):
-    # Create a pool of workers
-    # Monitor the progress of the pool
-    
-    output = []
-    logging.info("Generate predictions...")
-    # Process images in batches
-    for idx, i in enumerate(range(0, len(batch_data), batch_size)):
-        if (idx + 1) % 100 == 0:
-            logging.info(f"Processing batch {idx}/{len(batch_data)/batch_size}")
-        # Subset results for the current batch
-        batch_subset = batch_data[i:i+batch_size]
-
-        # Separate the images, questions, and ids
-        batch_images, batch_questions, batch_ids = [], [], []
-
-        # Load and preprocess the images
-        for item in batch_subset:
-            tmp_img, tmp_q, tmp_id = load_and_process_image(item)
-            batch_images.append(tmp_img)
-            batch_questions.append(tmp_q)
-            batch_ids.append(tmp_id)
-
-        # Concatenate the batch images
-        image_batch = torch.cat(batch_images, dim=0)
-        
-        # add prompt to questions
-        batch_questions = [prompt.format(q) for q in batch_questions]
-        # Generate predictions for the batch
-        
-        answers = model.generate({"image": image_batch, "prompt": batch_questions},
-                                 length_penalty=-1)  # default: num_beams=5
-        # print(batch_questions)
-        # print(answers)
-        
-        for idx, ans in zip(batch_ids, answers):
-            output.append({"data_id": idx, "prediction": ans})
-    return output
-
-def evaluate_model(split, model, batch_size, step, prompt, args, epoch):
-    # Create evaluate data
-    batch_data = create_eval_data(split)
-    # Process the data in batches
-    output = process_images_in_batches(model, batch_data, batch_size, prompt)
-
-    # Save the predictions
-    # development_{args.batch_size}_all_lora
-    pred_path = f"{args.output_dir}/{args.name}_{args.model_type}_{split}_{step}_epoch={epoch}.jsonl"
-    
-    # ref_path = f"infoseek_data/infoseek_{split}.jsonl"
-    ref_path = split2data[split]
-    # ref_qtype_path = f"infoseek_data/infoseek_{split}_qtype.jsonl"
-    
-    with open(pred_path, "w") as f:
-        for item in output:
-            f.write(json.dumps(item) + "\n")
-
-    if split == "val_seen" or split == "test_seen":
-        result = evaluate_seen(pred_path, ref_path)
-    else:
-        result = evaluate_infoseek(pred_path, ref_path, ref_path)
-    return result
-
-
-class BLIP2Dataset(torch.utils.data.Dataset):
-    def __init__(self, split, processor, PROMPT="Question: {} Short answer:"):
-        """
-        image_filenames and cpations must have the same length; so, if there are
-        multiple captions for each image, the image_filenames must have repetitive
-        file names 
-        """
-        self.image_path = []
-        self.question = []
-        self.answer = []
-        with open(split2data[split], "r", encoding="utf-8") as f:
-            for line in f:
-                line = json.loads(line)
-                image_id = line["image_id"]
-                path = id2path[image_id]
-                self.image_path.append(path)
-                self.question.append(line["question"])
-                self.answer.append(line["answer"][0])
-
-        self.vis_processor = processor
-        self.prompt = PROMPT
- 
-    def __getitem__(self, idx):
-        raw_image = Image.open(self.image_path[idx]).convert("RGB").resize((224, 224))
-        question = self.prompt.format(self.question[idx])
-        answer = self.answer[idx]
-        processed_image = self.vis_processor["train"](raw_image).unsqueeze(0)
-        inputs = {"image": processed_image, "text_input": question, "text_output": answer}
-        return inputs
- 
-    def __len__(self):
-        return len(self.question)
+from data.infoseek import BLIP2Dataset, evaluate_model
 
 
 def set_seed(seed):
@@ -313,6 +191,8 @@ if __name__ == "__main__":
     blip_dataset = BLIP2Dataset(
         split="train",
         processor=vis_processors,
+        split2data=split2data,
+        id2path=id2path,
         PROMPT="Question: {} Short answer:"
     )
     logging.info("Initialize Dataloader...")
@@ -345,61 +225,8 @@ if __name__ == "__main__":
     # optmizer adamw for all parameters require grad
     # optimizer = torch.optim.AdamW([p for p in model.parameters() if p.requires_grad], lr=args.lr)
     trainable_params = [p for p in model.parameters() if p.requires_grad]
-
-    if args.opt == "sgdp":
-        # Initalize optimizer parameters
-        optimizer_params = {
-            "lr": args.lr,
-            "weight_decay": args.wd,
-            "momentum": 0.9,
-            "nesterov": True,
-            "k": 1, 
-            #"exclude_set": {'module.head.weight','module.head.bias'}
-        } 
-        # Cache pre-trained model weights 
-        params_to_opt = [x[1] for x in model.named_parameters() if x[1].requires_grad]
-        params_to_opt_name = [x[0] for x in model.named_parameters() if x[1].requires_grad]
-        params_anchor = copy.deepcopy(params_to_opt)
-        param_group = [{'params':params_to_opt,
-                        'pre': params_anchor, 
-                        'name': params_to_opt_name}]
-        optimizer = SGDP(param_group,**optimizer_params)
-
-    elif args.opt == "adamp":
-        # Initalize optimizer parameters
-        optimizer_params = {
-            "lr": args.lr,
-            "weight_decay": args.wd,
-            "k": 1, 
-            #"exclude_set": {'module.head.weight','module.head.bias'}
-        } 
-
-        # Cache pre-trained model weights 
-        params_to_opt = [x[1] for x in model.named_parameters() if x[1].requires_grad]
-        params_to_opt_name = [x[0] for x in model.named_parameters() if x[1].requires_grad]
-        params_anchor = copy.deepcopy(params_to_opt)
-        param_group = [{'params':params_to_opt,
-                        'pre': params_anchor, 
-                        'name': params_to_opt_name}]
-        optimizer = AdamP(param_group,**optimizer_params)
     
-    elif args.opt == "adamh":
-        wd = args.adamh_wd
-        optimizer_params = {
-            "lr": args.lr,
-            "weight_decay": wd, #args.weight_decay, 1
-        } 
-        logging.info("AdamH WD: {}".format(wd))
-        params_to_opt = [x[1] for x in model.named_parameters() if x[1].requires_grad]
-        # if args.use_lora == 1:
-        #     param_group = [{'params':params_to_opt}]
-        # else:
-        params_anchor = copy.deepcopy(params_to_opt)
-        param_group = [{'params':params_to_opt,
-                        'pre': params_anchor}]
-        optimizer = AdamH(param_group,**optimizer_params)
-    
-    elif args.opt == "adam":
+    if args.opt == "adam":
         optimizer = torch.optim.AdamW(trainable_params, lr=args.lr, weight_decay=args.wd)
     else:
         optimizer_params = {
@@ -450,7 +277,7 @@ if __name__ == "__main__":
                     logging.info("Evaluation...")
                     model.eval()
                     val_result = evaluate_model(split=args.split, model=model, batch_size=args.batch_size, step=optimization_step, prompt="Question: {} Short answer:",
-                                                args=args, epoch=epoch)      
+                                                args=args, epoch=epoch, split2data=split2data, id2path=id2path, vis_processors=vis_processors, device=device)      
                     # logging.info("Step:", idx)
                     logging.info(f"Validation result: {val_result}")
                     if args.split == "val_seen":
@@ -538,19 +365,19 @@ if __name__ == "__main__":
     
     logging.info("Validation seen ...")
     val_seen_result = evaluate_model(split="val_seen", model=model, batch_size=args.batch_size, step=0, prompt="Question: {} Short answer:",
-                                args=args, epoch=0)
+                                args=args, epoch=0, split2data=split2data, id2path=id2path, vis_processors=vis_processors, device=device)
     logging.info(f"Validation seen result: {val_seen_result}")
 
     logging.info("Validation unseen ...")
     val_unseen_result = evaluate_model(split="val_unseen", model=model, batch_size=args.batch_size, step=0, prompt="Question: {} Short answer:",
-                                args=args, epoch=0)
+                                args=args, epoch=0, split2data=split2data, id2path=id2path, vis_processors=vis_processors, device=device)
     logging.info(f"Validation unseen result: {val_unseen_result}")
     
     # logging.info("Testing ...")
     # test_seen_result = evaluate_model(split="test_seen", model=model, batch_size=args.batch_size, step=0, prompt="Question: {} Short answer:",
-    #                             args=args, epoch=0)
+    #                             args=args, epoch=0, split2data=split2data, id2path=id2path, vis_processors=vis_processors, device=device)
     # logging.info(f"Testing result (seen): {test_seen_result}")
     
     # test_unseen_result = evaluate_model(split="test_unseen", model=model, batch_size=args.batch_size, step=0, prompt="Question: {} Short answer:",  
-    #                             args=args, epoch=0)
+    #                             args=args, epoch=0, split2data=split2data, id2path=id2path, vis_processors=vis_processors, device=device)
     # logging.info(f"Testing result (unseen): {test_unseen_result}")
