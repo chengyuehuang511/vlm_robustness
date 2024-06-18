@@ -27,6 +27,8 @@ from lavis.common.utils import now
 # imports modules for registration
 from lavis.datasets.builders import *
 from lavis.models import *
+from data.builders import *
+from model import *
 from lavis.processors import *
 from lavis.runners import *
 from lavis.tasks import *

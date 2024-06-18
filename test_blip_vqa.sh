@@ -8,4 +8,5 @@
 #SBATCH --mem-per-gpu=45G
 
 cd /nethome/chuang475/flash/projects/vlm_robustness/
+pip install transformers==4.25
 srun -u /nethome/chuang475/flash/miniconda3/envs/lavis/bin/python -m torch.distributed.run --nproc_per_node=8 evaluate.py --cfg-path configs/blip/vqa_v2_test.yaml
