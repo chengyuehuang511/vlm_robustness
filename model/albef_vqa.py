@@ -179,7 +179,9 @@ class AlbefVQA(AlbefBase, MomentumDistilationMixin):
         question_output, question_output_m = encoder_out
 
         for b, n in enumerate(samples["n_answers"]):
+            # image + question
             question_states += [question_output.last_hidden_state[b]] * n
+            # question
             question_atts += [question.attention_mask[b]] * n
 
         question_states = torch.stack(question_states, dim=0)

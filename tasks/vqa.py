@@ -130,6 +130,7 @@ class VQATask(BaseTask):
         return datasets
 
     def valid_step(self, model, samples):
+        # predict_answers function
         answers = model.predict_answers(
             samples=samples,
             answer_list=self.answer_list,

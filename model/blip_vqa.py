@@ -110,6 +110,8 @@ class BlipVQA(BlipBase):
             max_length=self.max_txt_len,
             return_tensors="pt",
         ).to(self.device)
+        # This step ensures that the sequence starts with a special token that signifies the beginning of the encoded input. 
+        # This is important for models like BERT, which expect a specific start token to properly encode the input sequence.
         questions.input_ids[:, 0] = self.tokenizer.enc_token_id
         samples.update({"tokenized_text": questions})
 
@@ -124,6 +126,7 @@ class BlipVQA(BlipBase):
         answers = self.tokenizer(
             samples["answer"], padding="longest", return_tensors="pt"
         ).to(self.device)
+        # This step ensures that the sequence starts with a special token that signifies the beginning of the encoded input.
         answers.input_ids[:, 0] = self.tokenizer.bos_token_id
         answer_targets = answers.input_ids.masked_fill(
             answers.input_ids == self.tokenizer.pad_token_id, -100

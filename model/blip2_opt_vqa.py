@@ -120,42 +120,88 @@ class Blip2OPT_VQA(Blip2Base):
             return_dict=True,
         )
 
+        # image inputs and atts
         inputs_opt = self.opt_proj(query_output.last_hidden_state)
         atts_opt = torch.ones(inputs_opt.size()[:-1], dtype=torch.long).to(image.device)
 
+        # decoder-only model
         self.opt_tokenizer.padding_side = "right"
 
-        text = [t + "\n" for t in samples["text_input"]]
+        # text = [t + "\n" for t in samples["text_input"]]
 
-        opt_tokens = self.opt_tokenizer(
-            text,
+        input_tokens = self.opt_tokenizer(
+            samples["text_input"],
             return_tensors="pt",
             padding="longest",
             truncation=True,
             max_length=self.max_txt_len,
         ).to(image.device)
 
-        targets = opt_tokens.input_ids.masked_fill(
-            opt_tokens.input_ids == self.opt_tokenizer.pad_token_id, -100
+        output_tokens = self.opt_tokenizer(
+                samples["answer"],
+                padding="longest",
+                truncation=True,
+                max_length=self.max_txt_len,
+                return_tensors="pt",
+            ).to(image.device)
+        
+        ############ add for vqa
+        batch_input_tokens_input_ids = []
+        batch_input_tokens_atts = []
+        batch_atts_opt = []
+        batch_inputs_opt = []
+
+        for b, n in enumerate(samples["n_answers"]):
+            # question
+            batch_input_tokens_input_ids += [input_tokens.input_ids[b]] * n
+            batch_input_tokens_atts += [input_tokens.attention_mask[b]] * n
+            # image
+            batch_atts_opt += [atts_opt[b]] * n
+            batch_inputs_opt += [inputs_opt[b]] * n
+        batch_input_tokens_input_ids = torch.stack(batch_input_tokens_input_ids, dim=0)
+        batch_input_tokens_atts = torch.stack(batch_input_tokens_atts, dim=0)
+        batch_atts_opt = torch.stack(batch_atts_opt, dim=0)
+        batch_inputs_opt = torch.stack(batch_inputs_opt, dim=0)
+        #############
+
+        # image + question
+        encoder_atts = torch.cat([batch_atts_opt, batch_input_tokens_atts], dim=1)
+        # image + question + answer
+        encoder_atts = torch.cat([encoder_atts, output_tokens.attention_mask], dim=1)
+
+        # answer
+        targets = output_tokens.input_ids.masked_fill(
+            output_tokens.input_ids == self.opt_tokenizer.pad_token_id, -100
         )
         if self.prompt:
             targets[:, : self.prompt_length] = -100  # do not apply loss to the prompt
 
-        empty_targets = (
-            torch.ones(atts_opt.size(), dtype=torch.long).to(image.device).fill_(-100)
+        ###########
+        empty_targets_img = (
+            torch.ones(batch_atts_opt.size(), dtype=torch.long).to(image.device).fill_(-100)
         )
-        targets = torch.cat([empty_targets, targets], dim=1)
+        empty_targets_question = (
+            torch.ones(batch_input_tokens_atts.size(), dtype=torch.long).to(image.device).fill_(-100)
+        )
+        targets = torch.cat([empty_targets_question, targets], dim=1)
+        # image + question + answer
+        targets = torch.cat([empty_targets_img, targets], dim=1)
+        ###########
 
-        inputs_embeds = self.opt_model.model.decoder.embed_tokens(opt_tokens.input_ids)
-        inputs_embeds = torch.cat([inputs_opt, inputs_embeds], dim=1)
-        attention_mask = torch.cat([atts_opt, opt_tokens.attention_mask], dim=1)
+        # question
+        inputs_embeds = self.opt_model.model.decoder.embed_tokens(batch_input_tokens_input_ids)
+        # image + question
+        inputs_embeds = torch.cat([batch_inputs_opt, inputs_embeds], dim=1)
+        # image + question + answer
+        inputs_embeds = torch.cat([inputs_embeds, self.opt_model.model.decoder.embed_tokens(output_tokens.input_ids)], dim=1)
 
         with self.maybe_autocast():
             outputs = self.opt_model(
-                inputs_embeds=inputs_embeds,
-                attention_mask=attention_mask,
+                inputs_embeds=inputs_embeds, 
+                attention_mask=encoder_atts, # image + question + answer
+                # decoder_attention_mask=output_tokens.attention_mask,
                 return_dict=True,
-                labels=targets,
+                labels=targets,  # image + question + answer
             )
         loss = outputs.loss
 
