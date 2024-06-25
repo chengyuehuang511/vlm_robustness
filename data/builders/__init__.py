@@ -12,7 +12,8 @@ from data.builders.vqa_builder import *
 from lavis.common.registry import registry
 
 __all__ = [
-    "COCOVQACPBuilder"
+    "COCOVQACPBuilder",
+    "COCOVQABuilder_Raw",
 ]
 
 
