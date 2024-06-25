@@ -13,6 +13,7 @@ from lavis.common.registry import registry
 from model.blip2_opt_vqa import Blip2OPT_VQA
 from model.blip2_t5_vqa import Blip2T5_VQA
 from model.paligemma_vqa import PaliGemma_VQA
+from model.florence2_vqa import Florence2_VQA
 
 from lavis.processors.base_processor import BaseProcessor
 
@@ -22,6 +23,7 @@ __all__ = [
     "Blip2OPT_VQA",
     "Blip2T5_VQA",
     "PaliGemma_VQA",
+    "Florence2_VQA",
 ]
 
 

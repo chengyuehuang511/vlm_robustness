@@ -2,29 +2,27 @@ import logging
 from PIL import Image
 import requests
 import torch
-from transformers import AutoProcessor, PaliGemmaForConditionalGeneration, PaliGemmaConfig, PaliGemmaProcessor
+from transformers import AutoProcessor, AutoModelForCausalLM, AutoModelForVision2Seq
 from lavis.common.registry import registry
 from lavis.models.base_model import BaseModel
 from transformers import Trainer
 import numpy as np
 
-@registry.register_model("paligemma_vqa")
-class PaliGemma_VQA(BaseModel):
+@registry.register_model("florence2_vqa")
+class Florence2_VQA(BaseModel):
     """
-    Paligemma VQA model.
+    Florence-2 VQA model.
     Supported model types:
-        - paligemma-3b-ft-vqav2-448: fine-tuned model with VQAv2 dataset
-        - paligemma-3b-pt-224: pre-trained model
+        - Florence-2-large-ft: fine-tuned model with a collection of datasets
     """
 
     PRETRAINED_MODEL_CONFIG_DICT = {
-        "paligemma-3b-ft-vqav2-448": "/nethome/chuang475/flash/projects/vlm_robustness/configs/models/paligemma_vqa/paligemma_ft_vqav2.yaml",
-        "paligemma-3b-pt-224": "configs/models/paligemma_vqa/paligemma_pt_224.yaml",
+        "Florence-2-large-ft": "/nethome/chuang475/flash/projects/vlm_robustness/configs/models/florence2_vqa/florence2_ft_vqav2.yaml"
     }
 
     def __init__(
         self,
-        model_id="google/paligemma-3b-ft-vqav2-448",
+        model_id="microsoft/Florence-2-large-ft",
         dtype=torch.bfloat16,
         apply_lemmatizer=False,
     ):
@@ -32,14 +30,25 @@ class PaliGemma_VQA(BaseModel):
         self.model_id = model_id
         self.dtype = dtype
 
-        self.processor = AutoProcessor.from_pretrained(model_id)
+        self.processor = AutoProcessor.from_pretrained(
+            model_id, 
+            trust_remote_code=True, 
+            # revision='refs/pr/6',
+        )
         
-        model_config = PaliGemmaConfig.from_pretrained(model_id)
-        self.model = PaliGemmaForConditionalGeneration.from_pretrained(
+        self.model = AutoModelForCausalLM.from_pretrained(
             model_id,
-            torch_dtype=dtype,
-            revision="bfloat16",
-        )#.eval()  # TODO: check if eval is needed
+            trust_remote_code=True,
+            # revision='refs/pr/6',
+        )
+
+        # # Load the model and processor
+        # self.model = AutoModelForCausalLM.from_pretrained(
+        #     "microsoft/Florence-2-base-ft", trust_remote_code=True, revision="refs/pr/6"
+        # )
+        # self.processor = AutoProcessor.from_pretrained(
+        #     "microsoft/Florence-2-base-ft", trust_remote_code=True, revision="refs/pr/6"
+        # )
 
         self._apply_lemmatizer = apply_lemmatizer
         self._lemmatizer = None
@@ -82,12 +91,20 @@ class PaliGemma_VQA(BaseModel):
         # print("text_input", text_input)
 
         model_inputs = self.processor(text=text_input, images=image, return_tensors="pt", padding="longest").to(self.device)
-        input_len = model_inputs["input_ids"].shape[-1]
+        # input_len = model_inputs["input_ids"].shape[-1]
+        # print("model_inputs", model_inputs.keys())
 
         with torch.inference_mode():
-            outputs = self.model.generate(**model_inputs, max_new_tokens=100, do_sample=False)
+            outputs = self.model.generate(
+                input_ids=model_inputs['input_ids'],
+                pixel_values=model_inputs['pixel_values'], 
+                # attention_mask=model_inputs['attention_mask'],
+                max_new_tokens=100, 
+                early_stopping=False,
+                do_sample=False,
+            )
             # When the model generates a response, it appends the generated tokens to this input sequence.
-            outputs = outputs[:, input_len:]
+            # outputs = outputs[:, input_len:]
             output_text = self.processor.batch_decode(outputs, skip_special_tokens=True)
         
         if self._apply_lemmatizer:
@@ -134,7 +151,7 @@ class PaliGemma_VQA(BaseModel):
 
     @classmethod
     def from_config(cls, cfg):
-        model_id = cfg.get("model_id", "google/paligemma-3b-ft-vqav2-448")
+        model_id = cfg.get("model_id", "microsoft/Florence-2-large-ft")
         dtype = cfg.get("dtype", torch.bfloat16)
 
         model = cls(
@@ -145,7 +162,7 @@ class PaliGemma_VQA(BaseModel):
 
 if __name__ == "__main__":
     # Example usage:
-    model_id = "google/paligemma-3b-ft-vqav2-448"
+    model_id = "microsoft/Florence-2-large-ft"
     device = "cuda:0"
     dtype = torch.bfloat16
 
@@ -155,9 +172,9 @@ if __name__ == "__main__":
 
     samples = {
         "image_raw": [image, image],
-        "text_input_raw": ["caption es", "caption es: "],
+        "text_input_raw": ["caption es", "What is the color of this car"],
     }
     with torch.inference_mode():
-        model = PaliGemma_VQA(model_id=model_id, dtype=dtype).to(device)
+        model = Florence2_VQA(model_id=model_id, dtype=dtype).to(device)
         output = model.predict_answers(samples)
         print(output)
