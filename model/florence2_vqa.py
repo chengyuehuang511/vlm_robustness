@@ -33,13 +33,13 @@ class Florence2_VQA(BaseModel):
         self.processor = AutoProcessor.from_pretrained(
             model_id, 
             trust_remote_code=True, 
-            # revision='refs/pr/6',
+            revision='refs/pr/10',
         )
         
         self.model = AutoModelForCausalLM.from_pretrained(
             model_id,
             trust_remote_code=True,
-            # revision='refs/pr/6',
+            revision='refs/pr/10',
         )
 
         # # Load the model and processor
@@ -172,7 +172,7 @@ if __name__ == "__main__":
 
     samples = {
         "image_raw": [image, image],
-        "text_input_raw": ["caption es", "What is the color of this car"],
+        "text_input_raw": ["caption es", "Question: what is the color of this car? Answer:"],
     }
     with torch.inference_mode():
         model = Florence2_VQA(model_id=model_id, dtype=dtype).to(device)
