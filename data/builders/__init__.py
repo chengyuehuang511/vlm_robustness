@@ -14,6 +14,7 @@ from lavis.common.registry import registry
 __all__ = [
     "COCOVQACPBuilder",
     "COCOVQABuilder_Raw",
+    "COCOVQA_Rephrasings_Builder",
 ]
 
 

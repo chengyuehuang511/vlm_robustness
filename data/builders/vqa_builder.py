@@ -13,7 +13,7 @@ from data.coco_vqa import *
 
 @registry.register_builder("coco_vqa_raw")
 class COCOVQABuilder_Raw(BaseDatasetBuilder):
-    train_dataset_cls = COCOVQADataset
+    train_dataset_cls = COCOVQADataset_Raw
     eval_dataset_cls = COCOVQAEvalDataset_Raw
 
     DATASET_CONFIG_DICT = {
@@ -24,11 +24,18 @@ class COCOVQABuilder_Raw(BaseDatasetBuilder):
 
 @registry.register_builder("coco_vqa_cp")
 class COCOVQACPBuilder(BaseDatasetBuilder):
-    train_dataset_cls = COCOVQADataset
-    eval_dataset_cls = COCOVQAEvalDataset
+    train_dataset_cls = COCOVQADataset_Raw
+    eval_dataset_cls = COCOVQAEvalDataset_Raw
 
     DATASET_CONFIG_DICT = {
         "default": "/nethome/chuang475/flash/projects/vlm_robustness/data/configs/vqa_cp.yaml"
     }
 
+@registry.register_builder("coco_vqa_rephrasings")
+class COCOVQA_Rephrasings_Builder(BaseDatasetBuilder):
+    train_dataset_cls = COCOVQADataset_Raw
+    eval_dataset_cls = COCOVQAEvalDataset_Raw
 
+    DATASET_CONFIG_DICT = {
+        "default": "/nethome/chuang475/flash/projects/vlm_robustness/data/configs/vqa_rephrasings.yaml"
+    }
