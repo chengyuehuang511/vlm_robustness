@@ -1,0 +1,5 @@
+model:
+  arch: paligemma_vqa
+  model_type: paligemma-3b-ft-vqav2-448
+  load_pretrained: True
+  pretrained: 'https://huggingface.co/google/paligemma-3b-ft-vqav2-448'

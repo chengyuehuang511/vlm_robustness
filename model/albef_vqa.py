@@ -145,6 +145,9 @@ class AlbefVQA(AlbefBase, MomentumDistilationMixin):
         ).to(self.device)
         samples.update({"tokenized_text": questions})
 
+        # image_encoder = VisionTransformerEncoder.from_config(cfg)
+        # text_encoder = XBertEncoder.from_config(cfg)
+        
         image_embeds = self.visual_encoder.forward_features(samples["image"])
         encoder_output = self.text_encoder.forward_automask(
             tokenized_text=samples["tokenized_text"], visual_embeds=image_embeds
@@ -442,3 +445,9 @@ class AlbefVQA(AlbefBase, MomentumDistilationMixin):
         logging.info(f"missing keys: {msg.missing_keys}")
 
         return msg
+
+
+if __name__ == "__main__":
+    model = AlbefVQA.from_config()
+    print(model)
+    

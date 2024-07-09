@@ -54,11 +54,7 @@ class Florence2_VQA(BaseModel):
         self._lemmatizer = None
 
     def forward(self, samples):
-        image = samples["image"]
-        questions = samples["text_input"]
-        answers = samples["answer"]
-
-        model_inputs = self.processor(text=questions, images=image, suffix=answers, return_tensors="pt").to(self.device)
+        model_inputs = self.processor(text=samples["text_input_raw"], images=samples["image_raw"], suffix=samples["multiple_choice_answer"], return_tensors="pt", padding="longest").to(self.device)
         outputs = self.model(**model_inputs)
         loss = outputs.loss
         

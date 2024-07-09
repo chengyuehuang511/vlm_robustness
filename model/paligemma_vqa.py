@@ -9,7 +9,7 @@ from transformers import Trainer
 import numpy as np
 
 @registry.register_model("paligemma_vqa")
-class PaliGemma_VQA(BaseModel):
+class PaliGemma_VQA(BaseModel):  # TODO
     """
     Paligemma VQA model.
     Supported model types:
@@ -45,13 +45,29 @@ class PaliGemma_VQA(BaseModel):
         self._lemmatizer = None
 
     def forward(self, samples):
-        image = samples["image"]
-        questions = samples["text_input"]
-        answers = samples["answer"]
+        # print("questions", questions)
+        # print("answers", answers)
+        # print("weight", samples["weight"])
+        # print("n_answers", samples["n_answers"])
+        
+        # image_stack = []
+        # questions_stack = []
 
-        model_inputs = self.processor(text=questions, images=image, suffix=answers, return_tensors="pt").to(self.device)
+        # assert len(samples["answer"]) == sum(samples["n_answers"])
+        # assert len(samples["text_input_raw"]) == len(samples["n_answers"])
+        # assert len(samples["image_raw"]) == len(samples["n_answers"])
+
+        # for b, n in enumerate(samples["n_answers"]):
+        #     # image
+        #     image_stack += [samples["image_raw"][b]] * n
+        #     # questions
+        #     questions_stack += [samples["text_input_raw"][b]] * n
+
+        # model_inputs = self.processor(text=questions_stack, images=image_stack, suffix=samples["answer"], return_tensors="pt", padding="longest").to(self.device)
+        model_inputs = self.processor(text=samples["text_input_raw"], images=samples["image_raw"], suffix=samples["multiple_choice_answer"], return_tensors="pt", padding="longest").to(self.device)
         outputs = self.model(**model_inputs)
         loss = outputs.loss
+        # print("loss: ", loss)
         
         return {"loss": loss}
     
