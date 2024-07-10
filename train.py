@@ -12,6 +12,7 @@ import random
 import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
+import logging
 
 import lavis.tasks as tasks
 from lavis.common.config import Config
@@ -29,6 +30,9 @@ from lavis.datasets.builders import *
 from lavis.models import *
 from data.builders import *
 from model import *
+from optimizer import *
+from runners import *
+
 from lavis.processors import *
 from lavis.runners import *
 from lavis.tasks import *
@@ -68,7 +72,7 @@ def get_runner_class(cfg):
     """
     Get runner class from config. Default to epoch-based runner.
     """
-    runner_cls = registry.get_runner_class(cfg.run_cfg.get("runner", "runner_base"))
+    runner_cls = registry.get_runner_class(cfg.run_cfg.get("runner", "runner_robust_ft"))
 
     return runner_cls
 
@@ -80,7 +84,8 @@ def main():
     # set before init_distributed_mode() to ensure the same job_id shared across all ranks.
     job_id = now()
 
-    cfg = Config(parse_args())
+    args = parse_args()
+    cfg = Config(args)
 
     init_distributed_mode(cfg.run_cfg)
 
@@ -94,6 +99,8 @@ def main():
     task = tasks.setup_task(cfg)
     datasets = task.build_datasets(cfg)
     model = task.build_model(cfg)
+
+    logging.info(model)
 
     runner = get_runner_class(cfg)(
         cfg=cfg, job_id=job_id, task=task, model=model, datasets=datasets
