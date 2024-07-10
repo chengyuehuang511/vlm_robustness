@@ -19,17 +19,19 @@ class PaliGemma_VQA(BaseModel):  # TODO
 
     PRETRAINED_MODEL_CONFIG_DICT = {
         "paligemma-3b-ft-vqav2-448": "/nethome/chuang475/flash/projects/vlm_robustness/configs/models/paligemma_vqa/paligemma_ft_vqav2.yaml",
-        "paligemma-3b-pt-224": "configs/models/paligemma_vqa/paligemma_pt_224.yaml",
+        "paligemma-3b-ft-vqav2-224": "/nethome/chuang475/flash/projects/vlm_robustness/configs/models/paligemma_vqa/paligemma_ft_vqav2_224.yaml",
+        "paligemma-3b-pt-224": "/nethome/chuang475/flash/projects/vlm_robustness/configs/models/paligemma_vqa/paligemma_pt_224.yaml",
     }
 
     def __init__(
         self,
-        model_id="google/paligemma-3b-ft-vqav2-448",
+        model_id="google/paligemma-3b-ft-vqav2-448",  # paligemma-3b-ft-vqav2-448  paligemma-3b-pt-224
         dtype=torch.bfloat16,
         apply_lemmatizer=False,
     ):
         super().__init__()
         self.model_id = model_id
+        print("model_id", model_id)
         self.dtype = dtype
 
         self.processor = AutoProcessor.from_pretrained(model_id)
@@ -90,7 +92,7 @@ class PaliGemma_VQA(BaseModel):  # TODO
         if isinstance(samples["text_input_raw"], str):
             samples["text_input_raw"] = [samples["text_input_raw"]]
         if prompt:
-            text_input = [prompt.format(question) for question in samples["text_input"]]
+            text_input = [prompt.format(question) for question in samples["text_input_raw"]]
         else:
             text_input = samples["text_input_raw"]
 
@@ -150,7 +152,7 @@ class PaliGemma_VQA(BaseModel):  # TODO
 
     @classmethod
     def from_config(cls, cfg):
-        model_id = cfg.get("model_id", "google/paligemma-3b-ft-vqav2-448")
+        model_id = cfg.get("model_id", "google/paligemma-3b-ft-vqav2-448")  # paligemma-3b-ft-vqav2-448  paligemma-3b-pt-224
         dtype = cfg.get("dtype", torch.bfloat16)
 
         model = cls(
