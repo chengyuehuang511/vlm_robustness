@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#SBATCH --partition="kira-lab"
+#SBATCH --partition="overcap"
 #SBATCH --nodes=1
-#SBATCH --gpus-per-node="2080_ti:8"
+#SBATCH --gpus-per-node="a40:8"
 #SBATCH --qos="short"
 #SBATCH -x shakey,nestor,voltron,chappie,puma,randotron,cheetah,baymax,tachikoma,uniblab,major,optimistprime,hk47,xaea-12,dave,crushinator,kitt
 #SBATCH --mem-per-gpu=45G

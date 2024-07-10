@@ -18,7 +18,7 @@ datasets:
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
           storage:
-              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vqace/val/combine_subset.json
+              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vqace/val/combined_data_subset.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
               - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vqace/val/question_subset.json
               - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vqace/val/annotation_subset.json
@@ -29,7 +29,7 @@ datasets:
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
           storage:
-              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vqace/val/combine_subset.json
+              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vqace/val/combined_data_subset.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
               - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vqace/val/question_subset.json
               - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vqace/val/annotation_subset.json
