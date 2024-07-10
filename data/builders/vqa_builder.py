@@ -39,3 +39,30 @@ class COCOVQA_Rephrasings_Builder(BaseDatasetBuilder):
     DATASET_CONFIG_DICT = {
         "default": "/nethome/chuang475/flash/projects/vlm_robustness/data/configs/vqa_rephrasings.yaml"
     }
+
+@registry.register_builder("coco_vqa_lol")
+class COCOVQALOLBuilder(BaseDatasetBuilder): 
+    train_dataset_cls = COCOVQADataset_Raw
+    eval_dataset_cls = COCOVQAEvalDataset_Raw
+
+    DATASET_CONFIG_DICT = { 
+        "default": "/coc/pskynet4/bmaneech3/vlm_robustness/data/configs/vqa_lol.yaml"
+    }
+
+@registry.register_builder("coco_vqa_vs")
+class COCOVQAVSBuilder(BaseDatasetBuilder): 
+    train_dataset_cls = COCOVQADataset_Raw
+    eval_dataset_cls = COCOVQAEvalDataset_Raw
+
+    DATASET_CONFIG_DICT = { 
+        "default": "/coc/pskynet4/bmaneech3/vlm_robustness/data/configs/vqa_vs.yaml"
+    }
+
+@registry.register_builder("coco_vqa_ce")
+class COCOVQACEBuilder(BaseDatasetBuilder): 
+    train_dataset_cls = COCOVQADataset_Raw
+    eval_dataset_cls = COCOVQAEvalDataset_Raw
+
+    DATASET_CONFIG_DICT = { 
+        "default": "/nethome/chuang475/flash/projects/vlm_robustness/data/configs/vqa_ce.yaml"
+    }

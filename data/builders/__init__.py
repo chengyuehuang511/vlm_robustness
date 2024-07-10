@@ -7,7 +7,7 @@
 
 from lavis.datasets.builders.base_dataset_builder import load_dataset_config
 
-from data.builders.vqa_builder import *
+from data.builders.vqa_builder import COCOVQACPBuilder, COCOVQABuilder_Raw, COCOVQA_Rephrasings_Builder, COCOVQACEBuilder
 
 from lavis.common.registry import registry
 
@@ -15,6 +15,7 @@ __all__ = [
     "COCOVQACPBuilder",
     "COCOVQABuilder_Raw",
     "COCOVQA_Rephrasings_Builder",
+    "COCOVQACEBuilder",
 ]
 
 

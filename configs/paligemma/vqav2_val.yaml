@@ -1,8 +1,3 @@
- # Copyright (c) 2022, salesforce.com, inc.
- # All rights reserved.
- # SPDX-License-Identifier: BSD-3-Clause
- # For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
-
 model:
   arch: paligemma_vqa
   model_type: paligemma-3b-ft-vqav2-448
@@ -11,11 +6,11 @@ model:
 
 
 datasets:
-  coco_vqa_rephrasings: # name of the dataset builder
+  coco_vqa_raw: # name of the dataset builder
     vis_processor:
         eval:
           name: "blip_image_eval"
-          image_size: 448
+          image_size: 384
     text_processor:
         eval:
           name: "blip_question"
@@ -37,13 +32,15 @@ run:
   prompt: "Question: {} Answer:"
 
   seed: 42
-  output_dir: "output/PALIGEMMA/VQA_REP"
+  output_dir: "output/PALIGEMMA/VQA"
 
   evaluate: True
+  train_splits: ["train"]
+  valid_splits: ["val"]
   test_splits: ["val"]
 
   # distribution-specific
   device: "cuda"
-  world_size: 8
+  world_size: 1
   dist_url: "env://"
   distributed: True
