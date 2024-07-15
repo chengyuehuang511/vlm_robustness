@@ -7,6 +7,9 @@
 
 import argparse
 import os
+print(os.environ["CUBLAS_WORKSPACE_CONFIG"])
+print(os.environ["PYTHONHASHSEED"])
+
 import random
 
 import numpy as np
@@ -14,9 +17,27 @@ import torch
 import torch.backends.cudnn as cudnn
 import logging
 
+from lavis.common.dist_utils import get_rank, init_distributed_mode
+
+def setup_seeds(seed):
+    seed = seed + get_rank()
+
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)  # if you are using multi-GPU.
+
+    cudnn.benchmark = False
+    cudnn.deterministic = True
+
+    torch.use_deterministic_algorithms(True)
+
+setup_seeds(42)
+
 import lavis.tasks as tasks
 from lavis.common.config import Config
-from lavis.common.dist_utils import get_rank, init_distributed_mode
 from lavis.common.logger import setup_logger
 from lavis.common.optims import (
     LinearWarmupCosineLRScheduler,
@@ -57,22 +78,11 @@ def parse_args():
     return args
 
 
-def setup_seeds(config):
-    seed = config.run_cfg.seed + get_rank()
-
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-
-    cudnn.benchmark = False
-    cudnn.deterministic = True
-
-
 def get_runner_class(cfg):
     """
     Get runner class from config. Default to epoch-based runner.
     """
-    runner_cls = registry.get_runner_class(cfg.run_cfg.get("runner", "runner_robust_ft"))
+    runner_cls = registry.get_runner_class(cfg.run_cfg.get("runner", "runner_robust_ft"))  # runner_base  # runner_robust_ft
 
     return runner_cls
 
@@ -89,7 +99,7 @@ def main():
 
     init_distributed_mode(cfg.run_cfg)
 
-    setup_seeds(cfg)
+    # setup_seeds(cfg)
 
     # set after init_distributed_mode() to only log on master.
     setup_logger()
