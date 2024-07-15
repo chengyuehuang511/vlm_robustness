@@ -27,13 +27,13 @@ datasets:
 run:
   task: vqa
   # optimizer
-  opt: "adamh"
+  opt: "adamp"
   lr_sched: "linear_warmup_cosine_lr"
-  init_lr: 3e-6  # 1e-5 
-  min_lr: 0 
+  init_lr: 5e-4  # 1e-5 3e-6
+  min_lr: 5e-5 # 0
   warmup_steps: 1000
-  warmup_lr: 3e-7  # 1e-8
-  weight_decay: 3e-7
+  warmup_lr: 5e-5 # 1e-8 3e-7
+  weight_decay: 5e-5 # 3e-7
   max_epoch: 10
   accum_grad_iters: 4 # 1
   lr_layer_decay: 0.9
@@ -54,6 +54,8 @@ run:
   seed: 42
   output_dir: "output/PALIGEMMA/VQA"
 
+  amp: False
+
   evaluate: False
   train_splits: ["train"]
   valid_splits: ["val"]
@@ -61,7 +63,7 @@ run:
 
   # distribution-specific
   device: "cuda"
-  world_size: 1
+  world_size: 8
   dist_url: "env://"
   distributed: True
 
