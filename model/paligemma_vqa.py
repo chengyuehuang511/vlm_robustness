@@ -5,7 +5,6 @@ import torch
 from transformers import AutoProcessor, PaliGemmaForConditionalGeneration, PaliGemmaConfig, PaliGemmaProcessor
 from lavis.common.registry import registry
 from lavis.models.base_model import BaseModel
-from transformers import Trainer
 import numpy as np
 
 @registry.register_model("paligemma_vqa")
@@ -25,11 +24,12 @@ class PaliGemma_VQA(BaseModel):  # TODO
 
     def __init__(
         self,
-        model_id="google/paligemma-3b-ft-vqav2-448",  # paligemma-3b-ft-vqav2-448  paligemma-3b-pt-224
+        model_id="google/paligemma-3b-pt-224",  # paligemma-3b-ft-vqav2-448  paligemma-3b-pt-224
         dtype=torch.bfloat16,
         apply_lemmatizer=False,
     ):
         super().__init__()
+
         self.model_id = model_id
         print("model_id", model_id)
         self.dtype = dtype
@@ -41,13 +41,15 @@ class PaliGemma_VQA(BaseModel):  # TODO
             model_id,
             torch_dtype=dtype,
             revision="bfloat16",
-        )#.eval()  # TODO: check if eval is needed
+        )
+
+        # print('language_model.lm_head.weight', self.model.state_dict()['language_model.lm_head.weight'])
 
         self._apply_lemmatizer = apply_lemmatizer
         self._lemmatizer = None
 
     def forward(self, samples):
-        # print("questions", questions)
+        # print("questions: ", samples["text_input_raw"])
         # print("answers", answers)
         # print("weight", samples["weight"])
         # print("n_answers", samples["n_answers"])
@@ -67,7 +69,46 @@ class PaliGemma_VQA(BaseModel):  # TODO
 
         # model_inputs = self.processor(text=questions_stack, images=image_stack, suffix=samples["answer"], return_tensors="pt", padding="longest").to(self.device)
         model_inputs = self.processor(text=samples["text_input_raw"], images=samples["image_raw"], suffix=samples["multiple_choice_answer"], return_tensors="pt", padding="longest").to(self.device)
+        # if samples["text_input_raw"] == ['Is there a light on?']:
+        #     # print("model_inputs", model_inputs)
+        #     # save json file of model_inputs
+        #     # import json
+        #     # with open("model_inputs.json", "w") as f:
+        #     #     json.dump(model_inputs, f)
+
+        #     # save model.state_dict() into a file
+        #     torch.save(self.model.state_dict(), "model_state_dict.pth")
+
+        #     # save image_raw, text_input_raw and multiple_choice_answer into 3 files
+        #     # import pickle
+        #     # with open("image_raw.pkl", "wb") as f:
+        #     #     pickle.dump(samples["image_raw"], f)
+        #     # with open("text_input_raw.pkl", "wb") as f:
+        #     #     pickle.dump(samples["text_input_raw"], f)
+        #     # with open("multiple_choice_answer.pkl", "wb") as f:
+        #     #     pickle.dump(samples["multiple_choice_answer"], f)
+            
+        # print the trainable parameters require_grad==True
+        # print("Trainable parameters: ")
+        # for name, param in self.model.named_parameters():
+        #     if param.requires_grad == False:
+        #         print(name)
+        # for name, param in self.model.named_parameters():
+        #     print(f"{name} requires_grad: {param.requires_grad}")
+
+        # print('state_dict: ', self.model.state_dict())
+        # print('language_model.lm_head.weight: ', self.model.state_dict()['language_model.lm_head.weight'])
+        # print(id(self.model))
+        # print("model_inputs", model_inputs)
+
+        # # Monitoring gradients
+        # for name, param in self.model.named_parameters():
+        #     param.requires_grad_(True)
+        #     print(f"Gradients for {name}: {param.grad}")
+        #     print(f"If Leaf: {param.is_leaf}")
+
         outputs = self.model(**model_inputs)
+        # print("outputs", outputs)
         loss = outputs.loss
         # print("loss: ", loss)
         
@@ -152,7 +193,7 @@ class PaliGemma_VQA(BaseModel):  # TODO
 
     @classmethod
     def from_config(cls, cfg):
-        model_id = cfg.get("model_id", "google/paligemma-3b-ft-vqav2-448")  # paligemma-3b-ft-vqav2-448  paligemma-3b-pt-224
+        model_id = cfg.get("model_id", "google/paligemma-3b-pt-224")  # paligemma-3b-ft-vqav2-448  paligemma-3b-pt-448
         dtype = cfg.get("dtype", torch.bfloat16)
 
         model = cls(

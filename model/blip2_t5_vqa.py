@@ -175,6 +175,9 @@ class Blip2T5_VQA(Blip2Base):
             )
             loss = outputs.loss
 
+            for name, param in self.t5_model.named_parameters():
+                print(f"Gradients for {name}: {param.grad}")
+
             return {"loss": loss}
 
     @torch.no_grad()
