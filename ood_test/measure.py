@@ -12,7 +12,7 @@ functions :
 2) calculate distance metric - between train & test split -> find way to optimize 
     - tensor 
 """
-keyobj_file = "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/sample_org/trainval_img_samples.json"
+keyobj_file = "/coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/sample_org/trainval_img_samples.json"
 
 keyobj_dict = None 
 
@@ -400,28 +400,28 @@ with open(keyobj_file, 'r') as file :
     keyobj_dict = json.load(file)
 
 
-vqa_vs_train_file = "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/train/train_combined_ann.json"
+vqa_vs_train_file = "/coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/train/train_combined_ann.json"
 # splits = {
 #     # "vqa_v2_train , vqa_v2_val" : ("/srv/kira-lab/share4/schopra47/VQA/data/vqa_v2/v2_mscoco_train2014_annotations.json", "/srv/kira-lab/share4/schopra47/VQA/data/vqa_v2/v2_mscoco_val2014_annotations.json"),
 #     # "vqa_v2_train, vqa_cp_test" : ("/srv/kira-lab/share4/schopra47/VQA/data/vqa_v2/v2_mscoco_train2014_annotations.json", "/srv/kira-lab/share4/chuang475/projects/vlm_robustness/tmp/datasets/vqacp2/test/annotation_new.json"), 
 #     # "vqa_cp_train, vqa_cp_test" : ("/srv/kira-lab/share4/chuang475/projects/vlm_robustness/tmp/datasets/vqacp2/train/vqacp_v2_train_annotations.json", "/srv/kira-lab/share4/chuang475/projects/vlm_robustness/tmp/datasets/vqacp2/test/annotation_new.json"), 
 
-#     # "vqa_vs_train, vqa_vs_test_QT" : ("/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/train/vqa_vs_train_annotations.json","/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT/OOD-Test-QT-Ans.json"),
-#     # "vqa_v2_train, vqa_vs_test_qt" : ("/srv/kira-lab/share4/schopra47/VQA/data/vqa_v2/v2_mscoco_train2014_annotations.json", "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT/OOD-Test-QT-Ans.json") 
+#     # "vqa_vs_train, vqa_vs_test_QT" : ("/coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/train/vqa_vs_train_annotations.json","/coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT/OOD-Test-QT-Ans.json"),
+#     # "vqa_v2_train, vqa_vs_test_qt" : ("/srv/kira-lab/share4/schopra47/VQA/data/vqa_v2/v2_mscoco_train2014_annotations.json", "/coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT/OOD-Test-QT-Ans.json") 
 
     
    
 # }
 splits = {
-    "KO": (vqa_vs_train_file, "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KO/KO_combined_ann.json"),
-    "KOP": (vqa_vs_train_file, "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KOP/KOP_combined_ann.json"),
-    "KW": (vqa_vs_train_file, "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KW/KW_combined_ann.json"),
-    "KW+KO": (vqa_vs_train_file, "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KW+KO/KW_KO_combined_ann.json"),
-    "KWP": (vqa_vs_train_file, "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KWP/KWP_combined_ann.json"),
-    "QT": (vqa_vs_train_file, "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT/QT_combined_ann.json"),
-    "QT+KO": (vqa_vs_train_file, "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KO/QT_KO_combined_ann.json"),
-    "QT+KW": (vqa_vs_train_file, "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KW/QT_KW_combined_ann.json"),
-    "QT+KW+KO": (vqa_vs_train_file, "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KW+KO/QT_KW_KO_combined_ann.json")
+    "KO": (vqa_vs_train_file, "/coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KO/KO_combined_ann.json"),
+    "KOP": (vqa_vs_train_file, "/coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KOP/KOP_combined_ann.json"),
+    "KW": (vqa_vs_train_file, "/coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KW/KW_combined_ann.json"),
+    "KW+KO": (vqa_vs_train_file, "/coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KW+KO/KW_KO_combined_ann.json"),
+    "KWP": (vqa_vs_train_file, "/coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KWP/KWP_combined_ann.json"),
+    "QT": (vqa_vs_train_file, "/coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT/QT_combined_ann.json"),
+    "QT+KO": (vqa_vs_train_file, "/coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KO/QT_KO_combined_ann.json"),
+    "QT+KW": (vqa_vs_train_file, "/coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KW/QT_KW_combined_ann.json"),
+    "QT+KW+KO": (vqa_vs_train_file, "/coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KW+KO/QT_KW_KO_combined_ann.json")
 }
 
 

@@ -4,23 +4,42 @@ model:
   load_pretrained: True
   pretrained: 'https://huggingface.co/microsoft/Florence-2-large-ft'
 
-
 datasets:
-  coco_vqa_raw: # name of the dataset builder
+  coco_vqa_raw:
     vis_processor:
+        train:
+          name: "blip_image_train"
+          image_size: 224
         eval:
           name: "blip_image_eval"
-          image_size: 384
+          image_size: 224
+        test:
+          name: "blip_image_eval"
+          image_size: 224
     text_processor:
+        train:
+          name: "blip_question"
         eval:
+          name: "blip_question"
+        test:
           name: "blip_question"
 
 run:
   task: vqa
+  # optimizer
+  lr_sched: "linear_warmup_cosine_lr"
+  init_lr: 3e-6  # 1e-5 
+  min_lr: 0 
+  warmup_steps: 1000
+  warmup_lr: 3e-9  # 1e-8
+  weight_decay: 3e-7
+  max_epoch: 10
+  accum_grad_iters: 1 # 1
+  lr_layer_decay: 0.9
 
   # optimization-specific
-  batch_size_train: 8
-  batch_size_eval: 8
+  batch_size_train: 1
+  batch_size_eval: 1
   num_workers: 4
 
   # inference-specific
@@ -34,7 +53,7 @@ run:
   seed: 42
   output_dir: "output/FLORENCE2/VQA"
 
-  evaluate: True
+  evaluate: False
   train_splits: ["train"]
   valid_splits: ["val"]
   test_splits: ["test"]

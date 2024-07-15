@@ -17,7 +17,7 @@ datasets:
               # - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/Training/Training-Ques.json?download=true
               # - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/Training/Training-Ans.json?download=true
           storage:
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/train/combined_data.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/train/combined_data.json
               # - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/train/train_questions.json
               # - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/train/train_annotations.json
         val:  # == test
@@ -27,10 +27,10 @@ datasets:
               - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/Val/Val-Ques.json?download=true
               - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/Val/Val-Ans.json?download=true
           storage:
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/val/combined_data.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/val/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/val/val_questions.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/val/val_annotations.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/val/val_questions.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/val/val_annotations.json
 
         test:  # == test
           url:
@@ -39,10 +39,10 @@ datasets:
               - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/IID-Test/IID-Test-Ques.json?download=true
               - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/IID-Test/IID-Test-Ans.json?download=true
           storage:
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/combined_data.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/test_questions.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/test_annotations.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/test_questions.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/test_annotations.json
 
         ko:  # == test
           url:
@@ -51,10 +51,10 @@ datasets:
               - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/IID-Test/IID-Test-Ques.json?download=true
               - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/IID-Test/IID-Test-Ans.json?download=true
           storage:
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KO/combined_data.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KO/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KO/test_questions.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KO/test_annotations.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KO/test_questions.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KO/test_annotations.json
 
 
         kop:  # == test
@@ -64,10 +64,10 @@ datasets:
               - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/IID-Test/IID-Test-Ques.json?download=true
               - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/IID-Test/IID-Test-Ans.json?download=true
           storage:
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KOP/combined_data.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KOP/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KOP/test_questions.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KOP/test_annotations.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KOP/test_questions.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KOP/test_annotations.json
 
         kw:  # == test
           url:
@@ -76,10 +76,10 @@ datasets:
               - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/IID-Test/IID-Test-Ques.json?download=true
               - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/IID-Test/IID-Test-Ans.json?download=true
           storage:
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KW/combined_data.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KW/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KW/test_questions.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KW/test_annotations.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KW/test_questions.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KW/test_annotations.json
         
         kw_ko:  # == test
           url:
@@ -88,10 +88,10 @@ datasets:
               - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/IID-Test/IID-Test-Ques.json?download=true
               - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/IID-Test/IID-Test-Ans.json?download=true
           storage:
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KW+KO/combined_data.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KW+KO/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KW+KO/test_questions.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KW+KO/test_annotations.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KW+KO/test_questions.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KW+KO/test_annotations.json
         
         kwp:  # == test
           url:
@@ -100,10 +100,10 @@ datasets:
               - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/IID-Test/IID-Test-Ques.json?download=true
               - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/IID-Test/IID-Test-Ans.json?download=true
           storage:
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KWP/combined_data.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KWP/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KWP/test_questions.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KWP/test_annotations.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KWP/test_questions.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KWP/test_annotations.json
 
         qt:  # == test
           url:
@@ -112,10 +112,10 @@ datasets:
               - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/IID-Test/IID-Test-Ques.json?download=true
               - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/IID-Test/IID-Test-Ans.json?download=true
           storage:
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT/combined_data.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT/test_questions.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT/test_annotations.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT/test_questions.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT/test_annotations.json
 
         qt_ko:  # == test
           url:
@@ -124,10 +124,10 @@ datasets:
               - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/IID-Test/IID-Test-Ques.json?download=true
               - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/IID-Test/IID-Test-Ans.json?download=true
           storage:
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KO/combined_data.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KO/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KO/test_questions.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KO/test_annotations.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KO/test_questions.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KO/test_annotations.json
 
         qt_kw:  # == test
           url:
@@ -136,10 +136,10 @@ datasets:
               - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/IID-Test/IID-Test-Ques.json?download=true
               - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/IID-Test/IID-Test-Ans.json?download=true
           storage:
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KW/combined_data.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KW/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KW/test_questions.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KW/test_annotations.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KW/test_questions.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KW/test_annotations.json
       
         qt_kw_ko:  # == test
           url:
@@ -148,10 +148,10 @@ datasets:
               - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/IID-Test/IID-Test-Ques.json?download=true
               - https://huggingface.co/datasets/QingyiSi/VQA-VS/resolve/main/VQA-VS/IID-Test/IID-Test-Ans.json?download=true
           storage:
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KW+KO/combined_data.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KW+KO/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KW+KO/test_questions.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KW+KO/test_annotations.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KW+KO/test_questions.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KW+KO/test_annotations.json
       
       images:
           storage: /coc/pskynet6/chuang475/.cache/lavis/coco/images/

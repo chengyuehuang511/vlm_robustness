@@ -127,10 +127,10 @@ class Blip2OPT_VQA(Blip2Base):
         # decoder-only model
         self.opt_tokenizer.padding_side = "right"
 
-        # text = [t + "\n" for t in samples["text_input"]]
+        text = [t + "\n" for t in samples["text_input"]]
 
         input_tokens = self.opt_tokenizer(
-            samples["text_input"],
+            text,
             return_tensors="pt",
             padding="longest",
             truncation=True,

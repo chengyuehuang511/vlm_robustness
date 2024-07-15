@@ -1,8 +1,8 @@
 model:
-  arch: florence2_vqa
-  model_type: Florence-2-large-ft
+  arch: paligemma_vqa
+  model_type: paligemma-3b-ft-vqav2-448
   load_pretrained: True
-  pretrained: 'https://huggingface.co/microsoft/Florence-2-large-ft'
+  pretrained: 'https://huggingface.co/google/paligemma-3b-ft-vqav2-448'
 
 
 datasets:
@@ -32,15 +32,15 @@ run:
   prompt: "Question: {} Answer:"
 
   seed: 42
-  output_dir: "output/FLORENCE2/VQA"
+  output_dir: "output/PALIGEMMA/VQA"
 
   evaluate: True
   train_splits: ["train"]
   valid_splits: ["val"]
-  test_splits: ["test"]
+  test_splits: ["val"]
 
   # distribution-specific
   device: "cuda"
-  world_size: 8
+  world_size: 1
   dist_url: "env://"
   distributed: True

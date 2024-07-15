@@ -3,3 +3,6 @@
 
 tmp/
 
+dataset_scratch.py
+
+vqa_vs.py

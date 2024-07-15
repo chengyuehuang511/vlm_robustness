@@ -3,7 +3,7 @@
 import json 
 import os
 from tqdm import tqdm
-dir_root = "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/sample_org"
+dir_root = "/coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/sample_org"
 
 def create_image_index(file_list) : 
 
@@ -119,9 +119,9 @@ def create_image_index(file_list) :
 
 if __name__ == "__main__"  : 
     file_list = [
-        "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/coco/annotations/annotations/instances_train2014.json", 
-        "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/coco/annotations/annotations/instances_val2014.json"
-        # "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/coco/annotations/annotations/captions_train2014.json"
+        "/coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/coco/annotations/annotations/instances_train2014.json", 
+        "/coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/coco/annotations/annotations/instances_val2014.json"
+        # "/coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/coco/annotations/annotations/captions_train2014.json"
     ]
     create_image_index(file_list)
 

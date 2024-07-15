@@ -17,7 +17,7 @@ datasets:
               # - https://huggingface.co/datasets/tgokhale/vqa_lol/resolve/main/train_vqa_lol_2.json?download=true
               # - https://huggingface.co/datasets/tgokhale/vqa_lol/resolve/main/train_vqa_lol_2.json?download=true
           storage:
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqalol/train/combined_data.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqalol/train/combined_data.json
               # - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqalol/train/train_vqa_lol_questions.json
               # - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqalol/train/train_vqa_lol_annotations.json
         
@@ -28,10 +28,10 @@ datasets:
               - https://huggingface.co/datasets/tgokhale/vqa_lol/resolve/main/nominival_vqa_lol_2.json?download=true
               - https://huggingface.co/datasets/tgokhale/vqa_lol/resolve/main/nominival_vqa_lol_2.json?download=true
           storage:
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqalol/test/combined_data.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqalol/answer_list.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqalol/test/nominival_vqa_lol_questions.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqalol/test/nominival_vqa_lol_annotations.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqalol/test/combined_data.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqalol/answer_list.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqalol/test/nominival_vqa_lol_questions.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqalol/test/nominival_vqa_lol_annotations.json
 
         test:  # == test
           url:
@@ -40,10 +40,10 @@ datasets:
               - https://huggingface.co/datasets/tgokhale/vqa_lol/resolve/main/nominival_vqa_lol_2.json?download=true
               - https://huggingface.co/datasets/tgokhale/vqa_lol/resolve/main/nominival_vqa_lol_2.json?download=true
           storage:
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqalol/test/combined_data.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqalol/answer_list.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqalol/test/nominival_vqa_lol_questions.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqalol/test/nominival_vqa_lol_annotations.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqalol/test/combined_data.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqalol/answer_list.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqalol/test/nominival_vqa_lol_questions.json
+              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqalol/test/nominival_vqa_lol_annotations.json
               
       images:
           storage: /coc/pskynet6/chuang475/.cache/lavis/coco/images/

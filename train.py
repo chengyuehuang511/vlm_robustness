@@ -7,15 +7,37 @@
 
 import argparse
 import os
+print(os.environ["CUBLAS_WORKSPACE_CONFIG"])
+print(os.environ["PYTHONHASHSEED"])
+
 import random
 
 import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
+import logging
+
+from lavis.common.dist_utils import get_rank, init_distributed_mode
+
+def setup_seeds(seed):
+    seed = seed + get_rank()
+
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)  # if you are using multi-GPU.
+
+    cudnn.benchmark = False
+    cudnn.deterministic = True
+
+    torch.use_deterministic_algorithms(True)
+
+setup_seeds(42)
 
 import lavis.tasks as tasks
 from lavis.common.config import Config
-from lavis.common.dist_utils import get_rank, init_distributed_mode
 from lavis.common.logger import setup_logger
 from lavis.common.optims import (
     LinearWarmupCosineLRScheduler,
@@ -29,6 +51,9 @@ from lavis.datasets.builders import *
 from lavis.models import *
 from data.builders import *
 from model import *
+from optimizer import *
+from runners import *
+
 from lavis.processors import *
 from lavis.runners import *
 from lavis.tasks import *
@@ -53,22 +78,11 @@ def parse_args():
     return args
 
 
-def setup_seeds(config):
-    seed = config.run_cfg.seed + get_rank()
-
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-
-    cudnn.benchmark = False
-    cudnn.deterministic = True
-
-
 def get_runner_class(cfg):
     """
     Get runner class from config. Default to epoch-based runner.
     """
-    runner_cls = registry.get_runner_class(cfg.run_cfg.get("runner", "runner_base"))
+    runner_cls = registry.get_runner_class(cfg.run_cfg.get("runner", "runner_robust_ft"))  # runner_base  # runner_robust_ft
 
     return runner_cls
 
@@ -80,11 +94,12 @@ def main():
     # set before init_distributed_mode() to ensure the same job_id shared across all ranks.
     job_id = now()
 
-    cfg = Config(parse_args())
+    args = parse_args()
+    cfg = Config(args)
 
     init_distributed_mode(cfg.run_cfg)
 
-    setup_seeds(cfg)
+    # setup_seeds(cfg)
 
     # set after init_distributed_mode() to only log on master.
     setup_logger()
@@ -94,6 +109,8 @@ def main():
     task = tasks.setup_task(cfg)
     datasets = task.build_datasets(cfg)
     model = task.build_model(cfg)
+
+    logging.info(model)
 
     runner = get_runner_class(cfg)(
         cfg=cfg, job_id=job_id, task=task, model=model, datasets=datasets

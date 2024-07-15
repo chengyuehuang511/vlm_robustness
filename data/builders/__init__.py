@@ -18,6 +18,12 @@ __all__ = [
     "COCOVQABuilder_Raw",
     "COCOVQAVSBuilder", 
     "COCOVQALOLBuilder"
+    "COCOVQA_Rephrasings_Builder",
+    "COCOVQACEBuilder",
+    "COCOVQALOLBuilder",
+    "COCOVQAVSBuilder",
+    "COCOCVVQABuilder",
+    "COCOIVVQABuilder",
 ]
 
 

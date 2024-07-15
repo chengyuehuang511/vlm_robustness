@@ -1,6 +1,6 @@
 #!/bin/bash
 cd /nethome/chuang475/flash/projects/vlm_robustness
-name="train_paligemma_vqa"
+name="test_paligemma_vqa_ce"
 
 job_name="${name}_$(date +%Y%m%d_%H%M%S)"
 output_dir="output/${job_name}"
