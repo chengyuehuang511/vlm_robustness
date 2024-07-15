@@ -677,6 +677,7 @@ class RunnerBase:
 class RunnerRobustFT(RunnerBase):
     def __init__(self, cfg, task, model, datasets, job_id):
         super().__init__(cfg, task, model, datasets, job_id)
+        self.lora_config = None
     
     @property
     def model(self):
@@ -695,96 +696,104 @@ class RunnerRobustFT(RunnerBase):
                     )
             else:
                 self._wrapped_model = self._model
+        
+        if self.lora_config is None:
+            use_lora = int(self.config.run_cfg.get("use_lora", 0))
+            lora_alpha = int(self.config.run_cfg.get("lora_alpha", 16))
+            lora_rank = int(self.config.run_cfg.get("lora_rank", 4))
+            target_modules = self.config.run_cfg.get("target_modules", "q_proj k_proj v_proj o_proj").split()
 
-        use_lora = int(self.config.run_cfg.get("use_lora", 0))
-        lora_alpha = int(self.config.run_cfg.get("lora_alpha", 16))
-        lora_rank = int(self.config.run_cfg.get("lora_rank", 4))
-        target_modules = self.config.run_cfg.get("target_modules", "q_proj k_proj v_proj o_proj").split()
-
-        if use_lora == 1:
-            lora_config = LoraConfig(
-                r=lora_rank,  # 4
-                lora_alpha=lora_alpha,
-                lora_dropout=0.05,
-                bias="none",
-                target_modules=target_modules,  # ['q_proj', 'k_proj', 'v_proj', 'o_proj'],  # qformer, qkv
-            )
-            
-            logging.info(lora_config)
-            self._wrapped_model = get_peft_model(self._wrapped_model, lora_config)
-            logging.info(self._wrapped_model.print_trainable_parameters())
+            if use_lora == 1:
+                self.lora_config = LoraConfig(
+                    r=lora_rank,  # 4
+                    lora_alpha=lora_alpha,
+                    lora_dropout=0.05,
+                    bias="none",
+                    target_modules=target_modules,  # ['q_proj', 'k_proj', 'v_proj', 'o_proj'],  # qformer, qkv
+                )
+                
+                logging.info(self.lora_config)
+                self._wrapped_model = get_peft_model(self._wrapped_model, self.lora_config)
+                logging.info(self._wrapped_model.print_trainable_parameters())
 
         return self._wrapped_model
     
     @property
     def optimizer(self):
-        trainable_params = [p for p in self.model.parameters() if p.requires_grad]
-        opt = self.config.run_cfg.get("opt", "adam")
-        # lr_scale = self.config.run_cfg.get("lr_layer_decay", 1)
-        weight_decay = self.config.run_cfg.get("weight_decay", 0.05)
-        lr=float(self.config.run_cfg.init_lr)
-        # beta2 = self.config.run_cfg.get("beta2", 0.999)
-        
-        if opt == "sgdp":
-            # Initalize optimizer parameters
-            optimizer_params = {
-                "lr": lr,
-                "weight_decay": weight_decay,
-                "momentum": 0.9,
-                "nesterov": True,
-                "k": 1, 
-                #"exclude_set": {'module.head.weight','module.head.bias'}
-            } 
-            # Cache pre-trained model weights 
-            params_to_opt = [x[1] for x in self.model.named_parameters() if x[1].requires_grad]
-            params_to_opt_name = [x[0] for x in self.model.named_parameters() if x[1].requires_grad]
-            params_anchor = copy.deepcopy(params_to_opt)
-            param_group = [{'params':params_to_opt,
-                            'pre': params_anchor, 
-                            'name': params_to_opt_name}]
-            self._optimizer = SGDP(param_group,**optimizer_params)
+        if self._optimizer is None:
+            trainable_params = [p for p in self._model.parameters() if p.requires_grad]  # TODO
+            
+            # for name, param in self._model.named_parameters():
+            #     print(f"{name} requires_grad: {param.requires_grad}")
+            
+            opt = self.config.run_cfg.get("opt", "adam")
+            # lr_scale = self.config.run_cfg.get("lr_layer_decay", 1)
+            weight_decay = self.config.run_cfg.get("weight_decay", 0.05)
+            lr=float(self.config.run_cfg.init_lr)
+            # beta2 = self.config.run_cfg.get("beta2", 0.999)
+            
+            if opt == "sgdp":
+                # Initalize optimizer parameters
+                optimizer_params = {
+                    "lr": lr,
+                    "weight_decay": weight_decay,
+                    "momentum": 0.9,
+                    "nesterov": True,
+                    "k": 1, 
+                    #"exclude_set": {'module.head.weight','module.head.bias'}
+                } 
+                # Cache pre-trained model weights 
+                params_to_opt = [x[1] for x in self._model.named_parameters() if x[1].requires_grad]
+                params_to_opt_name = [x[0] for x in self._model.named_parameters() if x[1].requires_grad]
+                params_anchor = copy.deepcopy(params_to_opt)
+                param_group = [{'params':params_to_opt,
+                                'pre': params_anchor, 
+                                'name': params_to_opt_name}]
+                self._optimizer = SGDP(param_group,**optimizer_params)
 
-        elif opt == "adamp":
-            # Initalize optimizer parameters
-            optimizer_params = {
-                "lr": lr,
-                "weight_decay": weight_decay,
-                "k": 1, 
-                #"exclude_set": {'module.head.weight','module.head.bias'}
-            } 
+            elif opt == "adamp":
+                # Initalize optimizer parameters
+                optimizer_params = {
+                    "lr": lr,
+                    "weight_decay": weight_decay,
+                    "k": 1, 
+                    #"exclude_set": {'module.head.weight','module.head.bias'}
+                } 
 
-            # Cache pre-trained model weights 
-            params_to_opt = [x[1] for x in self.model.named_parameters() if x[1].requires_grad]
-            params_to_opt_name = [x[0] for x in self.model.named_parameters() if x[1].requires_grad]
-            params_anchor = copy.deepcopy(params_to_opt)
-            param_group = [{'params':params_to_opt,
-                            'pre': params_anchor, 
-                            'name': params_to_opt_name}]
-            self._optimizer = AdamP(param_group,**optimizer_params)
-        
-        elif opt == "adamh":
-            optimizer_params = {
-                "lr": lr,
-                "weight_decay": weight_decay, #args.weight_decay, 1
-            } 
-            params_to_opt = [x[1] for x in self.model.named_parameters() if x[1].requires_grad]
-            # if args.use_lora == 1:
-            #     param_group = [{'params':params_to_opt}]
-            # else:
-            params_anchor = copy.deepcopy(params_to_opt)
-            param_group = [{'params':params_to_opt,
-                            'pre': params_anchor}]
-            self._optimizer = AdamH(param_group,**optimizer_params)
-        
-        elif opt == "adam":
-            self._optimizer = torch.optim.AdamW(trainable_params, lr=lr, weight_decay=weight_decay)
-        else:
-            optimizer_params = {
-                "lr": lr,
-                "weight_decay": weight_decay,
-                "momentum": 0.9,
-                "nesterov": True,
-            }   
-            self._optimizer = torch.optim.SGD(trainable_params, **optimizer_params)
+                # Cache pre-trained model weights 
+                params_to_opt = [x[1] for x in self._model.named_parameters() if x[1].requires_grad]
+                params_to_opt_name = [x[0] for x in self._model.named_parameters() if x[1].requires_grad]
+                params_anchor = copy.deepcopy(params_to_opt)
+                param_group = [{'params':params_to_opt,
+                                'pre': params_anchor, 
+                                'name': params_to_opt_name}]
+                self._optimizer = AdamP(param_group,**optimizer_params)
+            
+            elif opt == "adamh":
+                optimizer_params = {
+                    "lr": lr,
+                    "weight_decay": weight_decay, #args.weight_decay, 1
+                } 
+                params_to_opt = [x[1] for x in self._model.named_parameters() if x[1].requires_grad]
+                # if args.use_lora == 1:
+                #     param_group = [{'params':params_to_opt}]
+                # else:
+                params_anchor = copy.deepcopy(params_to_opt)
+                param_group = [{'params':params_to_opt,
+                                'pre': params_anchor}]
+                self._optimizer = AdamH(param_group,**optimizer_params)
+            
+            elif opt == "adam":
+                self._optimizer = torch.optim.AdamW(trainable_params, lr=lr, weight_decay=weight_decay)
+            else:
+                optimizer_params = {
+                    "lr": lr,
+                    "weight_decay": weight_decay,
+                    "momentum": 0.9,
+                    "nesterov": True,
+                }   
+                self._optimizer = torch.optim.SGD(trainable_params, **optimizer_params)
+            
+            print("optimizer: ", self._optimizer)
         
         return self._optimizer
