@@ -30,7 +30,7 @@ datasets:
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/v2_OpenEnded_mscoco_val2014_questions.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/v2_mscoco_val2014_annotations.json
-        test:
+        test: 
           url:
               - https://storage.googleapis.com/sfr-vision-language-research/LAVIS/datasets/vqav2/vqa_test.json
               - https://storage.googleapis.com/sfr-vision-language-research/LAVIS/datasets/vqav2/answer_list.json
@@ -39,3 +39,6 @@ datasets:
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
       images:
           storage: /coc/pskynet6/chuang475/.cache/lavis/coco/images/
+
+
+

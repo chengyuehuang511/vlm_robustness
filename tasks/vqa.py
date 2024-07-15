@@ -18,7 +18,6 @@ from lavis.common.vqa_tools.vqa import VQA
 from lavis.common.vqa_tools.vqa_eval import VQAEval
 from lavis.tasks.base_task import BaseTask
 
-
 @registry.register_task("vqa")
 class VQATask(BaseTask):
     def __init__(

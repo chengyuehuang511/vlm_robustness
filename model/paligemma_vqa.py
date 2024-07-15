@@ -18,7 +18,7 @@ class PaliGemma_VQA(BaseModel):
     """
 
     PRETRAINED_MODEL_CONFIG_DICT = {
-        "paligemma-3b-ft-vqav2-448": "/nethome/chuang475/flash/projects/vlm_robustness/configs/models/paligemma_vqa/paligemma_ft_vqav2.yaml",
+        "paligemma-3b-ft-vqav2-448": "/srv/kira-lab/share4/chuang475/projects/vlm_robustness/configs/models/paligemma_vqa/paligemma_ft_vqav2.yaml",
         "paligemma-3b-pt-224": "configs/models/paligemma_vqa/paligemma_pt_224.yaml",
     }
 

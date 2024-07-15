@@ -16,7 +16,7 @@ model:
   num_query_token: 32
 
 datasets:
-  coco_vqa:
+  coco_vqa_vs:
     vis_processor:
         train:
           name: "blip_image_train"
@@ -44,7 +44,7 @@ run:
   warmup_lr: 3e-9  # 1e-8
   weight_decay: 0.05
   max_epoch: 5
-  batch_size_train: 4
+  batch_size_train: 2
   batch_size_eval: 4
   num_workers: 4
   accum_grad_iters: 1 # 1
@@ -53,16 +53,14 @@ run:
   max_len: 10
   min_len: 1
   num_beams: 5
-  length_penalty: -1.
   inference_method: "generate"
-  prompt: "Question: {} Short Answer:"
+  prompt: "Question: {} Answer:"
 
   seed: 42
-  output_dir: "output/BLIP2/opt6.7b_VQA"
-
+  output_dir: "output/BLIP2/VQA_VS"
   amp: True
   resume_ckpt_path: null
-
+  
   evaluate: False
   train_splits: ["train"]
   valid_splits: ["val"]
