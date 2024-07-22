@@ -35,7 +35,6 @@ from torch.utils.data import DataLoader, DistributedSampler
 from torch.utils.data.dataset import ChainDataset
 
 from optimizer import *
-from peft import LoraConfig, get_peft_model
 import copy
 
 
@@ -677,7 +676,6 @@ class RunnerBase:
 class RunnerRobustFT(RunnerBase):
     def __init__(self, cfg, task, model, datasets, job_id):
         super().__init__(cfg, task, model, datasets, job_id)
-        self.lora_config = None
     
     @property
     def model(self):
@@ -696,25 +694,6 @@ class RunnerRobustFT(RunnerBase):
                     )
             else:
                 self._wrapped_model = self._model
-        
-        if self.lora_config is None:
-            use_lora = int(self.config.run_cfg.get("use_lora", 0))
-            lora_alpha = int(self.config.run_cfg.get("lora_alpha", 16))
-            lora_rank = int(self.config.run_cfg.get("lora_rank", 4))
-            target_modules = self.config.run_cfg.get("target_modules", "q_proj k_proj v_proj o_proj").split()
-
-            if use_lora == 1:
-                self.lora_config = LoraConfig(
-                    r=lora_rank,  # 4
-                    lora_alpha=lora_alpha,
-                    lora_dropout=0.05,
-                    bias="none",
-                    target_modules=target_modules,  # ['q_proj', 'k_proj', 'v_proj', 'o_proj'],  # qformer, qkv
-                )
-                
-                logging.info(self.lora_config)
-                self._wrapped_model = get_peft_model(self._wrapped_model, self.lora_config)
-                logging.info(self._wrapped_model.print_trainable_parameters())
 
         return self._wrapped_model
     
