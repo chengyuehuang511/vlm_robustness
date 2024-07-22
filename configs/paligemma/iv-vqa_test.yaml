@@ -5,9 +5,16 @@
 
 model:
   arch: paligemma_vqa
-  model_type: paligemma-3b-ft-vqav2-448
+  model_type: paligemma-3b-pt-224
   load_pretrained: True
-  pretrained: 'https://huggingface.co/google/paligemma-3b-ft-vqav2-448'
+  pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
+  load_finetuned: True
+  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/20240715010/checkpoint_best.pth'
+
+  # lora
+  use_lora: 1
+  target_modules: "q_proj"
+  lora_rank: 1
 
 
 datasets:
