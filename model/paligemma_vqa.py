@@ -244,7 +244,7 @@ class PaliGemma_VQA(BaseModel):  # TODO
             logging.info(model.print_trainable_parameters())
 
         # print("model: ", model)
-        # model.load_checkpoint_from_config(cfg)
+        model.load_checkpoint_from_config(cfg)
 
         return model
     
@@ -261,14 +261,16 @@ class PaliGemma_VQA(BaseModel):  # TODO
 
         state_dict = checkpoint["model"]
         for key in list(state_dict.keys()):
-            if key.startswith("model."):
-                state_dict[key[6:]] = state_dict.pop(key)
+            start_key = "base_model.model.model."
+            if key.startswith(start_key):
+                state_dict[key[len(start_key):]] = state_dict.pop(key)
         
         # Load the current state_dict of the model
         current_state_dict = self.model.state_dict()
 
         # Update the current state_dict with the new parameters
         for key in state_dict.keys():
+            assert key in current_state_dict, f"key {key} not in current_state_dict"
             current_state_dict[key] = state_dict[key]
 
         # Load the updated state_dict back into the model
@@ -288,14 +290,20 @@ class PaliGemma_VQA(BaseModel):  # TODO
 
         state_dict = checkpoint["model"]
         for key in list(state_dict.keys()):
-            if key.startswith("model."):
-                state_dict[key[6:]] = state_dict.pop(key)
+            start_key = "base_model.model.model."
+            if key.startswith(start_key):
+                state_dict[key[len(start_key):]] = state_dict.pop(key)
         
         # Load the current state_dict of the model
         current_state_dict = self.model.state_dict()
+        # print("address of current_state_dict", id(current_state_dict))
+        # print("address of model.state_dict()", id(self.model.state_dict()))
+        # print("current_state_dict", current_state_dict.keys())
+        # print("state_dict", state_dict.keys())
 
         # Update the current state_dict with the new parameters
         for key in state_dict.keys():
+            assert key in current_state_dict, f"key {key} not in current_state_dict"
             current_state_dict[key] = state_dict[key]
 
         # Load the updated state_dict back into the model

@@ -34,11 +34,11 @@ run:
   # optimizer
   opt: "adam"
   lr_sched: "linear_warmup_cosine_lr"
-  init_lr: 1e-2  # 1e-5 3e-6
-  min_lr: 1e-3 # 0
+  init_lr: 1e-3  # 1e-5 3e-6
+  min_lr: 1e-4 # 0
   warmup_steps: 1000
-  warmup_lr: 1e-3 # 1e-8 3e-7
-  weight_decay: 1e-3 # 3e-7 # 5e-5 0.5 1 1.5 2
+  warmup_lr: 1e-4 # 1e-8 3e-7
+  weight_decay: 0 # 3e-7 # 5e-5 0.5 1 1.5 2
   max_epoch: 10
   accum_grad_iters: 2 # 1
   lr_layer_decay: 0.9
@@ -57,7 +57,7 @@ run:
   prompt: "Question: {} Answer:"
 
   seed: 42
-  output_dir: "output/PALIGEMMA/VQA/1e-2"
+  output_dir: "output/PALIGEMMA/VQA/1e-3_wd0"
 
   amp: False
 

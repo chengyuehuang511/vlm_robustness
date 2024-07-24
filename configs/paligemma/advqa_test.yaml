@@ -9,12 +9,12 @@ model:
   load_pretrained: True
   pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
   load_finetuned: True
-  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/20240714221/checkpoint_best.pth'
+  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/1e-3/20240721224/checkpoint_best.pth'
 
   # lora
   use_lora: 1
-  target_modules: "q_proj"
-  lora_rank: 1
+  target_modules: "q_proj k_proj v_proj o_proj"
+  lora_rank: 8
 
 
 datasets:
@@ -31,8 +31,8 @@ run:
   task: vqa
 
   # optimization-specific
-  batch_size_train: 8
-  batch_size_eval: 8
+  batch_size_train: 16
+  batch_size_eval: 16
   num_workers: 4
 
   # inference-specific
