@@ -244,7 +244,7 @@ class PaliGemma_VQA(BaseModel):  # TODO
             logging.info(model.print_trainable_parameters())
 
         # print("model: ", model)
-        model.load_checkpoint_from_config(cfg)
+        # model.load_checkpoint_from_config(cfg)
 
         return model
     

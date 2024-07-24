@@ -17,8 +17,8 @@ class COCOVQABuilder_Raw(BaseDatasetBuilder):
     eval_dataset_cls = COCOVQAEvalDataset_Raw
 
     DATASET_CONFIG_DICT = {
-        "default": "/nethome/bmaneech3/flash/vlm_robustness/data/configs/defaults_vqa_raw.yaml",
-        "eval": "/nethome/bmaneech3/flash/vlm_robustness/data/configs/eval_vqa_raw.yaml",
+        "default": "/coc/pskynet4/chuang475/projects/vlm_robustness/data/configs/defaults_vqa_raw.yaml",
+        "eval": "/coc/pskynet4/chuang475/projects/vlm_robustness/data/configs/eval_vqa_raw.yaml",
     }
 
 

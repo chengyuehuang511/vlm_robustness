@@ -17,7 +17,7 @@ __all__ = [
     "COCOVQACPBuilder",
     "COCOVQABuilder_Raw",
     "COCOVQAVSBuilder", 
-    "COCOVQALOLBuilder"
+    "COCOVQALOLBuilder",
     "COCOVQA_Rephrasings_Builder",
     "COCOVQACEBuilder",
     "COCOVQALOLBuilder",
