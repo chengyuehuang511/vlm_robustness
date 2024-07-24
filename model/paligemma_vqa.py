@@ -21,9 +21,9 @@ class PaliGemma_VQA(BaseModel):  # TODO
     """
 
     PRETRAINED_MODEL_CONFIG_DICT = {
-        "paligemma-3b-ft-vqav2-448": "/nethome/chuang475/flash/projects/vlm_robustness/configs/models/paligemma_vqa/paligemma_ft_vqav2.yaml",
-        "paligemma-3b-ft-vqav2-224": "/nethome/chuang475/flash/projects/vlm_robustness/configs/models/paligemma_vqa/paligemma_ft_vqav2_224.yaml",
-        "paligemma-3b-pt-224": "/nethome/chuang475/flash/projects/vlm_robustness/configs/models/paligemma_vqa/paligemma_pt_224.yaml",
+        "paligemma-3b-ft-vqav2-448": "/coc/pskynet4/chuang475/projects/vlm_robustness/configs/models/paligemma_vqa/paligemma_ft_vqav2.yaml",
+        "paligemma-3b-ft-vqav2-224": "/coc/pskynet4/chuang475/projects/vlm_robustness/configs/models/paligemma_vqa/paligemma_ft_vqav2_224.yaml",
+        "paligemma-3b-pt-224": "/coc/pskynet4/chuang475/projects/vlm_robustness/configs/models/paligemma_vqa/paligemma_pt_224.yaml",
     }
 
     def __init__(

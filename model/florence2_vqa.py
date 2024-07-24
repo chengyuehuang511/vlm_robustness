@@ -17,7 +17,7 @@ class Florence2_VQA(BaseModel):
     """
 
     PRETRAINED_MODEL_CONFIG_DICT = {
-        "Florence-2-large-ft": "/nethome/chuang475/flash/projects/vlm_robustness/configs/models/florence2_vqa/florence2_ft_vqav2.yaml"
+        "Florence-2-large-ft": "/coc/pskynet4/chuang475/projects/vlm_robustness/configs/models/florence2_vqa/florence2_ft_vqav2.yaml"
     }
 
     def __init__(

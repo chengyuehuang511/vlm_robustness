@@ -2,6 +2,7 @@ model:
   arch: blip2_opt_vqa
   model_type: pretrain_opt6.7b
   load_pretrained: True
+
   pretrained: 'https://storage.googleapis.com/sfr-vision-language-research/LAVIS/models/BLIP2/blip2_pretrained_opt6.7b.pth'
   vit_model: eva_clip_g
 
@@ -16,7 +17,7 @@ model:
   num_query_token: 32
 
 datasets:
-  coco_vqa:
+  coco_vqa_lol:
     vis_processor:
         train:
           name: "blip_image_train"
@@ -34,6 +35,7 @@ datasets:
           name: "blip_question"
         test:
           name: "blip_question"
+
 run:
   task: vqa
   # optimizer
@@ -52,18 +54,19 @@ run:
 
   max_len: 10
   min_len: 1
-  num_beams: 5
+  num_beams: 3
+  num_ans_candidates: 18
   length_penalty: -1.
   inference_method: "generate"
   prompt: "Question: {} Short Answer:"
-
+  
   seed: 42
-  output_dir: "output/BLIP2/opt6.7b_VQA"
+  output_dir: "output/BLIP2/VQA_LOL"
 
   amp: True
   resume_ckpt_path: null
 
-  evaluate: False
+  evaluate: True 
   train_splits: ["train"]
   valid_splits: ["val"]
   test_splits: ["test"]

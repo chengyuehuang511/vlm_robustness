@@ -28,25 +28,34 @@ def report_metrics(result_file, ques_file, anno_file):
     overall_acc = vqa_scorer.accuracy["overall"]
     metrics["agg_metrics"] = overall_acc
 
-    logging.info("Overall Accuracy is: %.02f\n" % overall_acc)
+    logging.info("Overall Accuracy is: %.09f\n" % overall_acc)
+    print("Overall Accuracy is: %.09f\n" % overall_acc)
     logging.info("Per Answer Type Accuracy is the following:")
 
     for ans_type in vqa_scorer.accuracy["perAnswerType"]:
         logging.info(
-            "%s : %.02f"
+            "%s : %.09f"
             % (ans_type, vqa_scorer.accuracy["perAnswerType"][ans_type])
         )
         metrics[ans_type] = vqa_scorer.accuracy["perAnswerType"][ans_type]
+        print(f"yes/no {metrics[ans_type]:.9f}")
+
 
     with open(
-        os.path.join("/nethome/chuang475/flash/projects/vlm_robustness/result_output", "evaluate.txt"), "a"
+        os.path.join("/nethome/bmaneech3/flash/vlm_robustness/result_output", "blip2vqavs.txt"), "a"
     ) as f:
         f.write(json.dumps(metrics) + "\n")
     return metrics
 
 if __name__ == "__main__":
-    report_metrics(
-        "/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/ALBEF/VQACP/20240606120/result/val_vqa_result.json",
-        "/nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vqacp2/test/question_new.json",
-        "/nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vqacp2/test/annotation_new.json",
+    # report_metrics(
+    #     "/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/ALBEF/VQACP/20240606120/result/val_vqa_result.json",
+    #     "/nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vqacp2/test/question_new.json",
+    #     "/nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vqacp2/test/annotation_new.json",
+    # )
+    report_metrics( 
+        "/nethome/bmaneech3/flash/LAVIS/lavis/output/BLIP2/VQA_VS/t5/20240711190/result/test_vqa_result.json",
+        "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/test_questions.json",
+        "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/test_annotations.json"
     )
+    

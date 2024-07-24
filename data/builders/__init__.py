@@ -6,6 +6,8 @@
 """
 
 from lavis.datasets.builders.base_dataset_builder import load_dataset_config
+import os 
+# print(os.getcwd())
 
 from data.builders.vqa_builder import *
 
@@ -14,6 +16,8 @@ from lavis.common.registry import registry
 __all__ = [
     "COCOVQACPBuilder",
     "COCOVQABuilder_Raw",
+    "COCOVQAVSBuilder", 
+    "COCOVQALOLBuilder"
     "COCOVQA_Rephrasings_Builder",
     "COCOVQACEBuilder",
     "COCOVQALOLBuilder",
@@ -75,5 +79,10 @@ class DatasetZoo:
     def get_names(self):
         return list(self.dataset_zoo.keys())
 
-
 dataset_zoo = DatasetZoo()
+# coco_vqa_vs
+vqa_vs = load_dataset("coco_vqa_vs")
+
+print(vqa_vs.keys())
+print(vqa_vs["train"][0])
+

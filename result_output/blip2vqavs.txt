@@ -1,0 +1,1 @@
+{"agg_metrics": 50.67, "other": 37.38, "yes/no": 75.04, "number": 30.43}

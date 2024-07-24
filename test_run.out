@@ -1,0 +1,43 @@
+['alpro_video_eval', 'alpro_video_train', 'beats_audio', 'blip2_image_train', 'blip_caption', 'blip_diffusion_inp_image_eval', 'blip_diffusion_inp_image_train', 'blip_diffusion_tgt_image_train', 'blip_image_eval', 'blip_image_train', 'blip_instruction', 'blip_question', 'clip_image_eval', 'clip_image_train', 'gpt_dialogue', 'gpt_video_ft', 'ulip_pc']
+Using downloaded and verified file: /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/train/combined_data.json
+Using downloaded and verified file: /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/train/train_questions.json
+Using downloaded and verified file: /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/train/train_annotations.json
+Using downloaded and verified file: /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/val/combined_data.json
+Using downloaded and verified file: /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
+Using downloaded and verified file: /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/val/val_questions.json
+Using downloaded and verified file: /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/val/val_annotations.json
+Using downloaded and verified file: /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/combined_data.json
+Using downloaded and verified file: /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
+Using downloaded and verified file: /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/test_questions.json
+Using downloaded and verified file: /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/test_annotations.json
+------------------- /coc/pskynet6/chuang475/.cache/lavis/coco/images/
+------------------- ['/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/val/combined_data.json', '/coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json', '/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/val/val_questions.json', '/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/val/val_annotations.json']
+------------1 {'question_id': 524291001, 'question': 'Is the dog waiting?', 'answer': ['yes', 'yes', 'yes', 'yes', 'yes', 'yes', 'yes', 'yes', 'yes', 'yes'], 'image': 'train2014/COCO_train2014_000000524291.jpg', 'dataset': 'vqa'}
+------------------- keys dict_keys(['question_id', 'question', 'answer', 'image', 'dataset'])
+------------------- /coc/pskynet6/chuang475/.cache/lavis/coco/images/
+------------------- ['/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/combined_data.json', '/coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json', '/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/test_questions.json', '/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/test_annotations.json']
+------------1 {'question_id': 458752002, 'question': 'What color is the players shirt?', 'answer': ['orange', 'orange', 'orange', 'orange', 'orange', 'orange', 'orange', 'orange', 'orange', 'orange'], 'image': 'train2014/COCO_train2014_000000458752.jpg', 'dataset': 'vqa'}
+------------------- keys dict_keys(['question_id', 'question', 'answer', 'image', 'dataset'])
+dict_keys(['train', 'val', 'test'])
+{'image': <PIL.Image.Image image mode=RGB size=640x480 at 0x7F0B01AF4280>, 'text_input': 'What is this photo taken looking through?', 'answers': ['net', 'netting', 'mesh'], 'weights': [0.7999999999999999, 0.1, 0.1]}
+Using downloaded and verified file: /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/train/combined_data.json
+Using downloaded and verified file: /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/train/train_questions.json
+Using downloaded and verified file: /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/train/train_annotations.json
+Using downloaded and verified file: /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/val/combined_data.json
+Using downloaded and verified file: /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
+Using downloaded and verified file: /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/val/val_questions.json
+Using downloaded and verified file: /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/val/val_annotations.json
+Using downloaded and verified file: /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/combined_data.json
+Using downloaded and verified file: /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
+Using downloaded and verified file: /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/test_questions.json
+Using downloaded and verified file: /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/test_annotations.json
+------------------- /coc/pskynet6/chuang475/.cache/lavis/coco/images/
+------------------- ['/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/val/combined_data.json', '/coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json', '/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/val/val_questions.json', '/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/val/val_annotations.json']
+------------1 {'question_id': 524291001, 'question': 'Is the dog waiting?', 'answer': ['yes', 'yes', 'yes', 'yes', 'yes', 'yes', 'yes', 'yes', 'yes', 'yes'], 'image': 'train2014/COCO_train2014_000000524291.jpg', 'dataset': 'vqa'}
+------------------- keys dict_keys(['question_id', 'question', 'answer', 'image', 'dataset'])
+------------------- /coc/pskynet6/chuang475/.cache/lavis/coco/images/
+------------------- ['/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/combined_data.json', '/coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json', '/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/test_questions.json', '/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/test_annotations.json']
+------------1 {'question_id': 458752002, 'question': 'What color is the players shirt?', 'answer': ['orange', 'orange', 'orange', 'orange', 'orange', 'orange', 'orange', 'orange', 'orange', 'orange'], 'image': 'train2014/COCO_train2014_000000458752.jpg', 'dataset': 'vqa'}
+------------------- keys dict_keys(['question_id', 'question', 'answer', 'image', 'dataset'])
+dict_keys(['train', 'val', 'test'])
+{'image': <PIL.Image.Image image mode=RGB size=640x480 at 0x7F0B01B0B190>, 'text_input': 'What is this photo taken looking through?', 'answers': ['net', 'netting', 'mesh'], 'weights': [0.7999999999999999, 0.1, 0.1]}
