@@ -10,6 +10,7 @@ import numpy as np
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 import os
 import contextlib
+import copy
 
 @registry.register_model("paligemma_vqa")
 class PaliGemma_VQA(BaseModel):  # TODO
@@ -224,6 +225,8 @@ class PaliGemma_VQA(BaseModel):  # TODO
             dtype=dtype,
         )
 
+        load_finetuned = cfg.get("load_finetuned", False)
+
         # LoRA
         use_lora = int(cfg.get("use_lora", 0))
         lora_alpha = int(cfg.get("lora_alpha", 16))
@@ -245,7 +248,6 @@ class PaliGemma_VQA(BaseModel):  # TODO
             logging.info(model.print_trainable_parameters())
         
         # print("model: ", model)
-        # model.load_checkpoint_from_config(cfg)
 
         # Linear Probe
         linear_probe = int(cfg.get("linear_probe", 0))
@@ -268,6 +270,24 @@ class PaliGemma_VQA(BaseModel):  # TODO
                         param.requires_grad_(True)
                         print(f"{name} requires_grad: {param.requires_grad}")
             logging.info("Linear probe: only tune 'lm_head' layer")
+        
+        # WiSE
+        wise = int(cfg.get("wise", 0))
+        if wise == 1:
+            assert load_finetuned, "WiSE requires load_finetuned=True"
+            w0 = {key: value.to('cpu') for key, value in model.state_dict().items()}
+            w0 = copy.deepcopy(w0)
+        
+        if load_finetuned:
+            model.load_checkpoint_from_config(cfg)
+        
+        if wise == 1:
+            w1 = {key: value.to('cpu') for key, value in model.state_dict().items()}
+            # alpha * w0 + (1 - alpha) * w1
+            alpha = 0.5
+            wise = {key: (alpha * w0[key] + (1 - alpha) * w1[key]).to(model.device) for key in w1.keys()}
+            model.load_state_dict(wise)
+            logging.info("WiSE: load finetuned model and apply WiSE")
 
         return model
     
