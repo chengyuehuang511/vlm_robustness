@@ -4,11 +4,12 @@ model:
   load_pretrained: True
   pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
   load_finetuned: True
-  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/1e-3/20240721224/checkpoint_best.pth'
+  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/adamh/1e-3_wd0.5/20240724145/checkpoint_best.pth'
   # adamp:/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/20240715010/checkpoint_best.pth'
   # adamh: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/20240715010/checkpoint_best.pth'
   # 20240715010, adam: 20240714221
   # 1e-3/20240721224
+  # adamh/1e-3_wd0.5/20240724145
 
   # lora
   use_lora: 1

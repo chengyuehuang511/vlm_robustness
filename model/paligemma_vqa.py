@@ -224,6 +224,7 @@ class PaliGemma_VQA(BaseModel):  # TODO
             dtype=dtype,
         )
 
+        # LoRA
         use_lora = int(cfg.get("use_lora", 0))
         lora_alpha = int(cfg.get("lora_alpha", 16))
         lora_rank = int(cfg.get("lora_rank", 4))
@@ -242,9 +243,31 @@ class PaliGemma_VQA(BaseModel):  # TODO
             # model = prepare_model_for_kbit_training(model)
             model = get_peft_model(model, lora_config)
             logging.info(model.print_trainable_parameters())
-
+        
         # print("model: ", model)
         # model.load_checkpoint_from_config(cfg)
+
+        # Linear Probe
+        linear_probe = int(cfg.get("linear_probe", 0))
+        if linear_probe == 1:
+            assert use_lora == 0, "Linear probe and LoRA cannot be used together"
+            # only tune "lm_head" layer
+            # for name, param in model.named_parameters():
+            #     # if "lm_head" not in name:
+            #     #     param.requires_grad_(False)
+            #     # else:
+            #     #     param.requires_grad_(True)
+            #     print(f"{name} requires_grad: {param.requires_grad}")
+            for name, module in model.named_modules():
+                if "lm_head" not in name:
+                    for param in module.parameters():
+                        param.requires_grad_(False)
+                        print(f"{name} requires_grad: {param.requires_grad}")
+                else:
+                    for param in module.parameters():
+                        param.requires_grad_(True)
+                        print(f"{name} requires_grad: {param.requires_grad}")
+            logging.info("Linear probe: only tune 'lm_head' layer")
 
         return model
     

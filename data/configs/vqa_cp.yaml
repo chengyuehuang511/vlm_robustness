@@ -16,33 +16,29 @@ datasets:
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
           storage:
-              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqacp2/raw/annotations/vqacp_v2_train_questions.json
-              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqacp2/raw/annotations/vqacp_v2_train_annotations.json
+              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vqacp2/train/vqacp_v2_train_questions.json
+              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vqacp2/train/vqacp_v2_train_annotations.json
         val:  # == test
           url:
-              # - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
+              - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
           storage:
-              # - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqacp2/test/combined_data.json
+              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vqacp2/test/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
-              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqacp2/raw/annotations/vqacp_v2_test_questions.json
-              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqacp2/raw/annotations/vqacp_v2_test_annotations.json
+              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vqacp2/test/question_new.json
+              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vqacp2/test/annotation_new.json
         test:
           url:
-              # - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
+              - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
           storage:
-              # - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqacp2/vqacp2/raw/annotations/combined_data.json
+              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vqacp2/test/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
-              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqacp2/raw/annotations/vqacp_v2_test_questions.json
-              - /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqacp2/raw/annotations/vqacp_v2_test_annotations.json
+              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vqacp2/test/question_new.json
+              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vqacp2/test/annotation_new.json
       images:
           storage: /coc/pskynet6/chuang475/.cache/lavis/coco/images/
-
-          
-
-

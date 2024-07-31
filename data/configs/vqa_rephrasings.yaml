@@ -29,7 +29,7 @@ datasets:
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
           storage:
-              - /coc/pskynet4/chuang475/flash/projects/vlm_robustness/tmp/datasets/vqa_rephrasings/combined_data.json
+              - /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/vqa_rephrasings/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
               - /srv/datasets/vqa_rephrasings/v2_OpenEnded_mscoco_valrep2014_humans_og_questions.json
               - /srv/datasets/vqa_rephrasings/v2_mscoco_valrep2014_humans_og_annotations.json
