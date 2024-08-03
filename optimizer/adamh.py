@@ -5,7 +5,8 @@ import math
 
 class AdamH(Optimizer):
     def __init__(self, params, lr=1e-3, betas=(0.9, 0.999), eps=1e-8,
-                 weight_decay=0, amsgrad=False, exclude_set={}):
+                 weight_decay=0, amsgrad=False, exclude_set={}, norm_type="mars"):
+        self.norm_type = norm_type
         if not 0.0 <= lr:
             raise ValueError("Invalid learning rate: {}".format(lr))
         if not 0.0 <= eps:
@@ -117,6 +118,7 @@ class AdamH(Optimizer):
          eps: float):
         
         i = 0
+        # for param, pre in zip(group['params'],group['pre']):
         for param in group['params']:
             if param.grad is None: 
                 continue
@@ -150,6 +152,10 @@ class AdamH(Optimizer):
             new_p = param - d_p
 
             # Selective Projection Decay (SPD)
+            # condition_buffer[i] += torch.sum(torch.mul(grad, pre - param))
+            # if condition_buffer[i] < 0.0:
+            #     ratio = self._ratio(new_p, param, pre)
+            #     new_p = new_p - weight_decay * ratio * (new_p - pre)
             condition_buffer[i] += torch.sum(torch.mul(grad, -param))
             if condition_buffer[i] < 0.0:
                 ratio = self._ratio(new_p, param)
@@ -157,7 +163,20 @@ class AdamH(Optimizer):
             param.copy_(new_p)
             i += 1
 
+    # def _ratio(self,new_p,param,pre):
+    #     if self.norm_type == "mars":
+    #         curr_norm, prev_norm = self._mars_norm(new_p - pre), self._mars_norm(param - pre)
+    #     else:
+    #         curr_norm, prev_norm = torch.norm(new_p - pre), torch.norm(param - pre)
+    #     ratio = (curr_norm - prev_norm) / curr_norm 
+    #     return torch.nn.functional.hardtanh(ratio, 0.0, 1.0)
     def _ratio(self, new_p, param):
-        curr_norm, prev_norm = torch.norm(new_p), torch.norm(param)
+        if self.norm_type == "mars":
+            curr_norm, prev_norm = self._mars_norm(new_p), self._mars_norm(param)
+        else:
+            curr_norm, prev_norm = torch.norm(new_p), torch.norm(param)
         ratio = (curr_norm - prev_norm) / curr_norm 
         return torch.nn.functional.hardtanh(ratio, 0.0, 1.0)
+
+    def _mars_norm(self, tensor):
+            return torch.sum(torch.abs(tensor), dim=tuple(range(1,tensor.dim())), keepdim=True) + 1e-8
