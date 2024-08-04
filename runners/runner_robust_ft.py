@@ -741,17 +741,23 @@ class RunnerRobustFT(RunnerBase):
                 optimizer_params = {
                     "lr": lr,
                     "weight_decay": weight_decay,
-                    "k": 1, 
+                    "k": int(self.config.run_cfg.get("adamp_k", 1)),
+                    "use_lora": use_lora,
                     #"exclude_set": {'module.head.weight','module.head.bias'}
                 } 
 
                 # Cache pre-trained model weights 
-                params_to_opt = [x[1] for x in self._model.named_parameters() if x[1].requires_grad]
                 params_to_opt_name = [x[0] for x in self._model.named_parameters() if x[1].requires_grad]
-                params_anchor = copy.deepcopy(params_to_opt)
-                param_group = [{'params':params_to_opt,
-                                'pre': params_anchor, 
-                                'name': params_to_opt_name}]
+                params_to_opt = [x[1] for x in self._model.named_parameters() if x[1].requires_grad]
+                
+                if use_lora:
+                    param_group = [{'params':params_to_opt, 
+                                    'name': params_to_opt_name}]
+                else:
+                    params_anchor = copy.deepcopy(params_to_opt)
+                    param_group = [{'params':params_to_opt,
+                                    'pre': params_anchor, 
+                                    'name': params_to_opt_name}]
                 self._optimizer = AdamP(param_group,**optimizer_params)
             
             elif opt == "adamh":
