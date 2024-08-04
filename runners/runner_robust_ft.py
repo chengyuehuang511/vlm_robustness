@@ -711,6 +711,12 @@ class RunnerRobustFT(RunnerBase):
             lr=float(self.config.run_cfg.init_lr)
             # beta2 = self.config.run_cfg.get("beta2", 0.999)
             
+            use_lora = self.config.model_cfg.use_lora
+            if use_lora == 1:
+                use_lora = True
+            else:
+                use_lora = False
+            
             if opt == "sgdp":
                 # Initalize optimizer parameters
                 optimizer_params = {
@@ -752,14 +758,16 @@ class RunnerRobustFT(RunnerBase):
                 optimizer_params = {
                     "lr": lr,
                     "weight_decay": weight_decay, #args.weight_decay, 1
+                    "use_lora": use_lora,
+                    "norm_type": "l2",
                 } 
                 params_to_opt = [x[1] for x in self._model.named_parameters() if x[1].requires_grad]
-                # if args.use_lora == 1:
-                #     param_group = [{'params':params_to_opt}]
-                # else:
-                params_anchor = copy.deepcopy(params_to_opt)
-                param_group = [{'params':params_to_opt,
-                                'pre': params_anchor}]
+                if use_lora:
+                    param_group = [{'params':params_to_opt}]
+                else:
+                    params_anchor = copy.deepcopy(params_to_opt)
+                    param_group = [{'params':params_to_opt,
+                                    'pre': params_anchor}]
                 self._optimizer = AdamH(param_group,**optimizer_params)
             
             elif opt == "adam":
