@@ -2,10 +2,16 @@ import torch
 from torch.optim.optimizer import Optimizer, required
 import copy
 import math
+import logging
+from typing import List, Dict, Optional
 
 class AdamH(Optimizer):
     def __init__(self, params, lr=1e-3, betas=(0.9, 0.999), eps=1e-8,
-                 weight_decay=0, amsgrad=False, exclude_set={}):
+                 weight_decay=0, amsgrad=False, exclude_set={}, use_lora=False, norm_type="l2"):
+        self.norm_type = norm_type
+        self.exclude_set = exclude_set
+        self.use_lora = use_lora
+
         if not 0.0 <= lr:
             raise ValueError("Invalid learning rate: {}".format(lr))
         if not 0.0 <= eps:
@@ -102,62 +108,77 @@ class AdamH(Optimizer):
                    )
         return loss
 
-    def adam(self, group,
-         exp_avgs,
-         exp_avg_sqs,
-         hyper_param,
-         max_exp_avg_sqs,
-         condition_buffer,
-         state_steps, 
-         amsgrad: bool,
-         beta1: float,
-         beta2: float,
-         lr: float,
-         weight_decay: float,
-         eps: float):
+    def adam(self, 
+            group: Dict[str, List[torch.Tensor]],
+            exp_avgs: List[torch.Tensor],
+            exp_avg_sqs: List[torch.Tensor],
+            hyper_param: Dict[str, float],
+            max_exp_avg_sqs: Optional[List[torch.Tensor]],
+            condition_buffer: List[torch.Tensor],
+            state_steps: List[int], 
+            amsgrad: bool,
+            beta1: float,
+            beta2: float,
+            lr: float,
+            weight_decay: float,
+            eps: float):
+            
+        def compute_denominator(exp_avg_sq, bias_correction2, max_exp_avg_sq=None):
+            if amsgrad:
+                torch.maximum(max_exp_avg_sq, exp_avg_sq, out=max_exp_avg_sq)
+                return (max_exp_avg_sq.sqrt() / math.sqrt(bias_correction2)).add_(eps)
+            else:
+                return (exp_avg_sq.sqrt() / math.sqrt(bias_correction2)).add_(eps)
         
-        i = 0
-        for param in group['params']:
+        def update_parameter(param, grad, exp_avg, exp_avg_sq, step, pre=None):
+            bias_correction1 = 1 - beta1 ** step
+            bias_correction2 = 1 - beta2 ** step
+            
+            exp_avg.mul_(beta1).add_(grad, alpha=1 - beta1)
+            exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value=1 - beta2)
+
+            denom = compute_denominator(exp_avg_sq, bias_correction2, max_exp_avg_sqs[i] if amsgrad else None)
+            step_size = lr / bias_correction1
+            
+            d_p = step_size * exp_avg / denom 
+            new_p = param - d_p
+            
+            condition = -param if pre is None else pre - param
+            condition_buffer[i] += torch.sum(grad * condition)
+            if condition_buffer[i] < 0.0:
+                ratio = self._ratio(new_p, param, pre)
+                decay = weight_decay * ratio * (new_p if pre is None else new_p - pre)
+                new_p -= decay
+
+            param.copy_(new_p)
+        
+        for i, param in enumerate(group['params']):
             if param.grad is None: 
                 continue
+            
             grad = param.grad
             exp_avg = exp_avgs[i]
             exp_avg_sq = exp_avg_sqs[i]
             step = state_steps[i]
-            if amsgrad:
-                max_exp_avg_sq = max_exp_avg_sqs[i]
 
-            bias_correction1 = 1 - beta1 ** step
-            bias_correction2 = 1 - beta2 ** step
-            
-           
-            # Decay the first and second moment running average coefficient
-            exp_avg.mul_(beta1).add_(grad, alpha=1 - beta1)
-            exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value=1 - beta2)
-
-            if amsgrad:
-                # Maintains the maximum of all 2nd moment running avg. till now
-                torch.maximum(max_exp_avg_sq, exp_avg_sq, out=max_exp_avg_sq)
-                # Use the max. for normalizing running avg. of gradient
-                denom = (max_exp_avg_sq.sqrt() / math.sqrt(bias_correction2)).add_(eps)
+            if self.use_lora:
+                update_parameter(param, grad, exp_avg, exp_avg_sq, step)
             else:
-                denom = (exp_avg_sq.sqrt() / math.sqrt(bias_correction2)).add_(eps)
-            
-            step_size = lr / bias_correction1
-            
-            
-            d_p = step_size * exp_avg/denom 
-            new_p = param - d_p
+                pre = group['pre'][i]
+                update_parameter(param, grad, exp_avg, exp_avg_sq, step, pre)
 
-            # Selective Projection Decay (SPD)
-            condition_buffer[i] += torch.sum(torch.mul(grad, -param))
-            if condition_buffer[i] < 0.0:
-                ratio = self._ratio(new_p, param)
-                new_p = new_p - weight_decay * ratio * (new_p)
-            param.copy_(new_p)
-            i += 1
-
-    def _ratio(self, new_p, param):
-        curr_norm, prev_norm = torch.norm(new_p), torch.norm(param)
+    # 3
+    def _ratio(self, new_p: torch.Tensor, param: torch.Tensor, pre: Optional[torch.Tensor] = None) -> torch.Tensor:
+        if pre is None:
+            pre = torch.zeros_like(new_p)
+        
+        if self.norm_type == "mars":
+            curr_norm, prev_norm = self._mars_norm(new_p - pre), self._mars_norm(param - pre)
+        else:
+            curr_norm, prev_norm = torch.norm(new_p - pre), torch.norm(param - pre)
+        
         ratio = (curr_norm - prev_norm) / curr_norm 
         return torch.nn.functional.hardtanh(ratio, 0.0, 1.0)
+
+    def _mars_norm(self, tensor):
+        return torch.sum(torch.abs(tensor), dim=tuple(range(1,tensor.dim())), keepdim=True) + 1e-8

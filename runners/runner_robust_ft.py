@@ -35,7 +35,6 @@ from torch.utils.data import DataLoader, DistributedSampler
 from torch.utils.data.dataset import ChainDataset
 
 from optimizer import *
-from peft import LoraConfig, get_peft_model
 import copy
 
 
@@ -677,7 +676,6 @@ class RunnerBase:
 class RunnerRobustFT(RunnerBase):
     def __init__(self, cfg, task, model, datasets, job_id):
         super().__init__(cfg, task, model, datasets, job_id)
-        self.lora_config = None
     
     @property
     def model(self):
@@ -696,25 +694,6 @@ class RunnerRobustFT(RunnerBase):
                     )
             else:
                 self._wrapped_model = self._model
-        
-        if self.lora_config is None:
-            use_lora = int(self.config.run_cfg.get("use_lora", 0))
-            lora_alpha = int(self.config.run_cfg.get("lora_alpha", 16))
-            lora_rank = int(self.config.run_cfg.get("lora_rank", 4))
-            target_modules = self.config.run_cfg.get("target_modules", "q_proj k_proj v_proj o_proj").split()
-
-            if use_lora == 1:
-                self.lora_config = LoraConfig(
-                    r=lora_rank,  # 4
-                    lora_alpha=lora_alpha,
-                    lora_dropout=0.05,
-                    bias="none",
-                    target_modules=target_modules,  # ['q_proj', 'k_proj', 'v_proj', 'o_proj'],  # qformer, qkv
-                )
-                
-                logging.info(self.lora_config)
-                self._wrapped_model = get_peft_model(self._wrapped_model, self.lora_config)
-                logging.info(self._wrapped_model.print_trainable_parameters())
 
         return self._wrapped_model
     
@@ -731,6 +710,12 @@ class RunnerRobustFT(RunnerBase):
             weight_decay = self.config.run_cfg.get("weight_decay", 0.05)
             lr=float(self.config.run_cfg.init_lr)
             # beta2 = self.config.run_cfg.get("beta2", 0.999)
+            
+            use_lora = self.config.model_cfg.use_lora
+            if use_lora == 1:
+                use_lora = True
+            else:
+                use_lora = False
             
             if opt == "sgdp":
                 # Initalize optimizer parameters
@@ -756,31 +741,39 @@ class RunnerRobustFT(RunnerBase):
                 optimizer_params = {
                     "lr": lr,
                     "weight_decay": weight_decay,
-                    "k": 1, 
+                    "k": int(self.config.run_cfg.get("adamp_k", 1)),
+                    "use_lora": use_lora,
                     #"exclude_set": {'module.head.weight','module.head.bias'}
                 } 
 
                 # Cache pre-trained model weights 
-                params_to_opt = [x[1] for x in self._model.named_parameters() if x[1].requires_grad]
                 params_to_opt_name = [x[0] for x in self._model.named_parameters() if x[1].requires_grad]
-                params_anchor = copy.deepcopy(params_to_opt)
-                param_group = [{'params':params_to_opt,
-                                'pre': params_anchor, 
-                                'name': params_to_opt_name}]
+                params_to_opt = [x[1] for x in self._model.named_parameters() if x[1].requires_grad]
+                
+                if use_lora:
+                    param_group = [{'params':params_to_opt, 
+                                    'name': params_to_opt_name}]
+                else:
+                    params_anchor = copy.deepcopy(params_to_opt)
+                    param_group = [{'params':params_to_opt,
+                                    'pre': params_anchor, 
+                                    'name': params_to_opt_name}]
                 self._optimizer = AdamP(param_group,**optimizer_params)
             
             elif opt == "adamh":
                 optimizer_params = {
                     "lr": lr,
                     "weight_decay": weight_decay, #args.weight_decay, 1
+                    "use_lora": use_lora,
+                    "norm_type": "l2",
                 } 
                 params_to_opt = [x[1] for x in self._model.named_parameters() if x[1].requires_grad]
-                # if args.use_lora == 1:
-                #     param_group = [{'params':params_to_opt}]
-                # else:
-                params_anchor = copy.deepcopy(params_to_opt)
-                param_group = [{'params':params_to_opt,
-                                'pre': params_anchor}]
+                if use_lora:
+                    param_group = [{'params':params_to_opt}]
+                else:
+                    params_anchor = copy.deepcopy(params_to_opt)
+                    param_group = [{'params':params_to_opt,
+                                    'pre': params_anchor}]
                 self._optimizer = AdamH(param_group,**optimizer_params)
             
             elif opt == "adam":

@@ -17,8 +17,8 @@ class COCOVQABuilder_Raw(BaseDatasetBuilder):
     eval_dataset_cls = COCOVQAEvalDataset_Raw
 
     DATASET_CONFIG_DICT = {
-        "default": "/nethome/bmaneech3/flash/vlm_robustness/data/configs/defaults_vqa_raw.yaml",
-        "eval": "/nethome/bmaneech3/flash/vlm_robustness/data/configs/eval_vqa_raw.yaml",
+        "default": "/coc/pskynet4/chuang475/projects/vlm_robustness/data/configs/defaults_vqa_raw.yaml",
+        "eval": "/coc/pskynet4/chuang475/projects/vlm_robustness/data/configs/eval_vqa_raw.yaml",
     }
 
 
@@ -28,7 +28,7 @@ class COCOVQACPBuilder(BaseDatasetBuilder):
     eval_dataset_cls = COCOVQAEvalDataset_Raw
 
     DATASET_CONFIG_DICT = {
-        "default": "/nethome/bmaneech3/flash/vlm_robustness/data/configs/vqa_cp.yaml"
+        "default": "/coc/pskynet4/chuang475/projects/vlm_robustness/data/configs/vqa_cp.yaml"
     }
 
 
@@ -87,6 +87,14 @@ class COCOIVVQABuilder(BaseDatasetBuilder):
         "default": "/coc/pskynet4/chuang475/projects/vlm_robustness/data/configs/iv-vqa.yaml"
     }
 
+@registry.register_builder("coco_advqa")
+class COCOADVQABuilder(BaseDatasetBuilder): 
+    train_dataset_cls = COCOVQADataset_Raw
+    eval_dataset_cls = COCOVQAEvalDataset_Raw
+
+    DATASET_CONFIG_DICT = { 
+        "default": "/coc/pskynet4/chuang475/projects/vlm_robustness/data/configs/advqa.yaml"
+    }
 
 @registry.register_builder("textvqa")
 class TextVQABuilder(BaseDatasetBuilder): 
@@ -94,7 +102,7 @@ class TextVQABuilder(BaseDatasetBuilder):
     eval_dataset_cls = COCOVQAEvalDataset_Raw
 
     DATASET_CONFIG_DICT = { 
-        "default": "/nethome/bmaneech3/flash/vlm_robustness/data/configs/textvqa.yaml"
+        "default": "/coc/pskynet4/chuang475/projects/vlm_robustness/data/configs/textvqa.yaml"
     }
 
 @registry.register_builder("vizwiz")
@@ -103,7 +111,7 @@ class VizWizBuilder(BaseDatasetBuilder):
     eval_dataset_cls = COCOVQAEvalDataset_Raw
 
     DATASET_CONFIG_DICT = { 
-        "default": "/nethome/bmaneech3/flash/vlm_robustness/data/configs/vizwiz.yaml"
+        "default": "/coc/pskynet4/chuang475/projects/vlm_robustness/data/configs/vizwiz.yaml"
     }
 
 @registry.register_builder("coco_okvqa")
@@ -112,5 +120,5 @@ class COCOOKVQABuilder(BaseDatasetBuilder):
     eval_dataset_cls = COCOVQAEvalDataset_Raw
 
     DATASET_CONFIG_DICT = { 
-        "default": "/nethome/bmaneech3/flash/vlm_robustness/data/configs/ok-vqa.yaml"
+        "default": "/coc/pskynet4/chuang475/projects/vlm_robustness/data/configs/ok-vqa.yaml"
     }

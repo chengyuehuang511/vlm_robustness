@@ -11,17 +11,6 @@ datasets:
     build_info:
       # Be careful not to append minus sign (-) before split to avoid itemizing
       annotations:
-        train:
-          url:
-              - https://textvqa.org/dataset/
-              # - https://textvqa.org/dataset/
-              # - https://textvqa.org/dataset/
-              # - https://textvqa.org/dataset/
-          storage:
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/textvqa/train/combined_data.json
-              # - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
-              # - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/textvqa/train/question.json
-              # - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/textvqa/train/annotation.json
         val:
           url:
               - https://textvqa.org/dataset/
@@ -29,10 +18,10 @@ datasets:
               - https://textvqa.org/dataset/
               - https://textvqa.org/dataset/
           storage:
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/textvqa/val/combined_data.json
+              - /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/textvqa/val/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/textvqa/val/question.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/textvqa/val/annotation.json
+              - /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/textvqa/val/question.json
+              - /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/textvqa/val/annotation.json
         test:
           url:
               - https://textvqa.org/dataset/
@@ -40,9 +29,9 @@ datasets:
               - https://textvqa.org/dataset/
               - https://textvqa.org/dataset/
           storage:
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/textvqa/val/combined_data.json
+              - /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/textvqa/val/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/textvqa/val/question.json
-              - /nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/textvqa/val/annotation.json
+              - /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/textvqa/val/question.json
+              - /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/textvqa/val/annotation.json
       images:
-          storage: /coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/textvqa/images
+          storage: /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/textvqa/

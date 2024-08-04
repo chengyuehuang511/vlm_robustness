@@ -21,7 +21,7 @@ model:
 
 
 datasets:
-  coco_vqa_ce: # name of the dataset builder
+  textvqa: # name of the dataset builder
     vis_processor:
         eval:
           name: "blip_image_eval"
@@ -47,7 +47,7 @@ run:
   prompt: "Question: {} Answer:"
 
   seed: 42
-  output_dir: "output/PALIGEMMA/VQA_CE"
+  output_dir: "output/PALIGEMMA/TextVQA"
 
   evaluate: True
   test_splits: ["val"]

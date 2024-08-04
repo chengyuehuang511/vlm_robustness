@@ -1,8 +1,9 @@
-.out 
-.DS_Store
-
+infoseek/
+infoseek_data/
+output/
+file_list.txt
+train_env.sh
 tmp/
-
-dataset_scratch.py
-
-vqa_vs.py
+try/
+measure_ood/
+infoseek_eval.py

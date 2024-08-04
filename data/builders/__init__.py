@@ -24,6 +24,10 @@ __all__ = [
     "COCOVQAVSBuilder",
     "COCOCVVQABuilder",
     "COCOIVVQABuilder",
+    'COCOADVQABuilder',
+    'TextVQABuilder',
+    'VizWizBuilder',
+    'COCOOKVQABuilder'
 ]
 
 

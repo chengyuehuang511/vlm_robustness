@@ -26,7 +26,7 @@ class FTP(object):
     @torch.no_grad()
     def step(self,name, curr, pre, d_p):
         if curr.requires_grad and name not in self.exclude_set:
-            c_t = (curr - d_p) - pre
+            c_t = (curr - d_p) if pre is None else (curr - d_p) - pre
             norms = self._mars_norm(c_t)
 
             if self.t == 1:
@@ -53,7 +53,7 @@ class FTP(object):
             # Update
             denom = 1/norms
             ratio = gamma * denom
-            new_p = pre + self.threshold(ratio) * c_t 
+            new_p = self.threshold(ratio) * c_t if pre is None else pre + self.threshold(ratio) * c_t 
 
             # Save updated values
             self._update_buffers(gamma, c_t, denom)
@@ -103,7 +103,7 @@ class FTP(object):
             
 class SGDP(Optimizer):
     def __init__(self, params, lr=required, momentum=0, dampening=0,
-                 weight_decay=0, nesterov=False, k=1.0, exclude_set = {}):
+                 weight_decay=0, nesterov=False, k=1.0, exclude_set = {}, use_lora=False):
         if lr is not required and lr < 0.0:
             raise ValueError("Invalid learning rate: {}".format(lr))
         if momentum < 0.0:
@@ -120,6 +120,9 @@ class SGDP(Optimizer):
          
         # initialize FTP
         self.ftp = FTP(k, exclude_set=exclude_set)
+
+        # lora
+        self.use_lora = use_lora
                     
 
     def __setstate__(self, state):
@@ -145,7 +148,12 @@ class SGDP(Optimizer):
             dampening = group['dampening']
             nesterov = group['nesterov']
             
-            for p, name, pre in zip(group['params'],group['name'],group['pre']):
+            for i, (p, name) in enumerate(zip(group['params'],group['name'])):
+                if self.use_lora:
+                    pre = None
+                else:
+                    pre = group['pre'][i]
+                
                 if p.grad is None:
                     continue
                 d_p = p.grad
@@ -177,7 +185,7 @@ class SGDP(Optimizer):
 
 class AdamP(Optimizer):
     def __init__(self, params, lr=1e-3, betas=(0.9, 0.999), eps=1e-8,
-                 weight_decay=0, amsgrad=False, k=1.0, exclude_set={}):
+                 weight_decay=0, amsgrad=False, k=1.0, exclude_set={}, use_lora=False):
         if not 0.0 <= lr:
             raise ValueError("Invalid learning rate: {}".format(lr))
         if not 0.0 <= eps:
@@ -194,6 +202,9 @@ class AdamP(Optimizer):
 
         # initialize FTP
         self.ftp = FTP(k, exclude_set=exclude_set)
+
+        # lora
+        self.use_lora = use_lora
 
     def __setstate__(self, state):
         super(AdamP, self).__setstate__(state)
@@ -281,7 +292,12 @@ class AdamP(Optimizer):
          eps: float):
 
         i_with_grad = 0
-        for i, (param, name, pre) in enumerate(zip(group['params'],group['name'],group['pre'])):
+        for i, (param, name) in enumerate(zip(group['params'],group['name'])):
+            if self.use_lora:
+                pre = None
+            else:
+                pre = group['pre'][i]
+
             if param.grad is None: 
                 continue
             grad = param.grad

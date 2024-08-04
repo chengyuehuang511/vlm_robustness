@@ -4,7 +4,7 @@
  # For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
 
 datasets:
-  coco_vqa_rephrasings:
+  coco_advqa:
     # data_dir: ${env.data_dir}/datasets
     data_type: images # [images|videos|features]
 
@@ -18,10 +18,10 @@ datasets:
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
           storage:
-              - /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/vqa_rephrasings/combined_data.json
+              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/advqa/val/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
-              - /srv/datasets/vqa_rephrasings/v2_OpenEnded_mscoco_valrep2014_humans_og_questions.json
-              - /srv/datasets/vqa_rephrasings/v2_mscoco_valrep2014_humans_og_annotations.json
+              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/advqa/val/v1_OpenEnded_mscoco_val2017_advqa_questions.json
+              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/advqa/val/v1_mscoco_val2017_advqa_annotations_new.json
         test:
           url:
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
@@ -29,10 +29,9 @@ datasets:
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
           storage:
-              - /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/vqa_rephrasings/combined_data.json
+              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/advqa/val/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
-              - /srv/datasets/vqa_rephrasings/v2_OpenEnded_mscoco_valrep2014_humans_og_questions.json
-              - /srv/datasets/vqa_rephrasings/v2_mscoco_valrep2014_humans_og_annotations.json
+              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/advqa/val/v1_OpenEnded_mscoco_val2017_advqa_questions.json
+              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/advqa/val/v1_mscoco_val2017_advqa_annotations_new.json
       images:
-          storage: /coc/pskynet6/chuang475/.cache/lavis/coco/images/
-
+          storage: /srv/datasets/coco/
