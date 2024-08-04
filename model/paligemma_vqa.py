@@ -334,8 +334,11 @@ class PaliGemma_VQA(BaseModel):  # TODO
         state_dict = checkpoint["model"]
         for key in list(state_dict.keys()):
             start_key = "base_model.model.model."
+            start_key_2 = "model."
             if key.startswith(start_key):
                 state_dict[key[len(start_key):]] = state_dict.pop(key)
+            elif key.startswith(start_key_2):
+                state_dict[key[len(start_key_2):]] = state_dict.pop(key)
         
         # Load the current state_dict of the model
         current_state_dict = self.model.state_dict()
