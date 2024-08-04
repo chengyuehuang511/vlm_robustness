@@ -14,7 +14,7 @@ conda activate riplenv
 cd /nethome/bmaneech3/flash/vlm_robustness
 
 
-srun -u python -m torch.distributed.run --nproc_per_node=8 evaluate.py --cfg-path /nethome/bmaneech3/flash/vlm_robustness/configs/paligemma/vqavs_test.yaml
+srun -u python -m torch.distributed.run --nproc_per_node=8 evaluate.py --cfg-path /nethome/bmaneech3/flash/vlm_robustness/configs/paligemma/vqavs_zs.yaml
 
 
 

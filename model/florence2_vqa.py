@@ -79,7 +79,7 @@ class Florence2_VQA(BaseModel):
         if isinstance(samples["text_input_raw"], str):
             samples["text_input_raw"] = [samples["text_input_raw"]]
         if prompt:
-            text_input = [prompt.format(question) for question in samples["text_input"]]
+            text_input = [prompt.format(question) for question in samples["text_input_raw"]]
         else:
             text_input = samples["text_input_raw"]
 

@@ -3,6 +3,7 @@
 import json 
 import os
 from tqdm import tqdm
+import pandas as pd 
 dir_root = "/coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/sample_org"
 
 def create_image_index(file_list) : 
@@ -114,6 +115,32 @@ def create_image_index(file_list) :
         json.dump(cat_id_samples, file)
 
 
+def create_textvqa_imgidx(file_list) : 
+    
+    img_id_samples = {} #map img id -> everything (file_name, category list, url_list)
+    cat_id_samples = {} #id_2_cat 
+    label_map = pd.read_csv("/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/textvqa/2017_11/class-descriptions.csv")
+
+    label_map = label_map.to_dict(orient='records')
+
+    print(len(label_map))
+
+
+
+    for f in file_list : 
+        df = pd.read_csv(f)
+
+        print(df.columns)
+        no_label = set()
+        for index, row in tqdm(df.iterrows(), desc="Process Image ID classes"):
+            img_id = row["ImageID"]
+            cat = row["LabelName"]
+            #assumesall is confident 
+
+            if img_id not in img_id_samples : 
+                img_id_samples[img_id] = []
+
+        print("number of lost labels", len(no_label))
 
 
 

@@ -1,0 +1,56 @@
+
+Measure: (vqa_v2, vqa_v2 id_val) KO
+Result Jensen Shannon Divergence: (0.24171845993486554, 0.13027117440815772)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KOP
+Result Jensen Shannon Divergence: (0.5281339717335612, 0.39967945694927626)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KW
+Result Jensen Shannon Divergence: (0.2832395141040718, 0.39292347587945153)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KW+KO
+Result Jensen Shannon Divergence: (0.13721059303444985, 0.31485755850277447)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KO
+Result Jensen Shannon Divergence: (0.4746003941363629, 0.12834689641933147)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KOP
+Result Jensen Shannon Divergence: (nan, nan)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KO
+Result Jensen Shannon Divergence: (0.474600394136363, 0.12834689641933147)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KOP
+Result Jensen Shannon Divergence: (nan, nan)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KW
+Result Jensen Shannon Divergence: (nan, nan)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KW+KO
+Result Jensen Shannon Divergence: (nan, nan)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KWP
+Result Jensen Shannon Divergence: (nan, nan)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) QT
+Result Jensen Shannon Divergence: (0.29578283406970757, 0.20328845958435776)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KO
+Result Jensen Shannon Divergence: (0.474600394136363, 0.12834689641933142)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KOP
+Result Jensen Shannon Divergence: (nan, nan)
+Jaccard Similarity: 0.0

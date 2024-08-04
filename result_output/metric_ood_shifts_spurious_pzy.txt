@@ -1,0 +1,828 @@
+
+Measure: (vqa_v2, vqa_v2 id_val) KO
+Result Hellinger Distance : (0.6975384770995294, 0.18519896420320686)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KOP
+Result Hellinger Distance : (0.7445972923345179, 0.133514302299812)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KW
+Result Hellinger Distance : (0.7384363893536704, 0.12949696081590553)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KW+KO
+Result Hellinger Distance : (0.7585434012623272, 0.12245580529757762)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KWP
+Result Hellinger Distance : (0.7610952928354949, 0.12060768807752878)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) QT
+Result Hellinger Distance : (0.6782839299330355, 0.17369685874267177)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) QT+KO
+Result Hellinger Distance : (0.7399554055275368, 0.13652963205186205)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) QT+KW
+Result Hellinger Distance : (0.7517851039497581, 0.12191005830586102)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) QT+KW+KO
+Result Hellinger Distance : (0.7647445416102718, 0.1208259009145182)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_vs KO) KO
+Result Hellinger Distance : (0.5609916143475727, 0.29817442879839645)
+Jaccard Similarity: 0.05666844173290293
+
+Measure: (vqa_v2, vqa_vs KOP) KOP
+Result Hellinger Distance : (0.6207163469937995, 0.26299525043041616)
+Jaccard Similarity: 0.06301218427819567
+
+Measure: (vqa_v2, vqa_vs KW ) KW
+Result Hellinger Distance : (0.6784170240462009, 0.18859121026255574)
+Jaccard Similarity: 0.041104329700224346
+
+Measure: (vqa_v2, vqa_vs KW+KO) KW+KO
+Result Hellinger Distance : (0.7128134763361849, 0.11685866641989492)
+Jaccard Similarity: 0.02608575706540239
+
+Measure: (vqa_v2, vqa_vs KWP) KWP
+Result Hellinger Distance : (0.7130064729590402, 0.09789605922427755)
+Jaccard Similarity: 0.02134476001079054
+
+Measure: (vqa_v2, vqa_vs QT) QT
+Result Hellinger Distance : (0.5996185768502303, 0.2483107580857949)
+Jaccard Similarity: 0.03550966804639245
+
+Measure: (vqa_v2, vqa_vs QT+KO) QT+KO
+Result Hellinger Distance : (0.6816619201589845, 0.18394360509965094)
+Jaccard Similarity: 0.04094728564359935
+
+Measure: (vqa_v2, vqa_vs QT+KW) QT+KW
+Result Hellinger Distance : (0.7112388046559811, 0.10786174141788228)
+Jaccard Similarity: 0.02630109684293414
+
+Measure: (vqa_v2, vqa_vs QT+KW+KO) QT+KW+KO
+Result Hellinger Distance : (0.7155523591058334, 0.07168128547307556)
+Jaccard Similarity: 0.013860384545660041
+
+Measure: (vqa_v2, vqa_vs id_test) KO
+Result Hellinger Distance : (0.5383275547445223, 0.3025887381477938)
+Jaccard Similarity: 0.2223444077664438
+
+Measure: (vqa_v2, vqa_vs id_test) KOP
+Result Hellinger Distance : (0.5841337281383667, 0.2865040749777028)
+Jaccard Similarity: 0.2223444077664438
+
+Measure: (vqa_v2, vqa_vs id_test) KW
+Result Hellinger Distance : (0.5839930346028471, 0.27266174379901614)
+Jaccard Similarity: 0.2223444077664438
+
+Measure: (vqa_v2, vqa_vs id_test) KW+KO
+Result Hellinger Distance : (0.6083948604156256, 0.27333510633332986)
+Jaccard Similarity: 0.2223444077664438
+
+Measure: (vqa_v2, vqa_vs id_test) KWP
+Result Hellinger Distance : (0.6112331801396669, 0.26951229789138625)
+Jaccard Similarity: 0.2223444077664438
+
+Measure: (vqa_v2, vqa_vs id_test) QT
+Result Hellinger Distance : (0.5280381028545983, 0.2862863768392087)
+Jaccard Similarity: 0.2223444077664438
+
+Measure: (vqa_v2, vqa_vs id_test) QT+KO
+Result Hellinger Distance : (0.5830116548946747, 0.27809680674192455)
+Jaccard Similarity: 0.2223444077664438
+
+Measure: (vqa_v2, vqa_vs id_test) QT+KW
+Result Hellinger Distance : (0.5958407633478954, 0.2691471441328955)
+Jaccard Similarity: 0.2223444077664438
+
+Measure: (vqa_v2, vqa_vs id_test) QT+KW+KO
+Result Hellinger Distance : (0.6145428660485841, 0.27222679437666475)
+Jaccard Similarity: 0.2223444077664438
+
+Measure: (vqa_v2, vqa_ce ood_val) KO
+Result Hellinger Distance : (0.701728625328494, 0.17527288354915416)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_ce ood_val) KOP
+Result Hellinger Distance : (0.7456963867831045, 0.12633644408762804)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_ce ood_val) KW
+Result Hellinger Distance : (0.7432220547239361, 0.12196031012251485)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_ce ood_val) KW+KO
+Result Hellinger Distance : (0.7600720504241034, 0.11847303960439223)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_ce ood_val) KWP
+Result Hellinger Distance : (0.7628132687319484, 0.11810467823041762)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_ce ood_val) QT
+Result Hellinger Distance : (0.6842788334566129, 0.16257782842998655)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_ce ood_val) QT+KO
+Result Hellinger Distance : (0.7416228989597056, 0.1296513228211702)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_ce ood_val) QT+KW
+Result Hellinger Distance : (0.7551026257278344, 0.11626834304253293)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_ce ood_val) QT+KW+KO
+Result Hellinger Distance : (0.7650950541787687, 0.11833040536016796)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_cp ood_test) KO
+Result Hellinger Distance : (0.49933700210347703, 0.31981935463523536)
+Jaccard Similarity: 0.2877835341599239
+
+Measure: (vqa_v2, vqa_cp ood_test) KOP
+Result Hellinger Distance : (0.5391817621964424, 0.3091743110396251)
+Jaccard Similarity: 0.2877835341599239
+
+Measure: (vqa_v2, vqa_cp ood_test) KW
+Result Hellinger Distance : (0.549855004909264, 0.29640516139763173)
+Jaccard Similarity: 0.2877835341599239
+
+Measure: (vqa_v2, vqa_cp ood_test) KW+KO
+Result Hellinger Distance : (0.5702402944782239, 0.2981527299196335)
+Jaccard Similarity: 0.2877835341599239
+
+Measure: (vqa_v2, vqa_cp ood_test) KWP
+Result Hellinger Distance : (0.5789552238176738, 0.29457189174615045)
+Jaccard Similarity: 0.2877835341599239
+
+Measure: (vqa_v2, vqa_cp ood_test) QT
+Result Hellinger Distance : (0.5390956814081574, 0.2991619471090369)
+Jaccard Similarity: 0.2877835341599239
+
+Measure: (vqa_v2, vqa_cp ood_test) QT+KO
+Result Hellinger Distance : (0.559344824288244, 0.2989494230428083)
+Jaccard Similarity: 0.2877835341599239
+
+Measure: (vqa_v2, vqa_cp ood_test) QT+KW
+Result Hellinger Distance : (0.5663572416897311, 0.2946028094520519)
+Jaccard Similarity: 0.2877835341599239
+
+Measure: (vqa_v2, vqa_cp ood_test) QT+KW+KO
+Result Hellinger Distance : (0.5788902303602979, 0.2975953348957009)
+Jaccard Similarity: 0.2877835341599239
+
+Measure: (vqa_cp, vqa_cp ood_test) KO
+Result Hellinger Distance : (0.6842637355009359, 0.1962913190333394)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_cp, vqa_cp ood_test) KOP
+Result Hellinger Distance : (0.7230571672147755, 0.16148067097363697)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_cp, vqa_cp ood_test) KW
+Result Hellinger Distance : (0.7530396878287594, 0.12545385653942803)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_cp, vqa_cp ood_test) KW+KO
+Result Hellinger Distance : (0.7638833917123236, 0.12285851964385074)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_cp, vqa_cp ood_test) KWP
+Result Hellinger Distance : (0.7692573028630361, 0.12195455641546318)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_cp, vqa_cp ood_test) QT
+Result Hellinger Distance : (0.7759864151486094, 0.12421744534119616)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_cp, vqa_cp ood_test) QT+KO
+Result Hellinger Distance : (0.7759864151486094, 0.12421744534119616)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_cp, vqa_cp ood_test) QT+KW
+Result Hellinger Distance : (0.7759864151486094, 0.12421744534119616)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_cp, vqa_cp ood_test) QT+KW+KO
+Result Hellinger Distance : (0.7759864151486094, 0.12421744534119618)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs KO) KO
+Result Hellinger Distance : (0.693015167050678, 0.195364841090127)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs KOP) KOP
+Result Hellinger Distance : (0.7277229906244459, 0.15569193581753413)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs KW ) KW
+Result Hellinger Distance : (0.7374613193346812, 0.11381665256685043)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs KW+KO) KW+KO
+Result Hellinger Distance : (0.7309521455409581, 0.08715768051539842)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs KWP) KWP
+Result Hellinger Distance : (0.7270179385038799, 0.07625531474457405)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs QT) QT
+Result Hellinger Distance : (0.6984021559495653, 0.14897077014011056)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs QT+KO) QT+KO
+Result Hellinger Distance : (0.7392718522514241, 0.10785405268487588)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs QT+KW) QT+KW
+Result Hellinger Distance : (0.7282625811667465, 0.08123725232037282)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs QT+KW+KO) QT+KW+KO
+Result Hellinger Distance : (0.7203510648516405, 0.06199584492789018)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_val) KO
+Result Hellinger Distance : (0.6991580847040607, 0.1378533767296151)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_val) KOP
+Result Hellinger Distance : (0.7228524494856511, 0.10723470194575604)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_val) KW
+Result Hellinger Distance : (0.7256624675332108, 0.09494957074709232)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_val) KW+KO
+Result Hellinger Distance : (0.7362612224352121, 0.09427003896397924)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_val) KWP
+Result Hellinger Distance : (0.7370894583250733, 0.09229858040470028)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_val) QT
+Result Hellinger Distance : (0.6952453093426647, 0.11416943282448729)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_val) QT+KO
+Result Hellinger Distance : (0.7260861419202257, 0.09800098042072128)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_val) QT+KW
+Result Hellinger Distance : (0.7321761497943965, 0.09139101862180221)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_val) QT+KW+KO
+Result Hellinger Distance : (0.7395323620616155, 0.09378858707514581)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_test) KO
+Result Hellinger Distance : (0.6779800368251945, 0.20763860901028786)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_test) KOP
+Result Hellinger Distance : (0.7243147609666569, 0.16628791468337642)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_test) KW
+Result Hellinger Distance : (0.7390103080766833, 0.13774254205998185)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_test) KW+KO
+Result Hellinger Distance : (0.7594460475908088, 0.1284616919995047)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_test) KWP
+Result Hellinger Distance : (0.7625418823049305, 0.12607726340717992)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_test) QT
+Result Hellinger Distance : (0.6775425003695478, 0.18014217528401585)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_test) QT+KO
+Result Hellinger Distance : (0.736625118750215, 0.1465281831383558)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_test) QT+KW
+Result Hellinger Distance : (0.7528061626628278, 0.12899255736700116)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_test) QT+KW+KO
+Result Hellinger Distance : (0.7668585569536033, 0.1254461671911591)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KO
+Result Hellinger Distance : (0.6975384770995294, 0.1851989642032069)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KOP
+Result Hellinger Distance : (0.7445972923345179, 0.133514302299812)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KW
+Result Hellinger Distance : (0.7384627045718051, 0.1294480114575168)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KW+KO
+Result Hellinger Distance : (0.758515319888932, 0.12249297832753485)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KWP
+Result Hellinger Distance : (0.761117623650234, 0.12056248894163418)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) QT
+Result Hellinger Distance : (0.6782839299330355, 0.17369685874267177)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) QT+KO
+Result Hellinger Distance : (0.7399554055275368, 0.13652963205186205)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) QT+KW
+Result Hellinger Distance : (0.7518079389455506, 0.12187095189621491)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) QT+KW+KO
+Result Hellinger Distance : (0.7647425830394233, 0.12082791828246278)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_vs KO) KO
+Result Hellinger Distance : (0.5609916143475726, 0.29817442879839645)
+Jaccard Similarity: 0.05666844173290293
+
+Measure: (vqa_v2, vqa_vs KOP) KO
+Result Hellinger Distance : (0.576665248839837, 0.28085518103747187)
+Jaccard Similarity: 0.06301218427819567
+
+Measure: (vqa_v2, vqa_vs KW ) KO
+Result Hellinger Distance : (0.6354775378405598, 0.22488252795294883)
+Jaccard Similarity: 0.041104329700224346
+
+Measure: (vqa_v2, vqa_vs KW+KO) KO
+Result Hellinger Distance : (0.6798993887969221, 0.15240502897128888)
+Jaccard Similarity: 0.02608575706540239
+
+Measure: (vqa_v2, vqa_vs KWP) KO
+Result Hellinger Distance : (0.6871904555676748, 0.13269725088005352)
+Jaccard Similarity: 0.02134476001079054
+
+Measure: (vqa_v2, vqa_vs QT) KO
+Result Hellinger Distance : (0.5971721027235372, 0.2690814413851435)
+Jaccard Similarity: 0.03550966804639245
+
+Measure: (vqa_v2, vqa_vs QT+KO) KO
+Result Hellinger Distance : (0.6485412047209814, 0.21116248209696814)
+Jaccard Similarity: 0.04094728564359935
+
+Measure: (vqa_v2, vqa_vs QT+KW) KO
+Result Hellinger Distance : (0.6826196022881849, 0.14330709241962178)
+Jaccard Similarity: 0.02630109684293414
+
+Measure: (vqa_v2, vqa_vs QT+KW+KO) KO
+Result Hellinger Distance : (0.6983255301412317, 0.09613487123322456)
+Jaccard Similarity: 0.013860384545660041
+
+Measure: (vqa_v2, vqa_vs KO) KOP
+Result Hellinger Distance : (0.6033748515317567, 0.2852435660387303)
+Jaccard Similarity: 0.05666844173290293
+
+Measure: (vqa_v2, vqa_vs KOP) KOP
+Result Hellinger Distance : (0.6207163469937995, 0.26299525043041616)
+Jaccard Similarity: 0.06301218427819567
+
+Measure: (vqa_v2, vqa_vs KW ) KOP
+Result Hellinger Distance : (0.6694267354065757, 0.20104018296592713)
+Jaccard Similarity: 0.041104329700224346
+
+Measure: (vqa_v2, vqa_vs KW+KO) KOP
+Result Hellinger Distance : (0.7015106886647006, 0.12549455349960228)
+Jaccard Similarity: 0.02608575706540239
+
+Measure: (vqa_v2, vqa_vs KWP) KOP
+Result Hellinger Distance : (0.7050773035183011, 0.10655146550827901)
+Jaccard Similarity: 0.02134476001079054
+
+Measure: (vqa_v2, vqa_vs QT) KOP
+Result Hellinger Distance : (0.6403095673962069, 0.24819419088829056)
+Jaccard Similarity: 0.03550966804639245
+
+Measure: (vqa_v2, vqa_vs QT+KO) KOP
+Result Hellinger Distance : (0.6787520194047765, 0.1902288872521305)
+Jaccard Similarity: 0.04094728564359935
+
+Measure: (vqa_v2, vqa_vs QT+KW) KOP
+Result Hellinger Distance : (0.7015352945212118, 0.12011779797286015)
+Jaccard Similarity: 0.02630109684293414
+
+Measure: (vqa_v2, vqa_vs QT+KW+KO) KOP
+Result Hellinger Distance : (0.7098018894983986, 0.07239263613647481)
+Jaccard Similarity: 0.013860384545660041
+
+Measure: (vqa_v2, vqa_vs KO) KW
+Result Hellinger Distance : (0.616062648249514, 0.267527240807632)
+Jaccard Similarity: 0.05666844173290293
+
+Measure: (vqa_v2, vqa_vs KOP) KW
+Result Hellinger Distance : (0.6323889119037241, 0.24602360922446892)
+Jaccard Similarity: 0.06301218427819567
+
+Measure: (vqa_v2, vqa_vs KW ) KW
+Result Hellinger Distance : (0.6785246964102906, 0.1883417635197084)
+Jaccard Similarity: 0.041104329700224346
+
+Measure: (vqa_v2, vqa_vs KW+KO) KW
+Result Hellinger Distance : (0.7024434168823401, 0.1171422240371106)
+Jaccard Similarity: 0.02608575706540239
+
+Measure: (vqa_v2, vqa_vs KWP) KW
+Result Hellinger Distance : (0.7038115961527732, 0.09990311914403517)
+Jaccard Similarity: 0.02134476001079054
+
+Measure: (vqa_v2, vqa_vs QT) KW
+Result Hellinger Distance : (0.6525238089064721, 0.23342290198386656)
+Jaccard Similarity: 0.03550966804639245
+
+Measure: (vqa_v2, vqa_vs QT+KO) KW
+Result Hellinger Distance : (0.6792658938750519, 0.1812065911109059)
+Jaccard Similarity: 0.04094728564359935
+
+Measure: (vqa_v2, vqa_vs QT+KW) KW
+Result Hellinger Distance : (0.7058852331972434, 0.11022642101432845)
+Jaccard Similarity: 0.02630109684293414
+
+Measure: (vqa_v2, vqa_vs QT+KW+KO) KW
+Result Hellinger Distance : (0.7090609504150247, 0.06992066201542922)
+Jaccard Similarity: 0.013860384545660041
+
+Measure: (vqa_v2, vqa_vs KO) KW+KO
+Result Hellinger Distance : (0.6421454015425563, 0.2682908392934861)
+Jaccard Similarity: 0.05666844173290293
+
+Measure: (vqa_v2, vqa_vs KOP) KW+KO
+Result Hellinger Distance : (0.6556199086880793, 0.24494612671447807)
+Jaccard Similarity: 0.06301218427819567
+
+Measure: (vqa_v2, vqa_vs KW ) KW+KO
+Result Hellinger Distance : (0.6936174837477925, 0.18677609497009104)
+Jaccard Similarity: 0.041104329700224346
+
+Measure: (vqa_v2, vqa_vs KW+KO) KW+KO
+Result Hellinger Distance : (0.7127271031414639, 0.11689977026488078)
+Jaccard Similarity: 0.02608575706540239
+
+Measure: (vqa_v2, vqa_vs KWP) KW+KO
+Result Hellinger Distance : (0.7126045029751908, 0.09945669256964225)
+Jaccard Similarity: 0.02134476001079054
+
+Measure: (vqa_v2, vqa_vs QT) KW+KO
+Result Hellinger Distance : (0.6736058521129441, 0.23148888426687889)
+Jaccard Similarity: 0.03550966804639245
+
+Measure: (vqa_v2, vqa_vs QT+KO) KW+KO
+Result Hellinger Distance : (0.6985090802271712, 0.1779481468528469)
+Jaccard Similarity: 0.04094728564359935
+
+Measure: (vqa_v2, vqa_vs QT+KW) KW+KO
+Result Hellinger Distance : (0.7142015732751082, 0.10972651803004722)
+Jaccard Similarity: 0.02630109684293414
+
+Measure: (vqa_v2, vqa_vs QT+KW+KO) KW+KO
+Result Hellinger Distance : (0.7141009826211239, 0.07127637401516748)
+Jaccard Similarity: 0.013860384545660041
+
+Measure: (vqa_v2, vqa_vs KO) KWP
+Result Hellinger Distance : (0.6555006272245084, 0.26008283480465877)
+Jaccard Similarity: 0.05666844173290293
+
+Measure: (vqa_v2, vqa_vs KOP) KWP
+Result Hellinger Distance : (0.6674321571512666, 0.23852694842489683)
+Jaccard Similarity: 0.06301218427819567
+
+Measure: (vqa_v2, vqa_vs KW ) KWP
+Result Hellinger Distance : (0.6982736241279136, 0.18216058942551527)
+Jaccard Similarity: 0.041104329700224346
+
+Measure: (vqa_v2, vqa_vs KW+KO) KWP
+Result Hellinger Distance : (0.7129974646663375, 0.11388503174315583)
+Jaccard Similarity: 0.02608575706540239
+
+Measure: (vqa_v2, vqa_vs KWP) KWP
+Result Hellinger Distance : (0.7129882584084704, 0.0976885748836234)
+Jaccard Similarity: 0.02134476001079054
+
+Measure: (vqa_v2, vqa_vs QT) KWP
+Result Hellinger Distance : (0.6846744131732483, 0.22489384847416033)
+Jaccard Similarity: 0.03550966804639245
+
+Measure: (vqa_v2, vqa_vs QT+KO) KWP
+Result Hellinger Distance : (0.6997949637163355, 0.1754985588518217)
+Jaccard Similarity: 0.04094728564359935
+
+Measure: (vqa_v2, vqa_vs QT+KW) KWP
+Result Hellinger Distance : (0.716236115685662, 0.10783631709014474)
+Jaccard Similarity: 0.02630109684293414
+
+Measure: (vqa_v2, vqa_vs QT+KW+KO) KWP
+Result Hellinger Distance : (0.7142399866965273, 0.07021055222788712)
+Jaccard Similarity: 0.013860384545660041
+
+Measure: (vqa_v2, vqa_vs KO) QT
+Result Hellinger Distance : (0.5385361596338489, 0.2824637624596841)
+Jaccard Similarity: 0.05666844173290293
+
+Measure: (vqa_v2, vqa_vs KOP) QT
+Result Hellinger Distance : (0.5640576268957539, 0.2653674159172509)
+Jaccard Similarity: 0.06301218427819567
+
+Measure: (vqa_v2, vqa_vs KW ) QT
+Result Hellinger Distance : (0.6310772959489217, 0.20514605104176037)
+Jaccard Similarity: 0.041104329700224346
+
+Measure: (vqa_v2, vqa_vs KW+KO) QT
+Result Hellinger Distance : (0.6786762234250074, 0.12897466923576348)
+Jaccard Similarity: 0.02608575706540239
+
+Measure: (vqa_v2, vqa_vs KWP) QT
+Result Hellinger Distance : (0.6867114571190128, 0.1113580915382596)
+Jaccard Similarity: 0.02134476001079054
+
+Measure: (vqa_v2, vqa_vs QT) QT
+Result Hellinger Distance : (0.5996185768502305, 0.24831075808579486)
+Jaccard Similarity: 0.03550966804639245
+
+Measure: (vqa_v2, vqa_vs QT+KO) QT
+Result Hellinger Distance : (0.64264969166005, 0.19477423652371678)
+Jaccard Similarity: 0.04094728564359935
+
+Measure: (vqa_v2, vqa_vs QT+KW) QT
+Result Hellinger Distance : (0.6806702173127556, 0.12428732024108649)
+Jaccard Similarity: 0.02630109684293414
+
+Measure: (vqa_v2, vqa_vs QT+KW+KO) QT
+Result Hellinger Distance : (0.6971577529577706, 0.07609668205932102)
+Jaccard Similarity: 0.013860384545660041
+
+Measure: (vqa_v2, vqa_v2 id_val) KO
+Result Hellinger Distance : (0.6975384770995294, 0.18519896420320686)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KOP
+Result Hellinger Distance : (0.7445972923345177, 0.133514302299812)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KW
+Result Hellinger Distance : (0.7383852103269642, 0.12959160068763603)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KW+KO
+Result Hellinger Distance : (0.7585351781731063, 0.1224697736616183)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KWP
+Result Hellinger Distance : (0.7610254726630391, 0.12069925721321471)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) QT
+Result Hellinger Distance : (0.6782839299330357, 0.17369685874267174)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) QT+KO
+Result Hellinger Distance : (0.739955405527537, 0.13652963205186203)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) QT+KW
+Result Hellinger Distance : (0.7518027714049629, 0.121931787347579)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) QT+KW+KO
+Result Hellinger Distance : (0.7647419515204632, 0.12083188963909035)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_vs KO) KO
+Result Hellinger Distance : (0.5609916143475727, 0.29817442879839645)
+Jaccard Similarity: 0.05666844173290293
+
+Measure: (vqa_v2, vqa_vs KOP) KO
+Result Hellinger Distance : (0.576665248839837, 0.28085518103747187)
+Jaccard Similarity: 0.06301218427819567
+
+Measure: (vqa_v2, vqa_vs KW ) KO
+Result Hellinger Distance : (0.6354775378405597, 0.22488252795294883)
+Jaccard Similarity: 0.041104329700224346
+
+Measure: (vqa_v2, vqa_vs KW+KO) KO
+Result Hellinger Distance : (0.6798993887969221, 0.15240502897128888)
+Jaccard Similarity: 0.02608575706540239
+
+Measure: (vqa_v2, vqa_vs KWP) KO
+Result Hellinger Distance : (0.6871904555676748, 0.13269725088005355)
+Jaccard Similarity: 0.02134476001079054
+
+Measure: (vqa_v2, vqa_vs QT) KO
+Result Hellinger Distance : (0.5971721027235369, 0.2690814413851435)
+Jaccard Similarity: 0.03550966804639245
+
+Measure: (vqa_v2, vqa_vs QT+KO) KO
+Result Hellinger Distance : (0.6485412047209814, 0.21116248209696814)
+Jaccard Similarity: 0.04094728564359935
+
+Measure: (vqa_v2, vqa_vs QT+KW) KO
+Result Hellinger Distance : (0.6826196022881846, 0.14330709241962178)
+Jaccard Similarity: 0.02630109684293414
+
+Measure: (vqa_v2, vqa_vs QT+KW+KO) KO
+Result Hellinger Distance : (0.6983255301412316, 0.09613487123322456)
+Jaccard Similarity: 0.013860384545660041
+
+Measure: (vqa_v2, vqa_vs KO) KOP
+Result Hellinger Distance : (0.6033748515317569, 0.2852435660387303)
+Jaccard Similarity: 0.05666844173290293
+
+Measure: (vqa_v2, vqa_vs KOP) KOP
+Result Hellinger Distance : (0.6207163469937996, 0.26299525043041616)
+Jaccard Similarity: 0.06301218427819567
+
+Measure: (vqa_v2, vqa_vs KW ) KOP
+Result Hellinger Distance : (0.6694267354065757, 0.20104018296592713)
+Jaccard Similarity: 0.041104329700224346
+
+Measure: (vqa_v2, vqa_vs KW+KO) KOP
+Result Hellinger Distance : (0.7015106886647006, 0.12549455349960228)
+Jaccard Similarity: 0.02608575706540239
+
+Measure: (vqa_v2, vqa_vs KWP) KOP
+Result Hellinger Distance : (0.7050773035183011, 0.10655146550827901)
+Jaccard Similarity: 0.02134476001079054
+
+Measure: (vqa_v2, vqa_vs QT) KOP
+Result Hellinger Distance : (0.6403095673962069, 0.24819419088829056)
+Jaccard Similarity: 0.03550966804639245
+
+Measure: (vqa_v2, vqa_vs QT+KO) KOP
+Result Hellinger Distance : (0.6787520194047765, 0.1902288872521305)
+Jaccard Similarity: 0.04094728564359935
+
+Measure: (vqa_v2, vqa_vs QT+KW) KOP
+Result Hellinger Distance : (0.7015352945212119, 0.12011779797286015)
+Jaccard Similarity: 0.02630109684293414
+
+Measure: (vqa_v2, vqa_vs QT+KW+KO) KOP
+Result Hellinger Distance : (0.7098018894983987, 0.07239263613647481)
+Jaccard Similarity: 0.013860384545660041
+
+Measure: (vqa_v2, vqa_vs KO) KW
+Result Hellinger Distance : (0.6154836427051015, 0.2675890271610123)
+Jaccard Similarity: 0.05666844173290293
+
+Measure: (vqa_v2, vqa_vs KOP) KW
+Result Hellinger Distance : (0.6317711762361043, 0.24611187693840553)
+Jaccard Similarity: 0.06301218427819567
+
+Measure: (vqa_v2, vqa_vs KW ) KW
+Result Hellinger Distance : (0.678454993423883, 0.1883477418774527)
+Jaccard Similarity: 0.041104329700224346
+
+Measure: (vqa_v2, vqa_vs KW+KO) KW
+Result Hellinger Distance : (0.7024311400680396, 0.11702463732840247)
+Jaccard Similarity: 0.02608575706540239
+
+Measure: (vqa_v2, vqa_vs KWP) KW
+Result Hellinger Distance : (0.703815758211378, 0.10003536876246327)
+Jaccard Similarity: 0.02134476001079054
+
+Measure: (vqa_v2, vqa_vs QT) KW
+Result Hellinger Distance : (0.6519928649087405, 0.23337544849197783)
+Jaccard Similarity: 0.03550966804639245
+
+Measure: (vqa_v2, vqa_vs QT+KO) KW
+Result Hellinger Distance : (0.679014396630307, 0.1814424971888135)
+Jaccard Similarity: 0.04094728564359935
+
+Measure: (vqa_v2, vqa_vs QT+KW) KW
+Result Hellinger Distance : (0.7058636462835985, 0.11009423496199103)
+Jaccard Similarity: 0.02630109684293414
+
+Measure: (vqa_v2, vqa_vs QT+KW+KO) KW
+Result Hellinger Distance : (0.7089949450629977, 0.07013069013051972)
+Jaccard Similarity: 0.013860384545660041
+
+Measure: (vqa_v2, vqa_vs KO) KW+KO
+Result Hellinger Distance : (0.6416811966936193, 0.2682449906946995)
+Jaccard Similarity: 0.05666844173290293
+
+Measure: (vqa_v2, vqa_vs KOP) KW+KO
+Result Hellinger Distance : (0.6549730318576095, 0.2451193773275495)
+Jaccard Similarity: 0.06301218427819567
+
+Measure: (vqa_v2, vqa_vs KW ) KW+KO
+Result Hellinger Distance : (0.6935595660828106, 0.18674849331452031)
+Jaccard Similarity: 0.041104329700224346
+
+Measure: (vqa_v2, vqa_vs KW+KO) KW+KO
+Result Hellinger Distance : (0.7127775766800395, 0.11679244529309973)
+Jaccard Similarity: 0.02608575706540239
+
+Measure: (vqa_v2, vqa_vs KWP) KW+KO
+Result Hellinger Distance : (0.7125588318116773, 0.09957507695240682)
+Jaccard Similarity: 0.02134476001079054
+
+Measure: (vqa_v2, vqa_vs QT) KW+KO
+Result Hellinger Distance : (0.6731785124789178, 0.23148886016034442)
+Jaccard Similarity: 0.03550966804639245
+
+Measure: (vqa_v2, vqa_vs QT+KO) KW+KO
+Result Hellinger Distance : (0.698249489938609, 0.17825619035818535)
+Jaccard Similarity: 0.04094728564359935
+
+Measure: (vqa_v2, vqa_vs QT+KW) KW+KO
+Result Hellinger Distance : (0.714184751643956, 0.10956605459865305)
+Jaccard Similarity: 0.02630109684293414
+
+Measure: (vqa_v2, vqa_vs QT+KW+KO) KW+KO
+Result Hellinger Distance : (0.7140548551279741, 0.07145928806339573)
+Jaccard Similarity: 0.013860384545660041
+
+Measure: (vqa_v2, vqa_vs KO) KWP
+Result Hellinger Distance : (0.6548700086367463, 0.26029591659841284)
+Jaccard Similarity: 0.05666844173290293
+
+Measure: (vqa_v2, vqa_vs KOP) KWP
+Result Hellinger Distance : (0.666637902026657, 0.23883805714262366)
+Jaccard Similarity: 0.06301218427819567
+
+Measure: (vqa_v2, vqa_vs KW ) KWP
+Result Hellinger Distance : (0.6983117927407023, 0.1819904804436859)
+Jaccard Similarity: 0.041104329700224346
+
+Measure: (vqa_v2, vqa_vs KW+KO) KWP
+Result Hellinger Distance : (0.7130256360506964, 0.11376414861387453)
+Jaccard Similarity: 0.02608575706540239
+
+Measure: (vqa_v2, vqa_vs KWP) KWP
+Result Hellinger Distance : (0.7130190298325789, 0.09773620516552341)
+Jaccard Similarity: 0.02134476001079054
+
+Measure: (vqa_v2, vqa_vs QT) KWP
+Result Hellinger Distance : (0.6843465662826704, 0.2249181896171044)
+Jaccard Similarity: 0.03550966804639245
+
+Measure: (vqa_v2, vqa_vs QT+KO) KWP
+Result Hellinger Distance : (0.6996396145841001, 0.1756415106043589)
+Jaccard Similarity: 0.04094728564359935
+
+Measure: (vqa_v2, vqa_vs QT+KW) KWP
+Result Hellinger Distance : (0.7162707214949965, 0.10749461005800351)
+Jaccard Similarity: 0.02630109684293414
+
+Measure: (vqa_v2, vqa_vs QT+KW+KO) KWP
+Result Hellinger Distance : (0.714214142521103, 0.07037487835445472)
+Jaccard Similarity: 0.013860384545660041
+
+Measure: (vqa_v2, vqa_vs KO) QT
+Result Hellinger Distance : (0.5385361596338489, 0.2824637624596841)
+Jaccard Similarity: 0.05666844173290293
+
+Measure: (vqa_v2, vqa_vs KOP) QT
+Result Hellinger Distance : (0.5640576268957539, 0.2653674159172509)
+Jaccard Similarity: 0.06301218427819567
+
+Measure: (vqa_v2, vqa_vs KW ) QT
+Result Hellinger Distance : (0.6310772959489216, 0.20514605104176034)
+Jaccard Similarity: 0.041104329700224346
+
+Measure: (vqa_v2, vqa_vs KW+KO) QT
+Result Hellinger Distance : (0.6786762234250073, 0.12897466923576348)
+Jaccard Similarity: 0.02608575706540239
+
+Measure: (vqa_v2, vqa_vs KWP) QT
+Result Hellinger Distance : (0.6867114571190128, 0.11135809153825961)
+Jaccard Similarity: 0.02134476001079054
+
+Measure: (vqa_v2, vqa_vs QT) QT
+Result Hellinger Distance : (0.5996185768502305, 0.24831075808579486)
+Jaccard Similarity: 0.03550966804639245
+
+Measure: (vqa_v2, vqa_vs QT+KO) QT
+Result Hellinger Distance : (0.64264969166005, 0.19477423652371678)
+Jaccard Similarity: 0.04094728564359935
+
+Measure: (vqa_v2, vqa_vs QT+KW) QT
+Result Hellinger Distance : (0.6806702173127556, 0.12428732024108649)
+Jaccard Similarity: 0.02630109684293414
+
+Measure: (vqa_v2, vqa_vs QT+KW+KO) QT
+Result Hellinger Distance : (0.6971577529577706, 0.07609668205932102)
+Jaccard Similarity: 0.013860384545660041

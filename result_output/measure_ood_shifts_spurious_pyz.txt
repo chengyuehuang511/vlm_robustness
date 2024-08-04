@@ -1,0 +1,324 @@
+
+Measure: (vqa_v2, vqa_v2 id_val) KO
+Result Hellinger dist: (0.4563513562127759, 0.12459567204270443)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KOP
+Result Hellinger dist: (0.7920532574781867, 0.1740288349911532)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KW
+Result Hellinger dist: (0.7069402353144083, 0.21341883840047454)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KW+KO
+Result Hellinger dist: (0.6934490466742795, 0.1841158389656075)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) KWP
+Result Hellinger dist: (0.6886007031872118, 0.15615442949396555)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) QT
+Result Hellinger dist: (0.2898500677359671, 0.20041736430557255)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) QT+KO
+Result Hellinger dist: (0.563561615747294, 0.2834147309047035)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) QT+KW
+Result Hellinger dist: (0.6788083226693877, 0.19510365354770418)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_v2 id_val) QT+KW+KO
+Result Hellinger dist: (0.6815846200836768, 0.16340667288728258)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_vs KO) KO
+Result Hellinger dist: (0.8315745831530753, 0.03281229924269956)
+Jaccard Similarity: 0.05666844173290293
+
+Measure: (vqa_v2, vqa_vs KOP) KOP
+Result Hellinger dist: (0.8286304564006294, 0.1312372250651378)
+Jaccard Similarity: 0.06301218427819567
+
+Measure: (vqa_v2, vqa_vs KW ) KW
+Result Hellinger dist: (0.7296047054581579, 0.08356480996892551)
+Jaccard Similarity: 0.041104329700224346
+
+Measure: (vqa_v2, vqa_vs KW+KO) KW+KO
+Result Hellinger dist: (0.7145814904219339, 0.06460961078375174)
+Jaccard Similarity: 0.02608575706540239
+
+Measure: (vqa_v2, vqa_vs KWP) KWP
+Result Hellinger dist: (0.7092530736619859, 0.041805212537529786)
+Jaccard Similarity: 0.02134476001079054
+
+Measure: (vqa_v2, vqa_vs QT) QT
+Result Hellinger dist: (0.827409001181337, 0.09364912499743847)
+Jaccard Similarity: 0.03550966804639245
+
+Measure: (vqa_v2, vqa_vs QT+KO) QT+KO
+Result Hellinger dist: (0.7845330619851609, 0.1238079899625087)
+Jaccard Similarity: 0.04094728564359935
+
+Measure: (vqa_v2, vqa_vs QT+KW) QT+KW
+Result Hellinger dist: (0.7113626986550607, 0.06556659986663446)
+Jaccard Similarity: 0.02630109684293414
+
+Measure: (vqa_v2, vqa_vs QT+KW+KO) QT+KW+KO
+Result Hellinger dist: (0.7083025535937214, 0.038046902717264644)
+Jaccard Similarity: 0.013860384545660041
+
+Measure: (vqa_v2, vqa_vs id_test) KO
+Result Hellinger dist: (0.3781137055655222, 0.09906314628101512)
+Jaccard Similarity: 0.2223444077664438
+
+Measure: (vqa_v2, vqa_vs id_test) KOP
+Result Hellinger dist: (0.6967622227581747, 0.20023320686197993)
+Jaccard Similarity: 0.2223444077664438
+
+Measure: (vqa_v2, vqa_vs id_test) KW
+Result Hellinger dist: (0.5845803421017896, 0.2549914123779778)
+Jaccard Similarity: 0.2223444077664438
+
+Measure: (vqa_v2, vqa_vs id_test) KW+KO
+Result Hellinger dist: (0.5950245745889816, 0.26497556175984016)
+Jaccard Similarity: 0.2223444077664438
+
+Measure: (vqa_v2, vqa_vs id_test) KWP
+Result Hellinger dist: (0.6046235904278077, 0.2454225383902073)
+Jaccard Similarity: 0.2223444077664438
+
+Measure: (vqa_v2, vqa_vs id_test) QT
+Result Hellinger dist: (0.23081016881839023, 0.15727917839147793)
+Jaccard Similarity: 0.2223444077664438
+
+Measure: (vqa_v2, vqa_vs id_test) QT+KO
+Result Hellinger dist: (0.47117480917273885, 0.2551785922471622)
+Jaccard Similarity: 0.2223444077664438
+
+Measure: (vqa_v2, vqa_vs id_test) QT+KW
+Result Hellinger dist: (0.5789095506307816, 0.2584435637365868)
+Jaccard Similarity: 0.2223444077664438
+
+Measure: (vqa_v2, vqa_vs id_test) QT+KW+KO
+Result Hellinger dist: (0.5855942581252522, 0.26582787757272075)
+Jaccard Similarity: 0.2223444077664438
+
+Measure: (vqa_v2, vqa_ce ood_val) KO
+Result Hellinger dist: (0.7167241677506474, 0.06431990377208072)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_ce ood_val) KOP
+Result Hellinger dist: (0.8629772689033725, 0.131743219161861)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_ce ood_val) KW
+Result Hellinger dist: (0.7771517493507719, 0.12682476231974402)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_ce ood_val) KW+KO
+Result Hellinger dist: (0.7325349285119277, 0.10144217502873135)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_ce ood_val) KWP
+Result Hellinger dist: (0.7213077407313689, 0.07394954022289932)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_ce ood_val) QT
+Result Hellinger dist: (0.6633781666313439, 0.1984598879178728)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_ce ood_val) QT+KO
+Result Hellinger dist: (0.7849018882595048, 0.14768405521071432)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_ce ood_val) QT+KW
+Result Hellinger dist: (0.7347570844475942, 0.09606045316767792)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_ce ood_val) QT+KW+KO
+Result Hellinger dist: (0.7143064326025226, 0.07767051597581547)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_v2, vqa_cp ood_test) KO
+Result Hellinger dist: (0.46777662353776245, 0.08410632402965902)
+Jaccard Similarity: 0.2877835341599239
+
+Measure: (vqa_v2, vqa_cp ood_test) KOP
+Result Hellinger dist: (0.7164243035370887, 0.18712597975759157)
+Jaccard Similarity: 0.2877835341599239
+
+Measure: (vqa_v2, vqa_cp ood_test) KW
+Result Hellinger dist: (0.5902922022011964, 0.2549698351245549)
+Jaccard Similarity: 0.2877835341599239
+
+Measure: (vqa_v2, vqa_cp ood_test) KW+KO
+Result Hellinger dist: (0.6019650354934244, 0.26651813773109045)
+Jaccard Similarity: 0.2877835341599239
+
+Measure: (vqa_v2, vqa_cp ood_test) KWP
+Result Hellinger dist: (0.6155763415398088, 0.2390932013797677)
+Jaccard Similarity: 0.2877835341599239
+
+Measure: (vqa_v2, vqa_cp ood_test) QT
+Result Hellinger dist: (0.6570095715840132, 0.1644727107826456)
+Jaccard Similarity: 0.2877835341599239
+
+Measure: (vqa_v2, vqa_cp ood_test) QT+KO
+Result Hellinger dist: (0.6798364429378245, 0.1910729055035187)
+Jaccard Similarity: 0.2877835341599239
+
+Measure: (vqa_v2, vqa_cp ood_test) QT+KW
+Result Hellinger dist: (0.6082260611521518, 0.24018527130832207)
+Jaccard Similarity: 0.2877835341599239
+
+Measure: (vqa_v2, vqa_cp ood_test) QT+KW+KO
+Result Hellinger dist: (0.6022979744771363, 0.25725168310720226)
+Jaccard Similarity: 0.2877835341599239
+
+Measure: (vqa_cp, vqa_cp ood_test) KO
+Result Hellinger dist: (0.645128775556379, 0.09405849642853065)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_cp, vqa_cp ood_test) KOP
+Result Hellinger dist: (0.8636430146955612, 0.14293213897534315)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_cp, vqa_cp ood_test) KW
+Result Hellinger dist: (0.8150825381805278, 0.1923647418434994)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_cp, vqa_cp ood_test) KW+KO
+Result Hellinger dist: (0.7487870618087445, 0.14765064596544206)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_cp, vqa_cp ood_test) KWP
+Result Hellinger dist: (0.7593504887177395, 0.13408724265189506)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_cp, vqa_cp ood_test) QT
+Result Hellinger dist: (0.990987900959586, 0.050580280417354656)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_cp, vqa_cp ood_test) QT+KO
+Result Hellinger dist: (0.9424944815312496, 0.11634471087887467)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_cp, vqa_cp ood_test) QT+KW
+Result Hellinger dist: (0.8040625298606249, 0.13783056304995558)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_cp, vqa_cp ood_test) QT+KW+KO
+Result Hellinger dist: (0.7420574122947, 0.09494870315054449)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs KO) KO
+Result Hellinger dist: (0.8820348811910476, 0.031155105036859653)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs KOP) KOP
+Result Hellinger dist: (0.8535641609943361, 0.13593244326056964)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs KW ) KW
+Result Hellinger dist: (0.7389645347492405, 0.09514244819083427)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs KW+KO) KW+KO
+Result Hellinger dist: (0.7175695584222234, 0.062235377209961674)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs KWP) KWP
+Result Hellinger dist: (0.7104509539203266, 0.04023770999278852)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs QT) QT
+Result Hellinger dist: (0.8521420580079814, 0.09436155488894006)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs QT+KO) QT+KO
+Result Hellinger dist: (0.80505918023965, 0.13185114470479678)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs QT+KW) QT+KW
+Result Hellinger dist: (0.715476992346129, 0.06271183453909354)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs QT+KW+KO) QT+KW+KO
+Result Hellinger dist: (0.7093532573059782, 0.033733043489392954)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_val) KO
+Result Hellinger dist: (0.5348130532195359, 0.11412083485654696)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_val) KOP
+Result Hellinger dist: (0.7886858504947929, 0.15628135132366527)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_val) KW
+Result Hellinger dist: (0.7255179749172883, 0.15998515324909068)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_val) KW+KO
+Result Hellinger dist: (0.7060234251386583, 0.11612850477119617)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_val) KWP
+Result Hellinger dist: (0.7095346713168106, 0.10295005671516308)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_val) QT
+Result Hellinger dist: (0.35498265091821957, 0.2368982053546651)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_val) QT+KO
+Result Hellinger dist: (0.6342578310108049, 0.26485327457585545)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_val) QT+KW
+Result Hellinger dist: (0.7095786249334685, 0.13362958253525573)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_val) QT+KW+KO
+Result Hellinger dist: (0.7010549430655388, 0.09947424462138783)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_test) KO
+Result Hellinger dist: (0.4532909593798629, 0.11931824331686511)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_test) KOP
+Result Hellinger dist: (0.7917483279296537, 0.1837047719173507)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_test) KW
+Result Hellinger dist: (0.7337237305005768, 0.24083449356492861)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_test) KW+KO
+Result Hellinger dist: (0.7006070786377894, 0.1873158152530372)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_test) KWP
+Result Hellinger dist: (0.7107461002781649, 0.18932697896818407)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_test) QT
+Result Hellinger dist: (0.2903989277653083, 0.20103284413865247)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_test) QT+KO
+Result Hellinger dist: (0.5708021256605963, 0.2818340892896839)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_test) QT+KW
+Result Hellinger dist: (0.7119843480102015, 0.22698695281216277)
+Jaccard Similarity: 0.0
+
+Measure: (vqa_vs, vqa_vs id_test) QT+KW+KO
+Result Hellinger dist: (0.6890344925461567, 0.17247131179633216)
+Jaccard Similarity: 0.0

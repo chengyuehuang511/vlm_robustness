@@ -32,7 +32,6 @@ with open(f, 'r') as file :
             "dataset": "vqalol"
         } 
 
-
         combined_sample.append(comb_sample)
 
         

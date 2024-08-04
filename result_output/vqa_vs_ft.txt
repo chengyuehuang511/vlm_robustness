@@ -1,0 +1,10 @@
+{"agg_metrics": 26.65, "other": 28.94, "number": 6.78, "yes/no": 71.14} 
+{"agg_metrics": 31.25, "other": 33.27, "number": 15.02, "yes/no": 73.74}
+{"agg_metrics": 35.9, "other": 34.65, "number": 15.29, "yes/no": 77.9}
+{"agg_metrics": 42.66, "yes/no": 77.95, "number": 21.96, "other": 38.89}
+{"agg_metrics": 42.96, "other": 41.95, "number": 21.37, "yes/no": 78.01}
+{"agg_metrics": 27.45, "other": 30.86, "number": 3.83, "yes/no": 63.33}
+{"agg_metrics": 37.78, "other": 38.23, "yes/no": 77.75, "number": 14.67}
+{"agg_metrics": 44.68, "other": 43.01, "yes/no": 79.3, "number": 18.12}
+{"agg_metrics": 45.48, "other": 46.39, "number": 24.83, "yes/no": 76.6}
+{"agg_metrics": 54.41, "other": 44.64, "yes/no": 75.88, "number": 29.17}

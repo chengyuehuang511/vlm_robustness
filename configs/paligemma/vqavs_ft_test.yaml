@@ -32,12 +32,13 @@ run:
   prompt: "Question: {} Answer:"
 
   seed: 42
-  output_dir: "output/PALIGEMMA/VQAVS"
+  output_dir: "output/PALIGEMMA/VQAVS/FT"
 
   evaluate: True
   train_splits: ["train"]
   valid_splits: ["val"]
-  test_splits: ["test", "ko", "kop", "kw", "kw_ko","kwp", "qt", "qt_ko", "qt_kw", "qt_kw_ko"]
+  # test_splits: ["test", "ko", "kop", "kw", "kw_ko","kwp", "qt", "qt_ko", "qt_kw", "qt_kw_ko"]
+  test_splits: ["test"]
 
   # distribution-specific
   device: "cuda"

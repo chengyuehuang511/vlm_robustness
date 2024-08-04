@@ -15,4 +15,4 @@ conda activate riplenv
 cd /nethome/bmaneech3/flash/vlm_robustness
 
 
-srun -u python -u /nethome/bmaneech3/flash/vlm_robustness/report_metrics.py
+srun -u python -u /nethome/bmaneech3/flash/vlm_robustness/ood_test/measure.py

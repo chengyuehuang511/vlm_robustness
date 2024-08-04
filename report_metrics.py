@@ -42,7 +42,7 @@ def report_metrics(result_file, ques_file, anno_file):
 
 
     with open(
-        os.path.join("/nethome/bmaneech3/flash/vlm_robustness/result_output", "blip2vqavs.txt"), "a"
+        os.path.join("/nethome/bmaneech3/flash/vlm_robustness/result_output", "vqa_vs_ft.txt"), "a"
     ) as f:
         f.write(json.dumps(metrics) + "\n")
     return metrics
@@ -53,9 +53,29 @@ if __name__ == "__main__":
     #     "/nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vqacp2/test/question_new.json",
     #     "/nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vqacp2/test/annotation_new.json",
     # )
-    report_metrics( 
-        "/nethome/bmaneech3/flash/LAVIS/lavis/output/BLIP2/VQA_VS/t5/20240711190/result/test_vqa_result.json",
+    # file_list = [
+    #     "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KO/test_questions.json", 
+    # "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KOP/test_questions.json",
+    # "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KW/test_questions.json", 
+    # "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KW+KO/test_questions.json", 
+    # "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KWP/test_questions.json", 
+    # "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT/test_questions.json", 
+    # "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KO/test_questions.json",
+    # "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KW/test_questions.json",
+    # "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/QT+KW+KO/test_questions.json"
+    # ] 
+
+    # for file in file_list :
+        
+        # report_metrics( 
+        #     os.path.join(os.path.dirname(file), "test_result.json"),
+        #     os.path.join(os.path.dirname(file), "test_questions.json"), 
+        #     os.path.join(os.path.dirname(file), "test_annotations.json")
+        # )
+    
+
+    report_metrics(
+        "/nethome/bmaneech3/flash/LAVIS/lavis/output/PALIGEMMA/VQAVS/FT/20240716130/result/test_vqa_result.json",
         "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/test_questions.json",
         "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/test_annotations.json"
     )
-    
