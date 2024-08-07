@@ -43,19 +43,14 @@ def display_dataset(file_name, file_type) :
 
         if "question_type" in data[0] :
             print("question type",data[1000]["question_type"])
-
-
+            
 f = [ 
-#     "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/advqa/val/v1_OpenEnded_mscoco_val2017_advqa_questions.json",
-#    "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/advqa/val/v1_mscoco_val2017_advqa_annotations_new.json"
-    # "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/textvqa/val/question.json",
-    # "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/textvqa/val/annotation.json"
-    # "/coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqavs/test/combined_data.json",
-    # "/coc/pskynet6/chuang475/.cache/lavis/coco/annotations/vqa_train.json",
-    # "/coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/vqacp2/raw/annotations/vqacp_v2_test_questions.json"
-    
+    "/coc/pskynet6/chuang475/.cache/lavis/coco/annotations/vqa_test.json"
+    # "/coc/pskynet6/chuang475/.cache/lavis/coco/annotations/vqa_train.json"
+    # "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/advqa/val/v1_mscoco_val2017_advqa_annotations_new.json"
 
-
+    # "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/cv-vqa/val/BS/vedika2/nobackup/thesis/mini_datasets_qa_COUNTING_DEL_1/0.1_0.0/v2_mscoco_val2014_annotations.json"
+    # "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/advqa/val/combined_data.json"
 ]
 
 # print("VQA LOL structure")
