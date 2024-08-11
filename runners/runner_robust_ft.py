@@ -83,6 +83,8 @@ class RunnerBase:
         """
         A property to get the DDP-wrapped model on the device.
         """
+
+        print("Device Check", self._model.device != self.device)
         # move model to device
         if self._model.device != self.device:
             self._model = self._model.to(self.device)
@@ -93,6 +95,8 @@ class RunnerBase:
                     self._wrapped_model = DDP(
                         self._model, device_ids=[self.config.run_cfg.gpu]
                     )
+                    print(self._wrapped_model)
+                    
             else:
                 self._wrapped_model = self._model
 
@@ -289,7 +293,7 @@ class RunnerBase:
     def save_last(self):
         save_last = self.config.run_cfg.get("save_last", True)
         return int(save_last)
-
+    
     @property
     def init_lr(self):
         return float(self.config.run_cfg.init_lr)
@@ -448,6 +452,9 @@ class RunnerBase:
 
     def train_epoch(self, epoch):
         # train
+        print(self.model) 
+
+     
         self.model.train()
 
         return self.task.train_epoch(
@@ -682,6 +689,7 @@ class RunnerRobustFT(RunnerBase):
         """
         A property to get the DDP-wrapped model on the device.
         """
+        print("Device check", self._model.device , self.device)
         # move model to device
         if self._model.device != self.device:
             self._model = self._model.to(self.device)
@@ -695,6 +703,7 @@ class RunnerRobustFT(RunnerBase):
             else:
                 self._wrapped_model = self._model
 
+        print(self._wrapped_model)
         return self._wrapped_model
     
     @property

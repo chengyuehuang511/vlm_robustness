@@ -12,6 +12,14 @@ import os
 import contextlib
 import copy
 
+from llm_adapters.peft.src.peft import (  # noqa: E402
+    BottleneckConfig,
+    PrefixTuningConfig,
+    get_peft_model as get_adapter_peft_model,
+    get_peft_model_state_dict,
+    prepare_model_for_int8_training,
+    set_peft_model_state_dict,
+)
 @registry.register_model("paligemma_vqa")
 class PaliGemma_VQA(BaseModel):  # TODO
     """
@@ -52,7 +60,9 @@ class PaliGemma_VQA(BaseModel):  # TODO
             # load_in_8bit=True,
             # quantization_config=quantization_config,
         )
+        self.config = self.model.config
 
+        print(self.config)
         # print('language_model.lm_head.weight', self.model.state_dict()['language_model.lm_head.weight'])
 
         self._apply_lemmatizer = apply_lemmatizer
@@ -68,7 +78,7 @@ class PaliGemma_VQA(BaseModel):  # TODO
         else:
             return contextlib.nullcontext()
 
-    def forward(self, samples):
+    def forward(self, samples, **kwargs):
         # print("questions: ", samples["text_input_raw"])
         # print("answers", answers)
         # print("weight", samples["weight"])
@@ -128,6 +138,9 @@ class PaliGemma_VQA(BaseModel):  # TODO
         #     print(f"If Leaf: {param.is_leaf}")
         
         # with self.maybe_autocast():
+        # print("Paligemma receiving the following kwargs", kwargs)
+        # print("Paligemma recieves the following samples", len(samples))
+
         model_inputs = self.processor(text=samples["text_input_raw"], images=samples["image_raw"], suffix=samples["multiple_choice_answer"], return_tensors="pt", padding="longest").to(self.dtype).to(self.device)
         # print("model_inputs", model_inputs)
         outputs = self.model(**model_inputs)
@@ -244,10 +257,48 @@ class PaliGemma_VQA(BaseModel):  # TODO
             
             logging.info(lora_config)
             # model = prepare_model_for_kbit_training(model)
+            
             model = get_peft_model(model, lora_config)
             logging.info(model.print_trainable_parameters())
+            print(model) 
+            # raise Exception("just testing")
         
         # print("model: ", model)
+
+        use_adapter = int(cfg.get("use_adapter", 0))
+        use_parallel_adapter = int(cfg.get("use_parallel_adapter", 0))
+
+        if use_adapter == 1 : 
+            print("Use adapter")
+            non_linearity=cfg.get("non_linearity", "tanh")
+            bottleneck_size=int(cfg.get("bottleneck_size", 256))
+            target_modules = cfg.get("target_modules", "q_proj k_proj v_proj o_proj").split()
+            scaling = float(cfg.get("scaling", 1.0))
+            adapter_dropout = float(cfg.get("adapter_dropout", 0.1))
+            use_para_adapter = False
+            if use_parallel_adapter == 1 : 
+                use_para_adapter = True 
+                print("use para_adapter")
+                
+            adapter_config = BottleneckConfig(
+                        bottleneck_size=bottleneck_size,
+                        non_linearity=non_linearity,
+                        adapter_dropout=adapter_dropout,
+                        use_parallel_adapter=use_para_adapter,
+                        use_adapterp=False,
+                        target_modules=target_modules,
+                        scaling=scaling,
+                        bias="none",
+                        task_type="CAUSAL_LM",
+                    )
+
+            logging.info(adapter_config)
+            print("prev dev", model.device)
+            model = get_adapter_peft_model(model, adapter_config)
+            
+            logging.info(model.print_trainable_parameters())
+            print(model)
+        
 
         # Linear Probe
         linear_probe = int(cfg.get("linear_probe", 0))
@@ -289,6 +340,9 @@ class PaliGemma_VQA(BaseModel):  # TODO
             model.load_state_dict(wise)
             logging.info("WiSE: load finetuned model and apply WiSE")
 
+
+        print("Final Model before runner", model)
+        print("and it's device", model.device)
         return model
     
     def load_from_pretrained(self, url_or_filename):

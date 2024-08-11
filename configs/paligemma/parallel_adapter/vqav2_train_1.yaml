@@ -4,13 +4,15 @@ model:
   load_pretrained: True
   pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
 
+  
   # lora
-  use_lora: 1
+  use_lora: 0
+  use_parallel_adapter: 1
   target_modules: "q_proj k_proj v_proj o_proj"
-  lora_rank: 8
-
-  # linear probe
-  # linear_probe: 1
+  scaling: 1
+  bottleneck_size: 512
+  non_linearity: "relu"
+  adapter_dropout: 0.1 
 
 datasets:
   coco_vqa_raw:
@@ -47,7 +49,7 @@ run:
   lr_layer_decay: 0.9
 
   # optimization-specific
-  batch_size_train: 16  # 256
+  batch_size_train: 8  # 256
   batch_size_eval: 16
   num_workers: 4
 
@@ -60,7 +62,7 @@ run:
   prompt: "Question: {} Answer:"
 
   seed: 42
-  output_dir: "output/PALIGEMMA/VQA/linear_probe_1e-5"
+  output_dir: "output/PALIGEMMA/VQA/PA/qkvo_s1_r512_relu_10"
 
   amp: False
 
@@ -74,3 +76,5 @@ run:
   world_size: 8
   dist_url: "env://"
   distributed: True
+
+

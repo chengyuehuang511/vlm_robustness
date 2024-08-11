@@ -112,13 +112,9 @@ class MeasureOODDataset(Dataset) :
 
     def __getitem__(self, idx):
         sample = self.data[idx]
-        if "answer" in sample : 
-            label = sample["answer"]
-            if isinstance(sample["answer"], list) : 
-                label = Counter(sample['answer']).most_common(1)[0][0]
-
-        else : 
-            label = 0 
+        label = sample["answer"]
+        if isinstance(sample["answer"], list) : 
+            label = Counter(sample['answer']).most_common(1)[0][0]
 
         question = sample["question"]
 
@@ -203,115 +199,73 @@ def score_func(train_vectors, test_vectors, metric="maha", peranswerType=False) 
     
     #do them in batches to avoid memory error 
 
-    print("Train vector size", train_vectors.size())
-    print("Test vector size", test_vectors.size())
-
     #perAnswerType Logic
     #train_vectors : (#concepts C , batch size N, hidden size H)
     #test_vectors : (#concepts, batch size, hidden size)
-    train_vectors = train_vectors.to(device) 
-    # train_vectors = train_vectors
-    print(train_vectors.dtype)
-    u_vector = torch.mean(train_vectors, dim=1, keepdim=True).to(dtype=torch.bfloat16) #find mean in vector (concept, batch size , hidden size) -> (C, 1, H)
-    print("Size of mean vector", u_vector.size())
-    print(torch.cuda.memory_allocated())
-
-    if torch.isinf(u_vector).any() or torch.isnan(u_vector).any() : 
-        raise Exception("u vector has NaN values")
-
-    train_vectors = train_vectors.detach().cpu()   
+    train_vectors = train_vectors.to(device)
+    u_vector = torch.mean(train_vectors, dim=1) #find mean in vector (concept, batch size , hidden size)
+    
     c, n, h = train_vectors.size() 
     print(f"size (num_concept, samples, hidden size) : {c, n , h}")
- 
+
     #store u_vectors for certain things? 
-    n_batch = n // COMP_BATCH_SIZE 
-    final_cov = torch.zeros(c,h,h) #(C,H,H)
 
-    print("========================")
-    print(f"TRAINING SAMPLE {n} samples")
-    for i in range(n_batch) : 
-        start_ind = i * COMP_BATCH_SIZE
-        end_ind = min(n - 1, (i+1)*COMP_BATCH_SIZE)
-        print(f"Running batch {start_ind} - {end_ind}")
-        cur_vectors = train_vectors[:, start_ind : end_ind, :]
-        cur_vectors = cur_vectors.to(device)
+    u_vector = u_vector.expand(c, n, h)
+    
 
-        mean_vector = u_vector.expand(c, cur_vectors.size(1), h)
-        
-        diff =  cur_vectors - mean_vector  #f - u_c : (C,N ,H)
+    diff =  train_vectors - u_vector  #f - u_c : (C,N ,H)
 
-        diff = diff.permute(0,2,1)  #(C, H, N)
-        print("diff size", diff.size())
+    diff = diff.permute(0,2,1)  #(C, H, N)
+    print("diff size", diff.size())
 
-        #covariance matrix : * = element wise multiplication 
-        print("diff dtype", diff.dtype)
-        cov = torch.matmul(diff, diff.permute(0,2,1))  #(C, H, N) x (C, N, H) -> (C, H, H)
-        cov = cov / n
-        print("covariance matrix size", cov.size())
-        cov  = cov.detach().cpu() #(C, H, H)
-        final_cov = final_cov + cov 
-    del train_vectors 
+    del train_vectors
 
-    if torch.isinf(final_cov).any() or torch.isnan(final_cov).any() : 
-        raise Exception("cov matrix has NaN values")
+    #covariance matrix : * = element wise multiplication 
+    cov = torch.matmul(diff, diff.transpose(0,2,1))  #(C, H, N) x (C, N, H) -> (C, H, H)
+    cov = cov / n
 
     inv_cov = torch.empty(c,h,h) #(C, H, H)
-    for i in range(c) :
-        # reg_matrix = final_cov[i] + torch.eye(final_cov[0].size(1)) 
-        inv_cov[i] = torch.pinverse(final_cov[i]) # Σ^-1
+    for i in range(c) : 
+        inv_cov[i] = torch.pinverse(cov[i]) # Σ^-1
 
-    if torch.isinf(inv_cov).any() or torch.isnan(inv_cov).any() : 
-        raise Exception("inv cov matrix has NaN values")
+    torch.cuda.empty_cache()
+
     #maha metric 
     if metric == "maha" : 
-        total_res = torch.zeros(c)
-        c, n_test, _ = test_vectors.size()
-        print("========================")
-        print(f"TESTING SAMPLE {n_test} samples")
-        n_batch = n_test // COMP_BATCH_SIZE
-        inv_cov = inv_cov.to(dtype=test_vectors.dtype)
-        inv_cov = inv_cov.to(device)
+        test_vectors = test_vectors.gpu() 
 
-        for j in range(n_batch): 
+        #Z_test - μ 
+        test_diff = (test_vectors - u_vector) #(concept, BATCH SIZE, hidden size)
+        res_1 = torch.matmul(test_diff, inv_cov) #(concept, BATCH SIZE, hidden size)
+        res_2 = torch.matmul(res_1, test_diff.permute(0, 2, 1)) #(concept, BATCH SIZE, BATCH SIZE)
 
-            start_ind = j * COMP_BATCH_SIZE
-            end_ind = min(n_test - 1, (j+1) * COMP_BATCH_SIZE)
-            print(f"Running batch {start_ind} - {end_ind}")
-            cur_vectors = test_vectors[:, start_ind : end_ind, :] #(C, comp_batch_size, h)
-            cur_vectors = cur_vectors.to(device)
-            mean_vector = u_vector.expand(c, cur_vectors.size(1),h)
+        res = [] 
+        for i in range(c) : 
+            diag = torch.diag(res_2[i]) #(1, d)
+            #verify correctness via shape 
+            assert diag.size(1) == test_vectors.size(1) , "mismatch shape in diagonal values and n samples" 
 
-            #Z_test - μ 
-            test_diff = (cur_vectors - mean_vector)#(concept, BATCH SIZE, hidden size)
-            res_1 = torch.matmul(test_diff, inv_cov) #(concept, BATCH SIZE, hidden size)
-            res_2 = torch.matmul(res_1, test_diff.permute(0, 2, 1)) #(concept, BATCH SIZE, BATCH SIZE)
+            #avg dist across all samples 
+            score = torch.sum(diag, dim=1) / test_vectors.size(1)
+            score = float(score.item()) 
+            res.append(score)
 
-            res = torch.zeros(c)
-            for i in range(c) : 
-                diag = torch.diag(res_2[i]) #(1, d)
-                #verify correctness via shape 
-                print("diag size",diag.size())
-                assert diag.size(0) == cur_vectors.size(1) , "mismatch shape in diagonal values and n samples" 
+        del res_1
+        del res_2 
+        del test_diff 
 
-                #avg dist across all samples 
-
-                maha_score = -1 * torch.sqrt(diag) # (1,d)
-                total_score = torch.sum(maha_score) #sum maha score across all batch samples 
-                total_score = total_score.item() #would this be on the CPU now 
-                res[i] = total_score #(1, c)
-            total_res = total_res + res 
-            print("Done a sample")
-        total_res = total_res / n_test #average maha score across all test samples
-    
     #next perAnswerType 
 
     del cov
     del inv_cov 
-    del test_vectors
+    del test_vectors 
+
+    
+    
 
     # print("scores shape", res.size()) #(c, )
-    print(f"res shape : {res.size()}")
-    return total_res.tolist() #(concept, 1)
+    print(f"res shape : {len(res)}")
+    return res #(concept, 1)
 
 
 #organize structure : # for each split : {ds_name}_{split} -> store hidden states per ds_split , concept 
@@ -336,35 +290,12 @@ splits =[
     #(train, test, concept)
     #vqav2 train with all others
     #train_stuff = sample[0], test_stuff = sample[1]
-    [("vqa_v2","train"), ("vqa_v2","val")], 
-    [("vqa_v2","train"), ("advqa", "test")],
-    [("vqa_v2","train"), ("cvvqa", "test")], 
-    [("vqa_v2","train"), ("ivvqa", "test")],
-    [("vqa_v2","train"), ("okvqa", "test")], 
-    [("vqa_v2","train"), ("textvqa", "test")], 
-    [("vqa_v2","train"), ("vizwiz", "test")], 
-    [("vqa_v2","train"), ("vqa_cp", "test")], 
-    [("vqa_v2","train"), ("vqa_ce", "test")], 
-
-    [("vqa_v2","train"), ("vqa_lol", "test")], 
-    [("vqa_v2","train"), ("vqa_rephrasings", "test")],
-    [("vqa_v2","train"), ("vqa_vs", "id_val")], 
-    [("vqa_v2","train"), ("vqa_vs", "id_test")],
-    [("vqa_v2","train"), ("vqa_vs", "ood_test")],
-    [("vqa_v2","train"), ("vqa_v2","test")], 
-
-    [("vqa_v2","train"), ("vqa_vs", "KO")],
-    [("vqa_v2","train"), ("vqa_vs", "KOP")],
-    [("vqa_v2","train"), ("vqa_vs", "KW")],
-    [("vqa_v2","train"), ("vqa_vs", "KW_KO")],
-    [("vqa_v2","train"), ("vqa_vs", "KWP")],
-    [("vqa_v2","train"), ("vqa_vs", "QT")],
-    [("vqa_v2","train"), ("vqa_vs", "QT_KO")],
-    [("vqa_v2","train"), ("vqa_vs", "QT_KW")],
-    [("vqa_v2","train"), ("vqa_vs", "QT_KW_KO")]
+    # [("advqa", "test"), ("cvvqa", "test")], 
+    # [("ivvqa", "test"),("okvqa", "test") ],
+   
+    # [("vizwiz", "test"), ("textvqa", "test")], 
+    [("vqa_lol", "test"), ("vqa_cp", "test")]
 ]
-
-
 
 
 results_file = "/coc/pskynet4/bmaneech3/vlm_robustness/result_output/contextual_ood/maha_score_dict.json"
@@ -382,12 +313,6 @@ hidden_layer_name = ["image", "joint_lastl"]
 if __name__ == "__main__" : 
         
     for measure_instance in splits : 
-        results_file = "/coc/pskynet4/bmaneech3/vlm_robustness/result_output/contextual_ood/maha_score_dict.json"
-        if os.path.exists(results_file) : 
-            with open(results_file, 'r') as file : 
-                results_dict = json.load(file) #read from results dict 
-        else : 
-            results_dict = {} 
         
         train_ds_name, train_split = measure_instance[0]
         test_ds_name, test_split = measure_instance[1]
@@ -397,13 +322,13 @@ if __name__ == "__main__" :
         
         train_file = ds_split_2_file[train_ds_split]
         test_file = ds_split_2_file[test_ds_split]
-        print(f"Measure Instance {train_ds_split, test_ds_split}")
+        print(f"Measure Instance {train_split, test_split}")
 
-        if (f"{train_ds_split}" in results_dict): 
-            if (f"{test_ds_split}" in results_dict[f"{train_ds_split}"]) : 
-                # if (concept_type in results_dict[f"{train_split}"][f"{test_split}"]) : 
-                print(f"already measured")
-                continue  
+        if (f"{train_split}" in results_dict): 
+            if (f"{test_split}" in results_dict[f"{train_split}"]) : 
+                if (concept_type in results_dict[f"{train_split}"][f"{test_split}"]) : 
+                    print(f"already measured")
+                    continue  
 
         with open(train_file, 'r') as f :
             train_data = json.load(f)
@@ -417,7 +342,7 @@ if __name__ == "__main__" :
         if not os.path.exists(train_hidden_state_file) : 
 
             dataset = MeasureOODDataset(train_data, train_ds_name)
-            # concept_type = "joint"
+            concept_type = "joint"
 
             dataloader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=False, collate_fn=dataset.collate_fn, num_workers=2)
 
@@ -431,8 +356,8 @@ if __name__ == "__main__" :
                 inputs, labels = batch 
                 inputs = inputs.to(device) #don't forget to add puts to gpu 
             
-                enc_vectors = get_hidden_states(inputs)
-                enc_vectors_cpu = enc_vectors.detach().cpu() #(batchsize, concept, hidden size)
+                enc_vectors = get_hidden_states(inputs, concept_type)
+                enc_vectors_cpu = enc_vectors.cpu() #(batchsize, concept, hidden size)
 
                 #free up memory so next batch can use GPU compute 
 
@@ -448,17 +373,17 @@ if __name__ == "__main__" :
 
             print(f"final train vectors size : {train_vectors.size()}")
             
-            torch.save(train_vectors.detach().cpu(), train_hidden_state_file)
+            torch.save(train_vectors.cpu(), train_hidden_state_file)
             del train_vectors
             torch.cuda.empty_cache()
 
         test_hidden_state_file = f"/coc/pskynet4/bmaneech3/vlm_robustness/result_output/contextual_ood/hidden_states/{test_ds_split}_{'_'.join(concept_type)}.pth"
         if not os.path.exists(test_hidden_state_file) : 
-  
-            dataset = MeasureOODDataset(test_data, test_ds_name)
-            # concept_type = "joint"
 
-            dataloader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=False,collate_fn=dataset.collate_fn, num_workers=2)
+            dataset = MeasureOODDataset(test_data, test_ds_name)
+            concept_type = "joint"
+
+            dataloader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=False, collate_fn=dataset.collate_fn, num_workers=2)
 
             #VQAV2 -> store results of torch
             test_vectors = []
@@ -470,8 +395,8 @@ if __name__ == "__main__" :
                 inputs, labels = batch 
                 inputs = inputs.to(device)
 
-                enc_vectors = get_hidden_states(inputs)
-                enc_vectors_cpu = enc_vectors.detach().cpu() #(batchsize, concept, hidden size)
+                enc_vectors = get_hidden_states(inputs, concept_type)
+                enc_vectors_cpu = enc_vectors.cpu() #(batchsize, concept, hidden size)
 
                 test_vectors.append(enc_vectors_cpu)
                 del inputs
@@ -481,46 +406,52 @@ if __name__ == "__main__" :
 
             print(f"final test vectors size : {test_vectors.size()}")
             
-            torch.save(test_vectors.detach().cpu(), test_hidden_state_file)
+            torch.save(test_vectors.cpu(), test_hidden_state_file)
             del test_vectors 
             torch.cuda.empty_cache()
         
-        #on cpu 
-        train_vectors = torch.load(train_hidden_state_file) #(CONCEPT, batch size, hidden)
-        test_vectors = torch.load(test_hidden_state_file)
+        # #on cpu 
+        # train_vectors = torch.load(train_hidden_state_file) #(CONCEPT, batch size, hidden)
+        # test_vectors = torch.load(test_hidden_state_file)
 
 
-        n_train = train_vectors.size(1)
-        n_test = test_vectors.size(1)
+        # n_train = train_vectors.size(1)
+        # n_test = test_vectors.size(1)
         
-        batch_inc = n_train // COMP_BATCH_SIZE
+        # batch_inc = n_train // COMP_BATCH_SIZE
 
-        scores = score_func(train_vectors, test_vectors) #list of score per concept 
-        print(f"Score {scores}")
+        # #get mean and s.d. 
+        # # for i in range(batch_inc) : 
+        # #     train_batch = train_vectors[COMP_BATCH_SIZE * i : min(n_train - 1, (i+1) * COMP_BATCH_SIZE)] #(concept, batch_size, hidden size)
+        # #     train_batch = train_batch.to(device)
+        # #     torch.sum(train_batch, dim = 1)
 
-        #don't actually because after next iteration - garbage collector takes care 
-        del train_vectors 
-        del test_vectors 
+        # scores = score_func(train_vectors, test_vectors) #list of score per concept 
+        # print(f"Score {scores}")
+        # del train_vectors 
+        # del test_vectors 
         
-        torch.cuda.empty_cache()
+        # torch.cuda.empty_cache()
 
-        #train_vectors, test_vectors : (batch size, concepts, hidden size)
+        # #train_vectors, test_vectors : (batch size, concepts, hidden size)
         
-        for concept_name, score in zip(hidden_layer_name, scores) : 
+        # for concept_name, score in zip(hidden_layer_name, scores) : 
 
-            if train_split in results_dict : 
-                if test_split not in results_dict[train_split] : 
-                    results_dict[train_split][test_split] = {} 
-                results_dict[train_split][test_split][concept_name] = score
+        #     if train_split in results_dict : 
+        #         if test_split not in results_dict[train_split] : 
+        #             results_dict[train_split][test_split] = {} 
+        #         results_dict[train_split][test_split][concept_name] = score
                     
-            else : 
-                results_dict[train_split] = {}
-                results_dict[train_split][test_split] = {} 
-                results_dict[train_split][test_split][concept_name] = score 
-                       
+        #     else : 
+        #         results_dict[train_split] = {}
+        #         results_dict[train_split][test_split] = {} 
+        #         results_dict[train_split][test_split][concept_name] = score 
 
-        with open(results_file, 'w') as file : 
-            json.dump(results_dict, file)
+
+                                        
+
+# with open(results_file, 'w') as file : 
+#     json.dump(results_dict, file)
 
 
 
