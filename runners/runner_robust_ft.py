@@ -644,6 +644,7 @@ class RunnerBase:
         """
         Resume from a checkpoint.
         """
+        print("url ", url_or_filename)
         if is_url(url_or_filename):
             cached_file = download_cached_file(
                 url_or_filename, check_hash=False, progress=True

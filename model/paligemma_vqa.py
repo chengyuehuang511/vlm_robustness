@@ -331,6 +331,15 @@ class PaliGemma_VQA(BaseModel):  # TODO
         
         if load_finetuned:
             model.load_checkpoint_from_config(cfg)
+            # if use_adapter != 1 : 
+            #     model.load_checkpoint_from_config(cfg)
+
+            # else : #adapters 
+            #     url_or_filename = cfg.get("finetuned", None)
+            #     if os.path.isfile(cfg):
+            #         checkpoint_name = torch.load(url_or_filename, map_location="cpu")
+            #         adapters_weights = torch.load(checkpoint_name)
+            #         model = set_peft_model_state_dict(model, adapters_weights)
         
         if wise == 1:
             w1 = {key: value.to('cpu') for key, value in model.state_dict().items()}
@@ -402,6 +411,8 @@ class PaliGemma_VQA(BaseModel):  # TODO
         # print("state_dict", state_dict.keys())
 
         # Update the current state_dict with the new parameters
+        print("Checkpoint state dict keys ", state_dict.keys()) 
+        print("Current state dict keys", current_state_dict.keys())
         for key in state_dict.keys():
             assert key in current_state_dict, f"key {key} not in current_state_dict"
             current_state_dict[key] = state_dict[key]

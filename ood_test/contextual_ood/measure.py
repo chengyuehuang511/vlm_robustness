@@ -8,6 +8,8 @@ from collections import Counter
 import json
 from torchvision import transforms
 from torchvision.transforms import InterpolationMode
+import gc 
+import math 
 # from data.builders import load_dataset, DatasetZoo
 
 # dataset_zoo = DatasetZoo()
@@ -186,18 +188,6 @@ def get_hidden_states(inputs, concept_type="joint", hidden_layer=19) :
     return concept_hidden_vectors #(batch size, #concepts, hidden size)
 
 
-#batch processing from mean & sd 
-# def accum_mean_sd(train_vectors) : 
-
-#     """
-#     train_vectors : (concept, batchsize, hidden size)
-
-#     returns the sum of vectors to compute μ & intermediate (f-μ)(f-μ)T  
-#     """
-
-#     f_sum = torch.sum(train_vectors, dim=1)
-
-
 
 def score_func(train_vectors, test_vectors, metric="maha", peranswerType=False) : 
     
@@ -212,7 +202,7 @@ def score_func(train_vectors, test_vectors, metric="maha", peranswerType=False) 
     train_vectors = train_vectors.to(device) 
     # train_vectors = train_vectors
     print(train_vectors.dtype)
-    u_vector = torch.mean(train_vectors, dim=1, keepdim=True).to(dtype=torch.bfloat16) #find mean in vector (concept, batch size , hidden size) -> (C, 1, H)
+    u_vector = torch.mean(train_vectors, dim=1, keepdim=True) #find mean in vector (concept, batch size , hidden size) -> (C, 1, H)
     print("Size of mean vector", u_vector.size())
     print(torch.cuda.memory_allocated())
 
@@ -246,19 +236,30 @@ def score_func(train_vectors, test_vectors, metric="maha", peranswerType=False) 
         #covariance matrix : * = element wise multiplication 
         print("diff dtype", diff.dtype)
         cov = torch.matmul(diff, diff.permute(0,2,1))  #(C, H, N) x (C, N, H) -> (C, H, H)
-        cov = cov / n
         print("covariance matrix size", cov.size())
         cov  = cov.detach().cpu() #(C, H, H)
         final_cov = final_cov + cov 
+
+    final_cov = final_cov / n
     del train_vectors 
 
+    print("min val cov", torch.min(final_cov))
+    print("max val cov", torch.max(final_cov))
+    
     if torch.isinf(final_cov).any() or torch.isnan(final_cov).any() : 
         raise Exception("cov matrix has NaN values")
 
     inv_cov = torch.empty(c,h,h) #(C, H, H)
     for i in range(c) :
         # reg_matrix = final_cov[i] + torch.eye(final_cov[0].size(1)) 
-        inv_cov[i] = torch.pinverse(final_cov[i]) # Σ^-1
+        #regularize matrix to ensure positive semi-definite 
+        reg_term = 1e-8 * torch.eye(final_cov[i].size(-1)) #(H, H)
+        reg_cov = final_cov[i] + reg_term #(H, H)
+
+        inv_cov[i] = torch.linalg.pinv(reg_cov) # Σ^-1
+
+    print("min val cov", torch.min(inv_cov))
+    print("max val cov", torch.max(inv_cov))
 
     if torch.isinf(inv_cov).any() or torch.isnan(inv_cov).any() : 
         raise Exception("inv cov matrix has NaN values")
@@ -283,14 +284,20 @@ def score_func(train_vectors, test_vectors, metric="maha", peranswerType=False) 
 
             #Z_test - μ 
             test_diff = (cur_vectors - mean_vector)#(concept, BATCH SIZE, hidden size)
+            print("verify test diff size", test_diff.size())
             res_1 = torch.matmul(test_diff, inv_cov) #(concept, BATCH SIZE, hidden size)
             res_2 = torch.matmul(res_1, test_diff.permute(0, 2, 1)) #(concept, BATCH SIZE, BATCH SIZE)
+
 
             res = torch.zeros(c)
             for i in range(c) : 
                 diag = torch.diag(res_2[i]) #(1, d)
                 #verify correctness via shape 
                 print("diag size",diag.size())
+
+                if (diag < 0).any() : 
+                    raise Exception("Diagonal values can't be negative")
+                
                 assert diag.size(0) == cur_vectors.size(1) , "mismatch shape in diagonal values and n samples" 
 
                 #avg dist across all samples 
@@ -301,7 +308,11 @@ def score_func(train_vectors, test_vectors, metric="maha", peranswerType=False) 
                 res[i] = total_score #(1, c)
             total_res = total_res + res 
             print("Done a sample")
+            del res_1 
+            del res_2
+            torch.cuda.empty_cache()
         total_res = total_res / n_test #average maha score across all test samples
+        
     
     #next perAnswerType 
 
@@ -343,25 +354,25 @@ splits =[
     [("vqa_v2","train"), ("okvqa", "test")], 
     [("vqa_v2","train"), ("textvqa", "test")], 
     [("vqa_v2","train"), ("vizwiz", "test")], 
-    [("vqa_v2","train"), ("vqa_cp", "test")], 
+    # [("vqa_v2","train"), ("vqa_cp", "test")], 
     [("vqa_v2","train"), ("vqa_ce", "test")], 
 
-    [("vqa_v2","train"), ("vqa_lol", "test")], 
+    # [("vqa_v2","train"), ("vqa_lol", "test")], 
     [("vqa_v2","train"), ("vqa_rephrasings", "test")],
     [("vqa_v2","train"), ("vqa_vs", "id_val")], 
-    [("vqa_v2","train"), ("vqa_vs", "id_test")],
-    [("vqa_v2","train"), ("vqa_vs", "ood_test")],
+    # [("vqa_v2","train"), ("vqa_vs", "id_test")],
+    # [("vqa_v2","train"), ("vqa_vs", "ood_test")],
     [("vqa_v2","train"), ("vqa_v2","test")], 
 
-    [("vqa_v2","train"), ("vqa_vs", "KO")],
-    [("vqa_v2","train"), ("vqa_vs", "KOP")],
-    [("vqa_v2","train"), ("vqa_vs", "KW")],
-    [("vqa_v2","train"), ("vqa_vs", "KW_KO")],
-    [("vqa_v2","train"), ("vqa_vs", "KWP")],
-    [("vqa_v2","train"), ("vqa_vs", "QT")],
-    [("vqa_v2","train"), ("vqa_vs", "QT_KO")],
-    [("vqa_v2","train"), ("vqa_vs", "QT_KW")],
-    [("vqa_v2","train"), ("vqa_vs", "QT_KW_KO")]
+    # [("vqa_v2","train"), ("vqa_vs", "KO")],
+    # [("vqa_v2","train"), ("vqa_vs", "KOP")],
+    # [("vqa_v2","train"), ("vqa_vs", "KW")],
+    # [("vqa_v2","train"), ("vqa_vs", "KW_KO")],
+    # [("vqa_v2","train"), ("vqa_vs", "KWP")],
+    # [("vqa_v2","train"), ("vqa_vs", "QT")],
+    # [("vqa_v2","train"), ("vqa_vs", "QT_KO")],
+    # [("vqa_v2","train"), ("vqa_vs", "QT_KW")],
+    # [("vqa_v2","train"), ("vqa_vs", "QT_KW_KO")]
 ]
 
 
@@ -382,6 +393,8 @@ hidden_layer_name = ["image", "joint_lastl"]
 if __name__ == "__main__" : 
         
     for measure_instance in splits : 
+        print(torch.cuda.memory_allocated())
+        print("Memory summary", torch.cuda.memory_summary(device=None, abbreviated=False))
         results_file = "/coc/pskynet4/bmaneech3/vlm_robustness/result_output/contextual_ood/maha_score_dict.json"
         if os.path.exists(results_file) : 
             with open(results_file, 'r') as file : 
@@ -503,20 +516,24 @@ if __name__ == "__main__" :
         del test_vectors 
         
         torch.cuda.empty_cache()
+        gc.collect()
 
         #train_vectors, test_vectors : (batch size, concepts, hidden size)
         
         for concept_name, score in zip(hidden_layer_name, scores) : 
+            if math.isnan(score) : 
+                score = None
 
-            if train_split in results_dict : 
-                if test_split not in results_dict[train_split] : 
-                    results_dict[train_split][test_split] = {} 
-                results_dict[train_split][test_split][concept_name] = score
+            if train_ds_split in results_dict : 
+                if test_ds_split not in results_dict[train_ds_split] : 
+                    results_dict[train_ds_split][test_ds_split] = {} 
+                results_dict[train_ds_split][test_ds_split][concept_name] = score
                     
             else : 
-                results_dict[train_split] = {}
-                results_dict[train_split][test_split] = {} 
-                results_dict[train_split][test_split][concept_name] = score 
+                results_dict[train_ds_split] = {}
+                results_dict[train_ds_split][test_ds_split] = {} 
+                results_dict[train_ds_split][test_ds_split][concept_name] = score 
+                
                        
 
         with open(results_file, 'w') as file : 

@@ -11,7 +11,7 @@ model:
   use_parallel_adapter: 0
   target_modules: "q_proj k_proj v_proj o_proj"
   scaling: 1
-  bottleneck_size: 1024
+  bottleneck_size: 512
   non_linearity: "relu"
   adapter_dropout: 0.1 
 
@@ -63,7 +63,7 @@ run:
   prompt: "Question: {} Answer:"
 
   seed: 42
-  output_dir: "output/PALIGEMMA/VQA/PA/qkvo_s1_r512_relu_10"
+  output_dir: "output/PALIGEMMA/VQA/SA/qkvo_s1_r512_relu_10"
 
   amp: False
 

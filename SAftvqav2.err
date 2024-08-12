@@ -1,0 +1,44 @@
+WARNING:py.warnings:/nethome/bmaneech3/flash/miniconda3/envs/riplenv/lib/python3.9/site-packages/transformers/models/paligemma/configuration_paligemma.py:137: FutureWarning: The `vocab_size` attribute is deprecated and will be removed in v4.44, Please use `text_config.vocab_size` instead.
+  warnings.warn(
+
+WARNING:py.warnings:/nethome/bmaneech3/flash/miniconda3/envs/riplenv/lib/python3.9/site-packages/transformers/models/paligemma/configuration_paligemma.py:137: FutureWarning: The `vocab_size` attribute is deprecated and will be removed in v4.44, Please use `text_config.vocab_size` instead.
+  warnings.warn(
+
+WARNING:py.warnings:/nethome/bmaneech3/flash/miniconda3/envs/riplenv/lib/python3.9/site-packages/transformers/models/paligemma/configuration_paligemma.py:137: FutureWarning: The `vocab_size` attribute is deprecated and will be removed in v4.44, Please use `text_config.vocab_size` instead.
+  warnings.warn(
+
+WARNING:py.warnings:/nethome/bmaneech3/flash/miniconda3/envs/riplenv/lib/python3.9/site-packages/transformers/models/paligemma/configuration_paligemma.py:137: FutureWarning: The `vocab_size` attribute is deprecated and will be removed in v4.44, Please use `text_config.vocab_size` instead.
+  warnings.warn(
+
+WARNING:py.warnings:/nethome/bmaneech3/flash/miniconda3/envs/riplenv/lib/python3.9/site-packages/transformers/models/paligemma/configuration_paligemma.py:137: FutureWarning: The `vocab_size` attribute is deprecated and will be removed in v4.44, Please use `text_config.vocab_size` instead.
+  warnings.warn(
+
+WARNING:py.warnings:/nethome/bmaneech3/flash/miniconda3/envs/riplenv/lib/python3.9/site-packages/transformers/models/paligemma/configuration_paligemma.py:137: FutureWarning: The `vocab_size` attribute is deprecated and will be removed in v4.44, Please use `text_config.vocab_size` instead.
+  warnings.warn(
+
+WARNING:py.warnings:/nethome/bmaneech3/flash/miniconda3/envs/riplenv/lib/python3.9/site-packages/transformers/models/paligemma/configuration_paligemma.py:137: FutureWarning: The `vocab_size` attribute is deprecated and will be removed in v4.44, Please use `text_config.vocab_size` instead.
+  warnings.warn(
+
+WARNING:py.warnings:/nethome/bmaneech3/flash/miniconda3/envs/riplenv/lib/python3.9/site-packages/transformers/models/paligemma/configuration_paligemma.py:137: FutureWarning: The `vocab_size` attribute is deprecated and will be removed in v4.44, Please use `text_config.vocab_size` instead.
+  warnings.warn(
+
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:04<00:04,  4.18s/it]Loading checkpoint shards:  50%|█████     | 1/2 [00:04<00:04,  4.38s/it]Loading checkpoint shards:  50%|█████     | 1/2 [00:04<00:04,  4.57s/it]Loading checkpoint shards:  50%|█████     | 1/2 [00:04<00:04,  4.40s/it]Loading checkpoint shards:  50%|█████     | 1/2 [00:04<00:04,  4.31s/it]Loading checkpoint shards:  50%|█████     | 1/2 [00:04<00:04,  4.49s/it]Loading checkpoint shards:  50%|█████     | 1/2 [00:04<00:04,  4.51s/it]Loading checkpoint shards:  50%|█████     | 1/2 [00:04<00:04,  4.51s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:06<00:00,  3.35s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:06<00:00,  3.48s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.49s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.63s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.42s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.56s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.49s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.63s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.63s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.77s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.57s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.71s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.60s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.74s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.59s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:07<00:00,  3.72s/it]
+srun: Job step aborted: Waiting up to 302 seconds for job step to finish.
+slurmstepd: error: *** STEP 939522.0 ON cyborg CANCELLED AT 2024-08-11T14:17:25 ***
+slurmstepd: error: *** JOB 939522 ON cyborg CANCELLED AT 2024-08-11T14:17:25 ***
+W0811 14:17:25.660457 140559754740096 torch/distributed/elastic/agent/server/api.py:741] Received Signals.SIGTERM death signal, shutting down workers
+W0811 14:17:25.660982 140559754740096 torch/distributed/elastic/multiprocessing/api.py:851] Sending process 4022610 closing signal SIGTERM
+W0811 14:17:25.661928 140559754740096 torch/distributed/elastic/multiprocessing/api.py:851] Sending process 4022611 closing signal SIGTERM
+W0811 14:17:25.662802 140559754740096 torch/distributed/elastic/multiprocessing/api.py:851] Sending process 4022612 closing signal SIGTERM
+W0811 14:17:25.663261 140559754740096 torch/distributed/elastic/multiprocessing/api.py:851] Sending process 4022613 closing signal SIGTERM
+W0811 14:17:25.663557 140559754740096 torch/distributed/elastic/multiprocessing/api.py:851] Sending process 4022614 closing signal SIGTERM
+W0811 14:17:25.664253 140559754740096 torch/distributed/elastic/multiprocessing/api.py:851] Sending process 4022615 closing signal SIGTERM
+W0811 14:17:25.664461 140559754740096 torch/distributed/elastic/multiprocessing/api.py:851] Sending process 4022616 closing signal SIGTERM
+W0811 14:17:25.664615 140559754740096 torch/distributed/elastic/multiprocessing/api.py:851] Sending process 4022617 closing signal SIGTERM

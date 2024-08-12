@@ -294,7 +294,7 @@ splits =[
     # [("ivvqa", "test"),("okvqa", "test") ],
    
     # [("vizwiz", "test"), ("textvqa", "test")], 
-    [("vqa_lol", "test"), ("vqa_cp", "test")]
+    [("vqa_cp", "test"), ("vqa_lol", "test")]
 ]
 
 
@@ -329,7 +329,7 @@ if __name__ == "__main__" :
                 if (concept_type in results_dict[f"{train_split}"][f"{test_split}"]) : 
                     print(f"already measured")
                     continue  
-
+                
         with open(train_file, 'r') as f :
             train_data = json.load(f)
 

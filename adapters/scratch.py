@@ -15,14 +15,15 @@ sys.path.append('/nethome/bmaneech3/flash')
 # sys.path.append('/nethome/bmaneech3/flash/LLM-Adapters/peft/src/peft')
 # sys.path.append('/nethome/bmaneech3/flash/LLM-Adapters')
 
+from peft import PrefixTuningConfig, get_peft_model
 from llm_adapters.peft.src.peft import (  # noqa: E402
     LoraConfig,
     BottleneckConfig,
-    PrefixTuningConfig,
-    get_peft_model,
-    get_peft_model_state_dict,
-    prepare_model_for_int8_training,
-    set_peft_model_state_dict,
+    # PrefixTuningConfig,
+    # get_peft_model,
+    # get_peft_model_state_dict,
+    # prepare_model_for_int8_training,
+    # set_peft_model_state_dict,
 )
 
 
@@ -37,7 +38,7 @@ from llm_adapters.peft.src.peft.tuners.bottleneck import BottleneckConfig
 # # coco_vqa_vs
 # vqa_vs = load_dataset("coco_vqa_vs")
 
-image = 448
+image = 224
 
 model_id = "google/paligemma-3b-ft-vqav2-224"
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -49,7 +50,7 @@ prompt = "What is in the image right now"
 image_file = "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/textvqa/images/226d623d0c70664f.jpg"
 raw_image = Image.open(image_file).convert("RGB")
 resize_transform = transforms.Resize(
-    (448, 448), interpolation=InterpolationMode.BICUBIC
+    (224, 224), interpolation=InterpolationMode.BICUBIC
 )
 raw_image = resize_transform(raw_image)
 
@@ -96,17 +97,27 @@ print("Paligemma module inspection")
 
 
 
-config = PrefixTuningConfig()
+config = PrefixTuningConfig(
+    peft_type="PREFIX_TUNING",
+    task_type="CAUSAL_LM",
+    num_virtual_tokens=20,
+    token_dim=768,
+    num_transformer_submodules=1,
+    num_attention_heads=16,
+    num_layers=18,
+    encoder_hidden_size=2048,
+    )
 # print(model)
 print("CONFIGGG", model.config)
-new_model = get_peft_model(model, config)
+model = get_peft_model(model, config)
 
 # print(model)
-# print("trainable parameters")
-# model.print_trainable_parameters()
-# for layer_name, params in model.named_modules():
-#     if params.requires_grad: 
-#         print(f"Layer: {layer_name}, Size: {params.size()}")
+print("trainable parameters")
+model.print_trainable_parameters()
+for layer_name, params in model.named_modules():
+    print(layer_name)
+    # if params.requires_grad: 
+        # print(f"Layer: {layer_name}, Size: {params.size()}")
 
 # for layer_name, param in model.named_parameters():
 #     if param.requires_grad: 
@@ -115,5 +126,5 @@ new_model = get_peft_model(model, config)
 
 
 print("FINALL FINISHED MODEL")
-print(new_model)
+print(model)
 

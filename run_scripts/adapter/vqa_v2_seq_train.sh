@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=SAftvqav2 
-#SBATCH --output=SAftvqav2.out
-#SBATCH --error=SAftvqav2.err
+#SBATCH --job-name=SAft1024
+#SBATCH --output=SAft1024.out
+#SBATCH --error=SAft1024.err
 #SBATCH --partition="overcap"
 #SBATCH --nodes=1
 #SBATCH --gpus-per-node="a40:8"
@@ -19,4 +19,4 @@ conda activate riplenv
 cd /nethome/bmaneech3/flash/vlm_robustness
 
 
-srun -u python -m torch.distributed.run --nproc_per_node=8 train.py --cfg-path /nethome/bmaneech3/flash/vlm_robustness/configs/paligemma/parallel_adapter/vqa_v2_train_seq.yaml
+srun -u python -m torch.distributed.run --nproc_per_node=8 train.py --cfg-path /nethome/bmaneech3/flash/vlm_robustness/configs/paligemma/parallel_adapter/vqa_train_seq_1024.yaml

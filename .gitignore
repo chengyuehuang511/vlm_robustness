@@ -8,3 +8,4 @@ try/
 measure_ood/
 infoseek_eval.py
 result_output/
+*.out
