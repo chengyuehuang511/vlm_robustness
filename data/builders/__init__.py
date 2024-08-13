@@ -27,7 +27,12 @@ __all__ = [
     'COCOADVQABuilder',
     'TextVQABuilder',
     'VizWizBuilder',
-    'COCOOKVQABuilder'
+    'COCOOKVQABuilder',
+    'ImagenetVQABuilder',
+    'Imagenet2VQABuilder',
+    'ImagenetAVQABuilder',
+    'ImagenetRVQABuilder',
+    'ImagenetSVQABuilder',
 ]
 
 

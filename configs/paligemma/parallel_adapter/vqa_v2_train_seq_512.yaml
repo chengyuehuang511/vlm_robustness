@@ -1,0 +1,81 @@
+model:
+  arch: paligemma_vqa
+  model_type: paligemma-3b-pt-224  # paligemma-3b-pt-224
+  load_pretrained: True
+  pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
+
+  
+  # lora
+  use_lora: 0
+  use_adapter: 1
+  use_parallel_adapter: 0
+  target_modules: "q_proj k_proj v_proj o_proj"
+  scaling: 1
+  bottleneck_size: 512
+  non_linearity: "relu"
+  adapter_dropout: 0.1 
+
+datasets:
+  coco_vqa_raw:
+    vis_processor:
+        train:
+          name: "blip_image_train"
+          image_size: 224
+        eval:
+          name: "blip_image_eval"
+          image_size: 224
+        test:
+          name: "blip_image_eval"
+          image_size: 224
+    text_processor:
+        train:
+          name: "blip_question"
+        eval:
+          name: "blip_question"
+        test:
+          name: "blip_question"
+
+run:
+  task: vqa
+  # optimizer
+  opt: "adam"
+  lr_sched: "linear_warmup_cosine_lr"
+  init_lr: 1e-5  # 1e-5 3e-6
+  min_lr: 1e-6 # 0
+  warmup_steps: 1000
+  warmup_lr: 1e-6 # 1e-8 3e-7
+  weight_decay: 1e-6 # 3e-7 # 5e-5 0.5 1 1.5 2
+  max_epoch: 10
+  accum_grad_iters: 2 # 1
+  lr_layer_decay: 0.9
+
+  # optimization-specific
+  batch_size_train: 8  # 256
+  batch_size_eval: 16
+  num_workers: 4
+
+  # inference-specific
+  max_len: 10
+  min_len: 1
+  num_beams: 5
+  num_ans_candidates: 128
+  inference_method: "generate"
+  prompt: "Question: {} Answer:"
+
+  seed: 42
+  output_dir: "output/PALIGEMMA/VQA/SA/qkvo_s1_r512_relu_10"
+
+  amp: False
+
+  evaluate: False
+  train_splits: ["train"]
+  valid_splits: ["val"]
+  test_splits: ["test"]
+
+  # distribution-specific
+  device: "cuda"
+  world_size: 8
+  dist_url: "env://"
+  distributed: True
+
+

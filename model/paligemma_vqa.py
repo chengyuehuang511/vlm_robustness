@@ -11,7 +11,16 @@ from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 import os
 import contextlib
 import copy
+from tasks.vqa_task_utils import QAOutput
 
+from llm_adapters.peft.src.peft import (  # noqa: E402
+    BottleneckConfig,
+    PrefixTuningConfig,
+    get_peft_model as get_adapter_peft_model,
+    get_peft_model_state_dict,
+    prepare_model_for_int8_training,
+    set_peft_model_state_dict,
+)
 @registry.register_model("paligemma_vqa")
 class PaliGemma_VQA(BaseModel):  # TODO
     """
@@ -52,7 +61,9 @@ class PaliGemma_VQA(BaseModel):  # TODO
             # load_in_8bit=True,
             # quantization_config=quantization_config,
         )
+        self.config = self.model.config
 
+        print(self.config)
         # print('language_model.lm_head.weight', self.model.state_dict()['language_model.lm_head.weight'])
 
         self._apply_lemmatizer = apply_lemmatizer
@@ -68,7 +79,7 @@ class PaliGemma_VQA(BaseModel):  # TODO
         else:
             return contextlib.nullcontext()
 
-    def forward(self, samples):
+    def forward(self, samples, **kwargs):
         # print("questions: ", samples["text_input_raw"])
         # print("answers", answers)
         # print("weight", samples["weight"])
@@ -128,6 +139,9 @@ class PaliGemma_VQA(BaseModel):  # TODO
         #     print(f"If Leaf: {param.is_leaf}")
         
         # with self.maybe_autocast():
+        # print("Paligemma receiving the following kwargs", kwargs)
+        # print("Paligemma recieves the following samples", len(samples))
+
         model_inputs = self.processor(text=samples["text_input_raw"], images=samples["image_raw"], suffix=samples["multiple_choice_answer"], return_tensors="pt", padding="longest").to(self.dtype).to(self.device)
         # print("model_inputs", model_inputs)
         outputs = self.model(**model_inputs)
@@ -176,7 +190,12 @@ class PaliGemma_VQA(BaseModel):  # TODO
         if self._apply_lemmatizer:
             output_text = self._lemmatize(output_text)
 
-        return output_text
+        # print("output_text", output_text)
+
+        if kwargs["return_dict"]:
+            return QAOutput(answer=output_text)
+        else:
+            return output_text
     
     def _lemmatize(self, answers):
         def apply(answer):
@@ -244,10 +263,48 @@ class PaliGemma_VQA(BaseModel):  # TODO
             
             logging.info(lora_config)
             # model = prepare_model_for_kbit_training(model)
+            
             model = get_peft_model(model, lora_config)
             logging.info(model.print_trainable_parameters())
+            print(model) 
+            # raise Exception("just testing")
         
         # print("model: ", model)
+
+        use_adapter = int(cfg.get("use_adapter", 0))
+        use_parallel_adapter = int(cfg.get("use_parallel_adapter", 0))
+
+        if use_adapter == 1 : 
+            print("Use adapter")
+            non_linearity=cfg.get("non_linearity", "tanh")
+            bottleneck_size=int(cfg.get("bottleneck_size", 256))
+            target_modules = cfg.get("target_modules", "q_proj k_proj v_proj o_proj").split()
+            scaling = float(cfg.get("scaling", 1.0))
+            adapter_dropout = float(cfg.get("adapter_dropout", 0.1))
+            use_para_adapter = False
+            if use_parallel_adapter == 1 : 
+                use_para_adapter = True 
+                print("use para_adapter")
+                
+            adapter_config = BottleneckConfig(
+                        bottleneck_size=bottleneck_size,
+                        non_linearity=non_linearity,
+                        adapter_dropout=adapter_dropout,
+                        use_parallel_adapter=use_para_adapter,
+                        use_adapterp=False,
+                        target_modules=target_modules,
+                        scaling=scaling,
+                        bias="none",
+                        task_type="CAUSAL_LM",
+                    )
+
+            logging.info(adapter_config)
+            print("prev dev", model.device)
+            model = get_adapter_peft_model(model, adapter_config)
+            
+            logging.info(model.print_trainable_parameters())
+            print(model)
+        
 
         # Linear Probe
         linear_probe = int(cfg.get("linear_probe", 0))
@@ -280,6 +337,15 @@ class PaliGemma_VQA(BaseModel):  # TODO
         
         if load_finetuned:
             model.load_checkpoint_from_config(cfg)
+            # if use_adapter != 1 : 
+            #     model.load_checkpoint_from_config(cfg)
+
+            # else : #adapters 
+            #     url_or_filename = cfg.get("finetuned", None)
+            #     if os.path.isfile(cfg):
+            #         checkpoint_name = torch.load(url_or_filename, map_location="cpu")
+            #         adapters_weights = torch.load(checkpoint_name)
+            #         model = set_peft_model_state_dict(model, adapters_weights)
         
         if wise == 1:
             w1 = {key: value.to('cpu') for key, value in model.state_dict().items()}
@@ -289,6 +355,9 @@ class PaliGemma_VQA(BaseModel):  # TODO
             model.load_state_dict(wise)
             logging.info("WiSE: load finetuned model and apply WiSE")
 
+
+        print("Final Model before runner", model)
+        print("and it's device", model.device)
         return model
     
     def load_from_pretrained(self, url_or_filename):
@@ -348,6 +417,8 @@ class PaliGemma_VQA(BaseModel):  # TODO
         # print("state_dict", state_dict.keys())
 
         # Update the current state_dict with the new parameters
+        print("Checkpoint state dict keys ", state_dict.keys()) 
+        print("Current state dict keys", current_state_dict.keys())
         for key in state_dict.keys():
             assert key in current_state_dict, f"key {key} not in current_state_dict"
             current_state_dict[key] = state_dict[key]

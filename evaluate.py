@@ -26,6 +26,10 @@ from lavis.common.utils import now
 from lavis.datasets.builders import *
 from data.builders import *
 from model import *
+from optimizer import *
+from runners import *
+from tasks import *
+
 from lavis.models import *
 from lavis.processors import *
 from lavis.runners.runner_base import RunnerBase

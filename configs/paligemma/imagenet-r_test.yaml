@@ -1,0 +1,54 @@
+ # Copyright (c) 2022, salesforce.com, inc.
+ # All rights reserved.
+ # SPDX-License-Identifier: BSD-3-Clause
+ # For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+
+model:
+  arch: paligemma_vqa
+  model_type: paligemma-3b-pt-224
+  load_pretrained: True
+  pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
+  load_finetuned: False
+  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/adamp/1e-3_wd1e-4_nopre_k0/20240804121/checkpoint_best.pth'
+
+  # lora
+  use_lora: 0
+  target_modules: "q_proj k_proj v_proj o_proj"
+  lora_rank: 8
+
+  # wise
+  wise: 0
+
+
+datasets:
+  imagenet-r: # name of the dataset builder
+    question_type: what-is-in-image
+    type: eval
+
+run:
+  task: classifier_vqa
+
+  # optimization-specific
+  batch_size_train: 16
+  batch_size_eval: 16
+  num_workers: 4
+
+  # inference-specific
+  max_len: 10
+  min_len: 1
+  num_beams: 5
+  num_ans_candidates: 128
+  inference_method: "generate"
+  prompt: "Question: {} Short answer:"
+
+  seed: 42
+  output_dir: "output/PALIGEMMA/IMAGENET-R"
+
+  evaluate: True
+  test_splits: ["val"]
+
+  # distribution-specific
+  device: "cuda"
+  world_size: 8
+  dist_url: "env://"
+  distributed: True
