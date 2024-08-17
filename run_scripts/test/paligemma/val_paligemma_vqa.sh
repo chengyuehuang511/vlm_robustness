@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #SBATCH --partition="overcap"
+#SBATCH --cpus-per-gpu=6
 #SBATCH --nodes=1
 #SBATCH --gpus-per-node="a40:8"
 #SBATCH --qos="short"
@@ -8,4 +9,4 @@
 #SBATCH --mem-per-gpu=45G
 
 cd /nethome/chuang475/flash/projects/vlm_robustness/
-srun -u /nethome/chuang475/flash/miniconda3/envs/lavis/bin/python -m torch.distributed.run --nproc_per_node=8 evaluate.py --cfg-path configs/florence2/vqav2_test.yaml
+srun -u /nethome/chuang475/flash/miniconda3/envs/lavis/bin/python -m torch.distributed.run --nproc_per_node=8 evaluate.py --cfg-path configs/paligemma/vqav2_val.yaml

@@ -10,3 +10,4 @@ infoseek_eval.py
 result_output/
 *.out
 data/text_embeddings/sentences/open-clip~EVA01-g-14~laion400m_s11b_b41k.h5
+llm_adapters/

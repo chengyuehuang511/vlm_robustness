@@ -8,16 +8,16 @@ model:
   model_type: paligemma-3b-pt-224
   load_pretrained: True
   pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
-  load_finetuned: False
-  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/adamp/1e-3_wd1e-4_nopre_k0/20240804121/checkpoint_best.pth'
+  load_finetuned: True
+  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/adamh/1e-3_wd0.5/20240724145/checkpoint_best.pth'
 
   # lora
-  use_lora: 0
+  use_lora: 1
   target_modules: "q_proj k_proj v_proj o_proj"
   lora_rank: 8
 
   # wise
-  wise: 0
+  wise: 1
 
 
 datasets:

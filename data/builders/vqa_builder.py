@@ -128,11 +128,11 @@ class COCOOKVQABuilder(BaseDatasetBuilder):
 
 @registry.register_builder("imagenet1k")
 class ImagenetVQABuilder(BaseDatasetBuilder):
-    train_dataset_cls = None
+    train_dataset_cls = ClassifierVQADataset
     eval_dataset_cls = ClassifierVQADataset
 
     DATASET_CONFIG_DICT = {
-        "default": "",
+        "default": "/nethome/chuang475/flash/projects/vlm_robustness/data/configs/imagenet1k.yaml",
         "eval": "/nethome/chuang475/flash/projects/vlm_robustness/data/configs/imagenet1k.yaml",
     }
     

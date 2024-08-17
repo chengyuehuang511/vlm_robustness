@@ -4,29 +4,24 @@
  # For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
 
 model:
-  arch: paligemma_vqa
-  model_type: paligemma-3b-pt-224
+  arch: florence2_vqa
+  model_type: Florence-2-large-ft
   load_pretrained: True
-  pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
-  load_finetuned: True
-  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/adamh/1e-3_wd0.5/20240724145/checkpoint_best.pth'
-
-  # lora
-  use_lora: 1
-  target_modules: "q_proj k_proj v_proj o_proj"
-  lora_rank: 8
-
-  # wise
-  wise: 1
+  pretrained: 'https://huggingface.co/microsoft/Florence-2-large-ft'
 
 
 datasets:
-  imagenet-s: # name of the dataset builder
-    question_type: what-is-in-image
-    type: eval
+  coco_iv-vqa: # name of the dataset builder
+    vis_processor:
+        eval:
+          name: "blip_image_eval"
+          image_size: 448
+    text_processor:
+        eval:
+          name: "blip_question"
 
 run:
-  task: classifier_vqa
+  task: vqa
 
   # optimization-specific
   batch_size_train: 16
@@ -39,10 +34,10 @@ run:
   num_beams: 5
   num_ans_candidates: 128
   inference_method: "generate"
-  prompt: "Question: {} Short answer:"
+  prompt: "Question: {} Answer:"
 
   seed: 42
-  output_dir: "output/PALIGEMMA/IMAGENET-S"
+  output_dir: "output/FLORENCE2/IV-VQA"
 
   evaluate: True
   test_splits: ["val"]

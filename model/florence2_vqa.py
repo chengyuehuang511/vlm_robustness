@@ -7,6 +7,8 @@ from lavis.common.registry import registry
 from lavis.models.base_model import BaseModel
 from transformers import Trainer
 import numpy as np
+from tasks.vqa_task_utils import QAOutput
+from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 
 @registry.register_model("florence2_vqa")
 class Florence2_VQA(BaseModel):
@@ -17,12 +19,13 @@ class Florence2_VQA(BaseModel):
     """
 
     PRETRAINED_MODEL_CONFIG_DICT = {
+        "Florence-2-large": "/coc/pskynet4/chuang475/projects/vlm_robustness/configs/models/florence2_vqa/florence2_vqa.yaml",
         "Florence-2-large-ft": "/coc/pskynet4/chuang475/projects/vlm_robustness/configs/models/florence2_vqa/florence2_ft_vqav2.yaml"
     }
 
     def __init__(
         self,
-        model_id="microsoft/Florence-2-large-ft",
+        model_id="microsoft/Florence-2-large-ft",  # microsoft/Florence-2-large-ft
         dtype=torch.bfloat16,
         apply_lemmatizer=False,
     ):
@@ -105,8 +108,11 @@ class Florence2_VQA(BaseModel):
         
         if self._apply_lemmatizer:
             output_text = self._lemmatize(output_text)
-
-        return output_text
+        
+        if ("return_dict" in kwargs) and kwargs["return_dict"]:
+            return QAOutput(answer=output_text)
+        else:
+            return output_text
     
     def _lemmatize(self, answers):
         def apply(answer):
@@ -147,13 +153,34 @@ class Florence2_VQA(BaseModel):
 
     @classmethod
     def from_config(cls, cfg):
-        model_id = cfg.get("model_id", "microsoft/Florence-2-large-ft")
+        model_id = cfg.get("model_id", "microsoft/Florence-2-large-ft")  # microsoft/Florence-2-large-ft
+        print("model_id", model_id)
         dtype = cfg.get("dtype", torch.bfloat16)
 
         model = cls(
             model_id=model_id,
             dtype=dtype,
         )
+
+        use_lora = 0
+        lora_alpha = 16
+        lora_rank = 2
+        target_modules = ['q_proj', 'k_proj', 'v_proj', 'o_proj']
+        if use_lora == 1:
+            lora_config = LoraConfig(
+                r=lora_rank,  # 4
+                lora_alpha=lora_alpha,
+                lora_dropout=0.05,
+                bias="none",
+                target_modules=target_modules,  # ['q_proj', 'k_proj', 'v_proj', 'o_proj'],  # qformer, qkv
+            )
+            
+            logging.info(lora_config)
+            # model = prepare_model_for_kbit_training(model)
+            
+            model = get_peft_model(model, lora_config)
+            logging.info(model.print_trainable_parameters())
+
         return model
 
 if __name__ == "__main__":

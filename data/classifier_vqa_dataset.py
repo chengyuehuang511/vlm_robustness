@@ -134,8 +134,10 @@ class ClassifierVQADataset(BaseDataset):
             "label": class_idx,
             "multiple_choice_answer": class_name,
         }
+        cropped_images_dir = self.config.get("cropped_images_dir", "")
         if self.return_visual:
-            image_path = Path(self.vis_root) / ann["image"]
+            if cropped_images_dir == "":
+                image_path = Path(self.vis_root) / ann["image"]
             # print(f"Image path: {image_path}")
             image_pil = Image.open(image_path).convert("RGB")
             sample["image_raw"] = image_pil
