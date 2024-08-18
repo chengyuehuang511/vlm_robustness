@@ -8,30 +8,30 @@
 import argparse
 import random
 import os
-# print(os.environ["CUBLAS_WORKSPACE_CONFIG"])
-# print(os.environ["PYTHONHASHSEED"])
+print(os.environ["CUBLAS_WORKSPACE_CONFIG"])
+print(os.environ["PYTHONHASHSEED"])
 
 import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
 
 from lavis.common.dist_utils import get_rank, init_distributed_mode
-# def setup_seeds(seed):
-#     seed = seed + get_rank()
+def setup_seeds(seed):
+    seed = seed + get_rank()
 
-#     random.seed(seed)
-#     np.random.seed(seed)
-#     torch.manual_seed(seed)
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
 
-#     torch.cuda.manual_seed(seed)
-#     torch.cuda.manual_seed_all(seed)  # if you are using multi-GPU.
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)  # if you are using multi-GPU.
 
-#     cudnn.benchmark = False
-#     cudnn.deterministic = True
+    cudnn.benchmark = False
+    cudnn.deterministic = True
 
-#     torch.use_deterministic_algorithms(True)
+    torch.use_deterministic_algorithms(True)
 
-# setup_seeds(42)
+setup_seeds(42)
 
 import lavis.tasks as tasks
 from lavis.common.config import Config
@@ -92,6 +92,7 @@ def main():
 
     # set before init_distributed_mode() to ensure the same job_id shared across all ranks.
     job_id = now()
+    # job_id = "0"
 
     cfg = Config(parse_args())
 

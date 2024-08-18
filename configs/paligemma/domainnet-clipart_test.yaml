@@ -1,0 +1,35 @@
+datasets:
+  domainnet-clipart:
+    question_type: what-is-in-image
+    type: eval
+model:
+  arch: paligemma_vqa
+  finetuned: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/1e-3/20240721224/checkpoint_best.pth
+  load_finetuned: false
+  load_pretrained: true
+  lora_rank: 8
+  model_type: paligemma-3b-pt-224
+  pretrained: https://huggingface.co/google/paligemma-3b-pt-224
+  target_modules: q_proj k_proj v_proj o_proj
+  use_lora: 1
+  wise: 0
+run:
+  batch_size_eval: 16
+  batch_size_train: 16
+  device: cuda
+  dist_url: env://
+  distributed: true
+  evaluate: true
+  inference_method: generate
+  max_len: 10
+  min_len: 1
+  num_ans_candidates: 128
+  num_beams: 5
+  num_workers: 4
+  output_dir: output/PALIGEMMA/domainnet-clipart
+  prompt: 'Question: {} Short answer:'
+  seed: 42
+  task: classifier_vqa
+  test_splits:
+    - test
+  world_size: 8

@@ -33,6 +33,12 @@ __all__ = [
     'ImagenetAVQABuilder',
     'ImagenetRVQABuilder',
     'ImagenetSVQABuilder',
+    'DomainNetClipartVQABuilder',
+    'DomainNetInfographVQABuilder',
+    'DomainNetPaintingVQABuilder',
+    'DomainNetQuickdrawVQABuilder',
+    'DomainNetRealVQABuilder',
+    'DomainNetSketchVQABuilder',
 ]
 
 

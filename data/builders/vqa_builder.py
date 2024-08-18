@@ -242,3 +242,63 @@ class ImagenetSVQABuilder(ImagenetVQABuilder):
         "default": "",
         "eval": "/nethome/chuang475/flash/projects/vlm_robustness/data/configs/imagenet-s.yaml",
     }
+
+@registry.register_builder("domainnet-clipart")
+class DomainNetClipartVQABuilder(ImagenetVQABuilder):
+    train_dataset_cls = None
+    eval_dataset_cls = ClassifierVQADataset
+
+    DATASET_CONFIG_DICT = {
+        "default": "",
+        "eval": "/nethome/chuang475/flash/projects/vlm_robustness/data/configs/domainnet-clipart.yaml",
+    }
+
+@registry.register_builder("domainnet-infograph")
+class DomainNetInfographVQABuilder(ImagenetVQABuilder):
+    train_dataset_cls = None
+    eval_dataset_cls = ClassifierVQADataset
+
+    DATASET_CONFIG_DICT = {
+        "default": "",
+        "eval": "/nethome/chuang475/flash/projects/vlm_robustness/data/configs/domainnet-infograph.yaml",
+    }
+
+@registry.register_builder("domainnet-painting")
+class DomainNetPaintingVQABuilder(ImagenetVQABuilder):
+    train_dataset_cls = None
+    eval_dataset_cls = ClassifierVQADataset
+
+    DATASET_CONFIG_DICT = {
+        "default": "",
+        "eval": "/nethome/chuang475/flash/projects/vlm_robustness/data/configs/domainnet-painting.yaml",
+    }
+
+@registry.register_builder("domainnet-quickdraw")
+class DomainNetQuickdrawVQABuilder(ImagenetVQABuilder):
+    train_dataset_cls = None
+    eval_dataset_cls = ClassifierVQADataset
+
+    DATASET_CONFIG_DICT = {
+        "default": "",
+        "eval": "/nethome/chuang475/flash/projects/vlm_robustness/data/configs/domainnet-quickdraw.yaml",
+    }
+
+@registry.register_builder("domainnet-real")
+class DomainNetRealVQABuilder(ImagenetVQABuilder):
+    train_dataset_cls = None
+    eval_dataset_cls = ClassifierVQADataset
+
+    DATASET_CONFIG_DICT = {
+        "default": "",
+        "eval": "/nethome/chuang475/flash/projects/vlm_robustness/data/configs/domainnet-real.yaml",
+    }
+
+@registry.register_builder("domainnet-sketch")
+class DomainNetSketchVQABuilder(ImagenetVQABuilder):
+    train_dataset_cls = None
+    eval_dataset_cls = ClassifierVQADataset
+
+    DATASET_CONFIG_DICT = {
+        "default": "",
+        "eval": "/nethome/chuang475/flash/projects/vlm_robustness/data/configs/domainnet-sketch.yaml",
+    }

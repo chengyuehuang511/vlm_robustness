@@ -78,7 +78,7 @@ def get_sentence_embedder(
     verbose: bool = True,
     compute_missing: bool = True,
     emb_dir: Optional[PathType] = None,
-    save_to_db: bool = True,
+    save_to_db: bool = False,
     # embedder specific settings
     **kwargs,
 ) -> "SentenceEmbedderInterface":
@@ -703,7 +703,7 @@ class SentenceEmbedderWithDb(SentenceEmbedderInterface):
         verbose: bool = True,
         compute_missing: bool = True,
         emb_dir: Optional[PathType] = None,
-        save_to_db: bool = True,
+        save_to_db: bool = False,
     ):
         emb_dir = get_data_dir() / "text_embeddings/sentences" if emb_dir is None else Path(emb_dir)
         model_name = embedder.model_name
