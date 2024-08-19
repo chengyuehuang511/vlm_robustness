@@ -8,7 +8,7 @@ model:
   model_type: paligemma-3b-pt-224
   load_pretrained: True
   pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
-  load_finetuned: True
+  load_finetuned: False
   finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/adamh/1e-3_wd0.5/20240724145/checkpoint_best.pth'
 
   # lora
@@ -17,7 +17,7 @@ model:
   lora_rank: 8
 
   # wise
-  wise: 1
+  wise: 0
 
 
 datasets:
@@ -26,7 +26,24 @@ datasets:
     type: eval
 
 run:
-  task: classifier_vqa
+  task: classifier_vqa_followup
+
+  # follow-up questions
+  followup_cfg:
+    arg_max_or_average_syn_leaves: arg_max_syn
+    arg_max_or_average_syn_parents: arg_max_syn
+    canonical_mode_leaves: none
+    canonical_mode_parents: none
+    canonical_threshold: 0.37
+    consider_neighbors: 0
+    followup_prompt: 'Question: What type of {} is this? Short answer:'
+    model_name: EVA01-g-14/laion400m_s11b_b41k
+    package_name: open-clip
+    templates_name_leaves: openai_imagenet_template
+    templates_name_parents: openai_imagenet_template
+    use_synonyms_leaves: false
+    use_synonyms_parents: true
+  followup_prev_dir: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET-2/20240813024/
 
   # optimization-specific
   batch_size_train: 16

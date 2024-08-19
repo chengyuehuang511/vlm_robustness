@@ -7,6 +7,11 @@ from visiontext.nlp.nltktools import (
     rebuild_from_words_and_connectors,
 )
 
+import nltk
+# nltk.download('punkt', download_dir='/coc/pskynet4/chuang475')
+# Clear existing paths and set a new one
+nltk.data.path = ['/coc/pskynet4/chuang475']
+
 
 def cut_too_long_text(
     input_str,

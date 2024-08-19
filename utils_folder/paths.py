@@ -15,7 +15,7 @@ uname = getuser()
 base_dir = str(Path(__file__).parent.parent)
 OVQA_ENV_DEFAULTS = {
     EnvKeys.ENV_DATA_DIR: "data",
-    EnvKeys.ENV_CACHE_DIR: f"/home/{uname}/.cache",
+    EnvKeys.ENV_CACHE_DIR: f".cache",
     OvqaEnvKeys.OVQA_REPO_ROOT: base_dir,
     OvqaEnvKeys.OVQA_OUTPUT_DIR: f"output",
 }

@@ -2,6 +2,11 @@ import json
 import logging
 import numpy as np
 import os
+import sys
+# Get the directory containing the metrics folder
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+# Add the parent directory to sys.path
+sys.path.insert(0, parent_dir)
 
 import lavis.common.dist_utils as dist_utils
 from data.classifier_vqa_dataset import ClassifierVQADataset
@@ -12,6 +17,8 @@ from packg.iotools.jsonext import load_json
 from metrics.load_metrics import setup_clipmatch_metrics, setup_text_metrics
 from metrics.torchmetrics_ext import MetricCollectionExt
 from metrics.preprocessing import preprocess_text_simple
+
+
 
 
 def get_generation_kwargs(run_cfg):
@@ -230,13 +237,13 @@ def eval_classifier_vqa(results_dict, anno_dict, labels):
     
     return metrics
 
-# if __name__ == "__main__":
-#     results_file = load_json("/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET1K/20240810190/result/val_vqa_result.json")
-#     anno = load_json("/nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/imagenet/ovqa/ovqa/annotations/imagenet1k/generated/val.json")
-#     anno_dict = convert_list_to_dict(anno, "class_idx")
+if __name__ == "__main__":
+    results_file = load_json("/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET1K/20240810190/result/val_vqa_result.json")
+    anno = load_json("/nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/imagenet/ovqa/ovqa/annotations/imagenet1k/generated/val.json")
+    anno_dict = convert_list_to_dict(anno, "class_idx")
 
-#     results = load_json(results_file)  # list of {"question_id": int, "answer": str}
-#     results_dict = convert_list_to_dict(results, "answer")
+    results = load_json(results_file)  # list of {"question_id": int, "answer": str}
+    results_dict = convert_list_to_dict(results, "answer")
 
-#     labels = load_json("/nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/imagenet/ovqa/ovqa/annotations/imagenet1k/generated/classes_data.json")
-#     metrics = eval_classifier_vqa(results_dict, anno_dict, labels)
+    labels = load_json("/nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/imagenet/ovqa/ovqa/annotations/imagenet1k/generated/classes_data.json")
+    metrics = eval_classifier_vqa(results_dict, anno_dict, labels)
