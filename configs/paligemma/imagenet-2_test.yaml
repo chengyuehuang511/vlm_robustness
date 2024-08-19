@@ -9,7 +9,7 @@ model:
   load_pretrained: True
   pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
   load_finetuned: False
-  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/adamh/1e-3_wd0.5/20240724145/checkpoint_best.pth'
+  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/1e-3/20240721224/checkpoint_best.pth'
 
   # lora
   use_lora: 1
@@ -44,6 +44,14 @@ run:
     use_synonyms_leaves: false
     use_synonyms_parents: true
   followup_prev_dir: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET-2/20240813024/
+  
+  # lora: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET-2/20240815003/
+  # spd: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET-2/20240814235/
+  # spd_wise: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET-2/20240815012/
+  # wise: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET-2/20240815005/
+  # fft: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET-2/20240813024/
+  # zs: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET-2/20240813124/
+
 
   # optimization-specific
   batch_size_train: 16

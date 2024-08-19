@@ -1,7 +1,7 @@
 #!/bin/bash
 cd /nethome/chuang475/flash/projects/vlm_robustness
 
-for name in "test_paligemma_imagenet-2"
+for name in "test_paligemma_imagenet-2" "test_paligemma_imagenet1k" "test_paligemma_imagenet-r" "test_paligemma_imagenet-a" "test_paligemma_imagenet-s"
 # "domainnet-clipart_paligemma_test" "domainnet-infograph_paligemma_test" "domainnet-painting_paligemma_test" "domainnet-quickdraw_paligemma_test" "domainnet-real_paligemma_test" "domainnet-sketch_paligemma_test"
 #"test_florence2_imagenet-2" "test_florence2_imagenet1k" "test_florence2_imagenet-r" "test_florence2_imagenet-a" "test_florence2_imagenet-s" 
 #"val_florence2_vqa" "test_florence2_vqa_ce" "test_florence2_vqacp" "test_florence2_vqa_rep" "test_florence2_ok-vqa" "test_florence2_vizwiz" "test_florence2_textvqa" "test_florence2_advqa" "test_florence2_cv-vqa" "test_florence2_iv-vqa"
