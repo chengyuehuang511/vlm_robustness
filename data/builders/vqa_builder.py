@@ -285,11 +285,11 @@ class DomainNetQuickdrawVQABuilder(ImagenetVQABuilder):
 
 @registry.register_builder("domainnet-real")
 class DomainNetRealVQABuilder(ImagenetVQABuilder):
-    train_dataset_cls = None
+    train_dataset_cls = ClassifierVQADataset
     eval_dataset_cls = ClassifierVQADataset
 
     DATASET_CONFIG_DICT = {
-        "default": "",
+        "default": "/nethome/chuang475/flash/projects/vlm_robustness/data/configs/domainnet-real.yaml",
         "eval": "/nethome/chuang475/flash/projects/vlm_robustness/data/configs/domainnet-real.yaml",
     }
 

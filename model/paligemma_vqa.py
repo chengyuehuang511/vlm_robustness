@@ -39,7 +39,7 @@ class PaliGemma_VQA(BaseModel):  # TODO
 
     def __init__(
         self,
-        model_id="google/paligemma-3b-ft-vqav2-224",  # paligemma-3b-ft-vqav2-224  paligemma-3b-pt-224
+        model_id="google/paligemma-3b-pt-224",  # paligemma-3b-ft-vqav2-224  paligemma-3b-pt-224
         dtype=torch.bfloat16,
         apply_lemmatizer=False,
     ):
@@ -237,7 +237,7 @@ class PaliGemma_VQA(BaseModel):  # TODO
 
     @classmethod
     def from_config(cls, cfg):
-        model_id = cfg.get("model_id", "google/paligemma-3b-ft-vqav2-224")  # paligemma-3b-ft-vqav2-224  paligemma-3b-pt-448
+        model_id = cfg.get("model_id", "google/paligemma-3b-pt-224")  # paligemma-3b-ft-vqav2-224  paligemma-3b-pt-448
         dtype = cfg.get("dtype", torch.bfloat16)
 
         model = cls(
