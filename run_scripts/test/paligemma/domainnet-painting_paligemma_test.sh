@@ -1,5 +1,5 @@
 #!/bin/bash                   
-#SBATCH --partition="overcap"
+#SBATCH --partition="kira-lab"
 #SBATCH --nodes=1
 #SBATCH --cpus-per-gpu=6
 #SBATCH --gpus-per-node="a40:8"

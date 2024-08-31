@@ -1,9 +1,10 @@
 #!/bin/bash
 cd /nethome/chuang475/flash/projects/vlm_robustness
-# name="train_paligemma_vqa"
-name="train_paligemma_domainnet-real"
+name="train_paligemma_vqa"
+# name="train_paligemma_domainnet-real"
+# name="train_paligemma_imagenet1k"
 
 job_name="${name}_$(date +%Y%m%d_%H%M%S)"
-output_dir="output/domainnet/train/${job_name}"
+output_dir="output/vqa/adamh_0.5_back/${job_name}"
 mkdir -p "$output_dir"
 sbatch --export "ALL" --job-name="${job_name}" --output="${output_dir}/slurm-%j.out" --error="${output_dir}/slurm-%j.err" run_scripts/train/${name}.sh

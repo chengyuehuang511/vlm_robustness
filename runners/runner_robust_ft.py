@@ -776,6 +776,7 @@ class RunnerRobustFT(RunnerBase):
                     "weight_decay": weight_decay, #args.weight_decay, 1
                     "use_lora": use_lora,
                     "norm_type": "l2",
+                    "ortho": self.config.run_cfg.get("adamh_ortho", False),
                 } 
                 params_to_opt = [x[1] for x in self._model.named_parameters() if x[1].requires_grad]
                 if use_lora:

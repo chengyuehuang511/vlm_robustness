@@ -9,4 +9,7 @@
 #SBATCH --mem-per-gpu=45G
 
 cd /nethome/chuang475/flash/projects/vlm_robustness/
+export CUBLAS_WORKSPACE_CONFIG=:4096:8
+export PYTHONHASHSEED=42
+export TOKENIZERS_PARALLELISM=false
 srun -u /nethome/chuang475/flash/miniconda3/envs/lavis/bin/python -m torch.distributed.run --nproc_per_node=6 evaluate.py --cfg-path configs/paligemma/vqa_ce_test.yaml
