@@ -11,6 +11,7 @@ from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 import os
 import contextlib
 import copy
+from tasks.vqa_task_utils import QAOutput
 
 from llm_adapters.peft.src.peft import (  # noqa: E402
     BottleneckConfig,
@@ -20,6 +21,7 @@ from llm_adapters.peft.src.peft import (  # noqa: E402
     prepare_model_for_int8_training,
     set_peft_model_state_dict,
 )
+
 @registry.register_model("paligemma_vqa")
 class PaliGemma_VQA(BaseModel):  # TODO
     """
@@ -37,7 +39,7 @@ class PaliGemma_VQA(BaseModel):  # TODO
 
     def __init__(
         self,
-        model_id="google/paligemma-3b-pt-224",  # paligemma-3b-ft-vqav2-448  paligemma-3b-pt-224
+        model_id="google/paligemma-3b-pt-224",  # paligemma-3b-ft-vqav2-224  paligemma-3b-pt-224
         dtype=torch.bfloat16,
         apply_lemmatizer=False,
     ):
@@ -189,7 +191,12 @@ class PaliGemma_VQA(BaseModel):  # TODO
         if self._apply_lemmatizer:
             output_text = self._lemmatize(output_text)
 
-        return output_text
+        # print("output_text", output_text)
+
+        if ("return_dict" in kwargs) and kwargs["return_dict"]:
+            return QAOutput(answer=output_text)
+        else:
+            return output_text
     
     def _lemmatize(self, answers):
         def apply(answer):
@@ -260,11 +267,12 @@ class PaliGemma_VQA(BaseModel):  # TODO
             
             model = get_peft_model(model, lora_config)
             logging.info(model.print_trainable_parameters())
-            print(model) 
+            # print(model) 
             # raise Exception("just testing")
         
         # print("model: ", model)
 
+        # Adapter
         use_adapter = int(cfg.get("use_adapter", 0))
         use_parallel_adapter = int(cfg.get("use_parallel_adapter", 0))
 
@@ -351,7 +359,7 @@ class PaliGemma_VQA(BaseModel):  # TODO
 
 
         print("Final Model before runner", model)
-        print("and it's device", model.device)
+        # print("and it's device", model.device)
         return model
     
     def load_from_pretrained(self, url_or_filename):

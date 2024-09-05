@@ -53,6 +53,7 @@ from data.builders import *
 from model import *
 from optimizer import *
 from runners import *
+from tasks import *
 
 from lavis.processors import *
 from lavis.runners import *
