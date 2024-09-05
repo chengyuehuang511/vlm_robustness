@@ -52,13 +52,13 @@ f = [
     # "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/advqa/val/v1_mscoco_val2017_advqa_annotations_new.json"
 
     # "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/cv-vqa/val/BS/vedika2/nobackup/thesis/mini_datasets_qa_COUNTING_DEL_1/0.1_0.0/v2_mscoco_val2014_annotations.json"
-    # "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/advqa/val/combined_data.json",
+    "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/advqa/val/combined_data.json",
     # "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KO/combined_data.json"
     # "/coc/pskynet6/chuang475/.cache/lavis/coco/annotations/vqa_val_eval.json"
-    "/coc/pskynet6/chuang475/.cache/lavis/coco/annotations/vqa_test.json"
+    # "/coc/pskynet6/chuang475/.cache/lavis/coco/annotations/vqa_test.json"
 ]
 
-# print("VQA LOL structure")
+print("VQA LOL structure")
 for i in f : 
     print(f"File name {i}")
     if "question" in i or "questions" in i or "combined_data" in i : 
@@ -67,6 +67,12 @@ for i in f :
     else : 
         print(display_dataset(i, "annotations"))
 
+
+
+# f = "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/advqa/val/combined_data.json"
+# with open(f, 'r') as file : 
+#     data = json.load(file)
+#     print(len(data))
 
 
 

@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=SAft512
-#SBATCH --output=SAft512.out
-#SBATCH --error=SAft512.err
+#SBATCH --job-name=PAftvqav2 
+#SBATCH --output=PAftvqav2.out
+#SBATCH --error=PAftvqav2.err
 #SBATCH --partition="kira-lab"
 #SBATCH --nodes=1
 #SBATCH --gpus-per-node="a40:8"
@@ -19,4 +19,4 @@ conda activate riplenv
 cd /nethome/bmaneech3/flash/vlm_robustness
 
 
-srun -u python -m torch.distributed.run --nproc_per_node=8 train.py --cfg-path /nethome/bmaneech3/flash/vlm_robustness/configs/paligemma/sequential_adapter/vqa_v2_train_seq_512.yaml
+srun -u python -m torch.distributed.run --nproc_per_node=8 train.py --cfg-path /nethome/bmaneech3/flash/vlm_robustness/configs/paligemma/parallel_adapter/vqav2_train_pa_1024.yaml

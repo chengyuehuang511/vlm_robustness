@@ -222,6 +222,10 @@ class COCOVQAEvalDataset_Raw(VQAEvalDataset, __DisplMixin):
         """
 
         self.vis_root = vis_root
+        # fix_path = fix_path.replace("/nethome/chuang475/flash", "/coc/pskynet4/chuang475")
+
+        for i in range(len(ann_paths)) : 
+            ann_paths[i] = ann_paths[i].replace("/nethome/chuang475/flash", "/coc/pskynet4/chuang475")
 
         self.annotation = json.load(open(ann_paths[0]))
 

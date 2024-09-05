@@ -42,7 +42,7 @@ def report_metrics(result_file, ques_file, anno_file):
 
 
     with open(
-        os.path.join("/nethome/bmaneech3/flash/vlm_robustness/result_output", "vqa_pa_ft.txt"), "a"
+        os.path.join("/nethome/bmaneech3/flash/vlm_robustness/result_output", "vqa_pa_val.txt"), "a"
     ) as f:
         f.write(json.dumps(metrics) + "\n")
     return metrics
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     
 
     report_metrics(
-        "/nethome/bmaneech3/flash/LAVIS/lavis/output/PALIGEMMA/VQA/SA/qkvo_s1_r512_relu_10/20240811141/result/val_vqa_result.json",
+        "/nethome/bmaneech3/flash/LAVIS/lavis/output/PALIGEMMA/VQA/PA/qkvo_s1_r1024_relu_10/20240817110/result/val_vqa_result.json",
         "/coc/pskynet6/chuang475/.cache/lavis/coco/annotations/v2_OpenEnded_mscoco_val2014_questions.json",
         "/coc/pskynet6/chuang475/.cache/lavis/coco/annotations/v2_mscoco_val2014_annotations.json"
     )

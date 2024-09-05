@@ -18,10 +18,10 @@ datasets:
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
           storage:
-              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/advqa/val/combined_data.json
+              - /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/advqa/val/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
-              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/advqa/val/v1_OpenEnded_mscoco_val2017_advqa_questions.json
-              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/advqa/val/v1_mscoco_val2017_advqa_annotations_new.json
+              - /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/advqa/val/v1_OpenEnded_mscoco_val2017_advqa_questions.json
+              - /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/advqa/val/v1_mscoco_val2017_advqa_annotations_new.json
         test:
           url:
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
@@ -29,9 +29,9 @@ datasets:
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
           storage:
-              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/advqa/val/combined_data.json
+              - /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/advqa/val/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
-              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/advqa/val/v1_OpenEnded_mscoco_val2017_advqa_questions.json
-              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/advqa/val/v1_mscoco_val2017_advqa_annotations_new.json
+              - /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/advqa/val/v1_OpenEnded_mscoco_val2017_advqa_questions.json
+              - /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/advqa/val/v1_mscoco_val2017_advqa_annotations_new.json
       images:
           storage: /srv/datasets/coco/

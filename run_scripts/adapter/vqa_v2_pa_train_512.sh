@@ -2,7 +2,7 @@
 #SBATCH --job-name=PAft512
 #SBATCH --output=PAft512.out
 #SBATCH --error=PAft512.err
-#SBATCH --partition="overcap"
+#SBATCH --partition="kira-lab"
 #SBATCH --nodes=1
 #SBATCH --gpus-per-node="a40:8"
 #SBATCH --qos="short"
@@ -19,4 +19,4 @@ conda activate riplenv
 cd /nethome/bmaneech3/flash/vlm_robustness
 
 
-srun -u python -m torch.distributed.run --nproc_per_node=8 train.py --cfg-path /nethome/bmaneech3/flash/vlm_robustness/configs/paligemma/parallel_adapter/vqa_v2_train_512.yaml
+srun -u python -m torch.distributed.run --nproc_per_node=8 train.py --cfg-path /nethome/bmaneech3/flash/vlm_robustness/configs/paligemma/parallel_adapter/vqa_v2_train_pa_512.yaml

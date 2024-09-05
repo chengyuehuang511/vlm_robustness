@@ -2,7 +2,7 @@
 #SBATCH --job-name=comp_hid_2
 #SBATCH --output=comp_hid_2.out
 #SBATCH --error=comp_hid_2.err
-#SBATCH --partition="overcap"
+#SBATCH --partition="kira-lab"
 #SBATCH --nodes=1
 #SBATCH --cpus-per-gpu=6
 #SBATCH --gpus-per-node="a40:8"

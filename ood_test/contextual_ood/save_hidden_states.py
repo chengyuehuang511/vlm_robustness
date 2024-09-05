@@ -161,38 +161,35 @@ def get_hidden_states(inputs, concept_type="joint", hidden_layer=19) :
     return 
         concept_hidden_states : (batch size, # of concept, hidden dim)
     """
-    image_hidden_state = hidden_states[0][:, 0:256, :] #(batch size, hidden dim) 
-    u_image_vector = torch.mean(image_hidden_state, dim=1).unsqueeze(1)
-    concept_hidden_vectors = u_image_vector 
-    
-    # for i in range(len(hidden_states)) : 
-    u_hidden_vector =  torch.mean(hidden_states[-1], dim=1) 
-    cur_hidden_vectors = u_hidden_vector.unsqueeze(1) # dim 1 = concept
-    concept_hidden_vectors = torch.cat([concept_hidden_vectors, cur_hidden_vectors], dim = 1)
 
-    del hidden_states 
-    del image_hidden_state 
-    del u_image_vector
-    del u_hidden_vector
-    del cur_hidden_vectors 
+    # image_hidden_state = hidden_states[0][:, 0:256, :] #(batch size, seq length, hidden dim) 
+    # u_image_vector = torch.mean(image_hidden_state, dim=1).unsqueeze(1)
+    # concept_hidden_vectors = u_image_vector 
+    
+    # # for i in range(len(hidden_states)) : 
+    # u_hidden_vector =  torch.mean(hidden_states[-1], dim=1) 
+    # cur_hidden_vectors = u_hidden_vector.unsqueeze(1) # dim 1 = concept
+    # concept_hidden_vectors = torch.cat([concept_hidden_vectors, cur_hidden_vectors], dim = 1)
+
+    question_hidden_state = hidden_states[9][:, 256:, :] #(batch size, seq length, hidden dim) #what layer should i do? 1?
+    concept_hidden_vectors = torch.mean(question_hidden_state, dim=1).unsqueeze(1)
+
+    last_question_hidden_state = torch.mean(hidden_states[-1][:,256:,:], dim=1) .unsqueeze(1)
+    concept_hidden_vectors = torch.cat([concept_hidden_vectors, last_question_hidden_state], dim=1)
+
+
+    # del hidden_states 
+    # del image_hidden_state 
+    # del u_image_vector
+    # del u_hidden_vector
+    # del cur_hidden_vectors 
+    del hidden_states
+    del question_hidden_state
+    del last_question_hidden_state
     torch.cuda.empty_cache()
     
-
     print(f"concept_hidden_vectors : {concept_hidden_vectors.size()}")
     return concept_hidden_vectors #(batch size, #concepts, hidden size)
-
-
-#batch processing from mean & sd 
-# def accum_mean_sd(train_vectors) : 
-
-#     """
-#     train_vectors : (concept, batchsize, hidden size)
-
-#     returns the sum of vectors to compute μ & intermediate (f-μ)(f-μ)T  
-#     """
-
-#     f_sum = torch.sum(train_vectors, dim=1)
-
 
 
 def score_func(train_vectors, test_vectors, metric="maha", peranswerType=False) : 
@@ -282,7 +279,7 @@ concept : joint/image/question etc.
 """
 
 #how to organize when you get the score 
-concept_type = ["joint", "image"] #
+concept_type = ["q_mid", "q_last"] #
 
 
 splits =[
@@ -292,11 +289,9 @@ splits =[
     #train_stuff = sample[0], test_stuff = sample[1]
     # [("advqa", "test"), ("cvvqa", "test")], 
     # [("ivvqa", "test"),("okvqa", "test") ],
-   
     # [("vizwiz", "test"), ("textvqa", "test")], 
     [("vqa_cp", "test"), ("vqa_lol", "test")]
 ]
-
 
 results_file = "/coc/pskynet4/bmaneech3/vlm_robustness/result_output/contextual_ood/maha_score_dict.json"
 if os.path.exists(results_file) : 
@@ -305,7 +300,7 @@ if os.path.exists(results_file) :
 else : 
     results_dict = {} 
 
-hidden_layer_name = ["image", "joint_lastl"]
+hidden_layer_name = ["q_mid", "q_last"]
 
 # for i in range(1,20) : 
 #     hidden_layer_name.append(f"joint_l{i}")
@@ -322,11 +317,11 @@ if __name__ == "__main__" :
         
         train_file = ds_split_2_file[train_ds_split]
         test_file = ds_split_2_file[test_ds_split]
-        print(f"Measure Instance {train_split, test_split}")
+        print(f"Measure Instance {train_ds_split, test_ds_split}")
 
         if (f"{train_split}" in results_dict): 
             if (f"{test_split}" in results_dict[f"{train_split}"]) : 
-                if (concept_type in results_dict[f"{train_split}"][f"{test_split}"]) : 
+                if (concept_type[0] in results_dict[f"{train_split}"][f"{test_split}"]) : 
                     print(f"already measured")
                     continue  
                 
@@ -342,7 +337,7 @@ if __name__ == "__main__" :
         if not os.path.exists(train_hidden_state_file) : 
 
             dataset = MeasureOODDataset(train_data, train_ds_name)
-            concept_type = "joint"
+            # concept_type = "joint"
 
             dataloader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=False, collate_fn=dataset.collate_fn, num_workers=2)
 
@@ -381,7 +376,7 @@ if __name__ == "__main__" :
         if not os.path.exists(test_hidden_state_file) : 
 
             dataset = MeasureOODDataset(test_data, test_ds_name)
-            concept_type = "joint"
+            # concept_type = "joint"
 
             dataloader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=False, collate_fn=dataset.collate_fn, num_workers=2)
 

@@ -1,11 +1,14 @@
 model:
   arch: paligemma_vqa
   model_type: paligemma-3b-pt-224  # paligemma-3b-pt-224
-  load_pretrained: True
-  pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
+  # load_pretrained: True
+  # pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
 
 
-  
+  #3 epochs 
+  load_finetuned: True 
+  finetuned: "/nethome/bmaneech3/flash/LAVIS/lavis/output/PALIGEMMA/VQA/SA/qkvo_s1_r1024_relu_10/20240820151/checkpoint_best.pth"
+
   # lora
   use_lora: 0
   use_adapter: 1
@@ -46,7 +49,7 @@ run:
   warmup_steps: 1000
   warmup_lr: 1e-6 # 1e-8 3e-7
   weight_decay: 1e-6 # 3e-7 # 5e-5 0.5 1 1.5 2
-  max_epoch: 10
+  max_epoch: 7
   accum_grad_iters: 2 # 1
   lr_layer_decay: 0.9
 
@@ -62,7 +65,7 @@ run:
   num_ans_candidates: 128
   inference_method: "generate"
   prompt: "Question: {} Answer:"
-
+  
   seed: 42
   output_dir: "output/PALIGEMMA/VQA/SA/qkvo_s1_r1024_relu_10"
 
