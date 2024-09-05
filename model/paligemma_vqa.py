@@ -70,6 +70,12 @@ class PaliGemma_VQA(BaseModel):  # TODO
         self._apply_lemmatizer = apply_lemmatizer
         self._lemmatizer = None
     
+    def add_parameter(self, param_name, param_value):
+        # Dynamically add a parameter
+        param = torch.nn.Parameter(param_value, requires_grad=True)  # Convert the value to a trainable parameter
+        setattr(self, param_name, param)  # Assign it to the model
+        self.register_parameter(param_name, param)  # Register it as a trainable parameter
+    
     def maybe_autocast(self, dtype=torch.float16):
         # if on cpu, don't use autocast
         # if on gpu, use autocast with dtype if provided, otherwise use torch.float16

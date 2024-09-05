@@ -787,6 +787,45 @@ class RunnerRobustFT(RunnerBase):
                                     'pre': params_anchor}]
                 self._optimizer = AdamH(param_group,**optimizer_params)
             
+            elif opt == "pcgrad": 
+                params_to_opt = [x[1] for x in self._model.named_parameters() if x[1].requires_grad]
+                self._model.add_parameter("strengths", torch.zeros(len(params_to_opt)))
+                
+                for x in self._model.named_parameters():
+                    if x[0] == "strengths":
+                        strengths = x[1]
+                
+                optimizer_params = {
+                    "lr": lr,
+                    "weight_decay": weight_decay,
+                    "use_lora": use_lora,
+                    "proj_term": self.config.run_cfg.get("proj_term", "both"),
+                    "strength": strengths #self.config.run_cfg.get("pcgrad_strength", 1.0),
+                }
+                
+                if use_lora:
+                    param_group = [{'params':params_to_opt}]
+                else:
+                    params_anchor = copy.deepcopy(params_to_opt)
+                    param_group = [{'params':params_to_opt,
+                                    'pre': params_anchor}]
+                self._optimizer = PCGrad(param_group,**optimizer_params)
+
+            elif opt == "mop":
+                optimizer_params = {
+                    "lr": lr,
+                    "weight_decay": weight_decay,
+                    "use_lora": use_lora,
+                } 
+                params_to_opt = [x[1] for x in self._model.named_parameters() if x[1].requires_grad]
+                if use_lora:
+                    param_group = [{'params':params_to_opt}]
+                else:
+                    params_anchor = copy.deepcopy(params_to_opt)
+                    param_group = [{'params':params_to_opt,
+                                    'pre': params_anchor}]
+                self._optimizer = MOP(param_group,**optimizer_params)
+            
             elif opt == "adam":
                 self._optimizer = torch.optim.AdamW(trainable_params, lr=lr, weight_decay=weight_decay)
             else:
