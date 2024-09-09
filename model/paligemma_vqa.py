@@ -70,12 +70,6 @@ class PaliGemma_VQA(BaseModel):  # TODO
         self._apply_lemmatizer = apply_lemmatizer
         self._lemmatizer = None
     
-    def add_parameter(self, param_name, param_value):
-        # Dynamically add a parameter
-        param = torch.nn.Parameter(param_value, requires_grad=True)  # Convert the value to a trainable parameter
-        setattr(self, param_name, param)  # Assign it to the model
-        self.register_parameter(param_name, param)  # Register it as a trainable parameter
-    
     def maybe_autocast(self, dtype=torch.float16):
         # if on cpu, don't use autocast
         # if on gpu, use autocast with dtype if provided, otherwise use torch.float16
@@ -351,8 +345,8 @@ class PaliGemma_VQA(BaseModel):  # TODO
             # else : #adapters 
             #     url_or_filename = cfg.get("finetuned", None)
             #     if os.path.isfile(cfg):
-            #         checkpoint_name = torch.load(url_or_filename, map_location="cpu")
-            #         adapters_weights = torch.load(checkpoint_name)
+            #         checkpoint_name = torch.load(url_or_filename, map_location="cpu", weights_only=True)
+            #         adapters_weights = torch.load(checkpoint_name, weights_only=True)
             #         model = set_peft_model_state_dict(model, adapters_weights)
         
         if wise == 1:
@@ -373,9 +367,9 @@ class PaliGemma_VQA(BaseModel):  # TODO
             cached_file = download_cached_file(
                 url_or_filename, check_hash=False, progress=True
             )
-            checkpoint = torch.load(cached_file, map_location=self.device)
+            checkpoint = torch.load(cached_file, map_location=self.device, weights_only=True)
         elif os.path.isfile(url_or_filename):
-            checkpoint = torch.load(url_or_filename, map_location=self.device)
+            checkpoint = torch.load(url_or_filename, map_location=self.device, weights_only=True)
         else:
             raise RuntimeError("checkpoint url or path is invalid")
 
@@ -402,9 +396,9 @@ class PaliGemma_VQA(BaseModel):  # TODO
             cached_file = download_cached_file(
                 url_or_filename, check_hash=False, progress=True
             )
-            checkpoint = torch.load(cached_file, map_location=self.device)
+            checkpoint = torch.load(cached_file, map_location=self.device, weights_only=True)
         elif os.path.isfile(url_or_filename):
-            checkpoint = torch.load(url_or_filename, map_location=self.device)
+            checkpoint = torch.load(url_or_filename, map_location=self.device, weights_only=True)
         else:
             raise RuntimeError("checkpoint url or path is invalid")
 
@@ -425,8 +419,8 @@ class PaliGemma_VQA(BaseModel):  # TODO
         # print("state_dict", state_dict.keys())
 
         # Update the current state_dict with the new parameters
-        print("Checkpoint state dict keys ", state_dict.keys()) 
-        print("Current state dict keys", current_state_dict.keys())
+        # print("Checkpoint state dict keys ", state_dict.keys()) 
+        # print("Current state dict keys", current_state_dict.keys())
         for key in state_dict.keys():
             assert key in current_state_dict, f"key {key} not in current_state_dict"
             current_state_dict[key] = state_dict[key]

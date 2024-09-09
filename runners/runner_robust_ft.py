@@ -690,7 +690,8 @@ class RunnerRobustFT(RunnerBase):
         """
         A property to get the DDP-wrapped model on the device.
         """
-        print("Device check", self._model.device , self.device)
+
+        print("Device Check", self._model.device != self.device)
         # move model to device
         if self._model.device != self.device:
             self._model = self._model.to(self.device)
@@ -701,10 +702,11 @@ class RunnerRobustFT(RunnerBase):
                     self._wrapped_model = DDP(
                         self._model, device_ids=[self.config.run_cfg.gpu]
                     )
+                    print(self._wrapped_model)
+                    
             else:
                 self._wrapped_model = self._model
 
-        print(self._wrapped_model)
         return self._wrapped_model
     
     @property
@@ -789,18 +791,14 @@ class RunnerRobustFT(RunnerBase):
             
             elif opt == "pcgrad": 
                 params_to_opt = [x[1] for x in self._model.named_parameters() if x[1].requires_grad]
-                self._model.add_parameter("strengths", torch.zeros(len(params_to_opt)))
-                
-                for x in self._model.named_parameters():
-                    if x[0] == "strengths":
-                        strengths = x[1]
                 
                 optimizer_params = {
                     "lr": lr,
                     "weight_decay": weight_decay,
                     "use_lora": use_lora,
                     "proj_term": self.config.run_cfg.get("proj_term", "both"),
-                    "strength": strengths #self.config.run_cfg.get("pcgrad_strength", 1.0),
+                    "strength": self.config.run_cfg.get("pcgrad_strength", 1.0),
+                    "trainable_strength": self.config.run_cfg.get("trainable_strength", True),
                 }
                 
                 if use_lora:
