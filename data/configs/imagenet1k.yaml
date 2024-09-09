@@ -1,0 +1,35 @@
+# Copyright (c) 2022, salesforce.com, inc.
+# All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause
+# For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+
+datasets:
+    imagenet1k:
+        data_type: images
+        class_name_key: "clip_bench_label"
+        # cropped_images_dir: "/nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/imagenet/ovqa/data/imagenet1k/square"
+        build_info:
+            annotations:
+                train:
+                    url:
+                        - None
+                        - None
+                    storage:
+                        - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/imagenet/ovqa/ovqa/annotations/imagenet1k/generated/train.json
+                        - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/imagenet/ovqa/ovqa/annotations/imagenet1k/generated/classes_data.json
+                val:
+                    url:
+                        - None
+                        - None
+                    storage:
+                        - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/imagenet/ovqa/ovqa/annotations/imagenet1k/generated/val.json
+                        - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/imagenet/ovqa/ovqa/annotations/imagenet1k/generated/classes_data.json
+                test:
+                    url:
+                        - None
+                        - None
+                    storage:
+                        - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/imagenet/ovqa/ovqa/annotations/imagenet1k/generated/val.json
+                        - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/imagenet/ovqa/ovqa/annotations/imagenet1k/generated/classes_data.json
+            images:
+                storage: /srv/kira-lab/share4/datasets/ImageNet/imagenet

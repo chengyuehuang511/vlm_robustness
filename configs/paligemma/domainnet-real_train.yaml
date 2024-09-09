@@ -1,0 +1,67 @@
+model:
+  arch: paligemma_vqa
+  model_type: paligemma-3b-pt-224  # paligemma-3b-pt-224
+  load_pretrained: True
+  pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
+  load_finetuned: False
+  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/DomainNet-Real/lp_1e-3/20240824012/checkpoint_best.pth'
+  # lp: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/DomainNet-Real/lp_1e-3/20240824012/checkpoint_best.pth
+
+  # lora
+  use_lora: 1
+  target_modules: "q_proj k_proj v_proj o_proj"
+  lora_rank: 8
+
+  # linear probe
+  linear_probe: 0
+
+datasets:
+  domainnet-real: # name of the dataset builder
+    question_type: what-is-in-image
+
+run:
+  task: classifier_vqa
+  # optimizer
+  opt: "pcgrad"
+  proj_term: "both"
+  pcgrad_strength: 1.0
+  adamh_ortho: False
+  adamp_k: 0.5 # 0.5 1
+  lr_sched: "linear_warmup_cosine_lr"
+  init_lr: 1e-3  # 1e-5 3e-6
+  min_lr: 1e-4 # 0
+  warmup_steps: 1000
+  warmup_lr: 1e-4 # 1e-8 3e-7
+  weight_decay: 1e-4 # 3e-7 # 5e-5 0.5 1 1.5 2
+  max_epoch: 10
+  accum_grad_iters: 2 # 1
+  lr_layer_decay: 0.9
+
+  # optimization-specific
+  batch_size_train: 16  # 256
+  batch_size_eval: 16
+  num_workers: 4
+
+  # inference-specific
+  max_len: 10
+  min_len: 1
+  num_beams: 5
+  num_ans_candidates: 128
+  inference_method: "generate"
+  prompt: "Question: {} Short answer:"
+
+  seed: 42
+  output_dir: "output/PALIGEMMA/DomainNet-Real/pcgrad_1e-3_1e-4_1"
+
+  amp: False
+
+  evaluate: False
+  train_splits: ["train"]
+  valid_splits: ["val"]
+  test_splits: ["test"]
+
+  # distribution-specific
+  device: "cuda"
+  world_size: 8
+  dist_url: "env://"
+  distributed: True

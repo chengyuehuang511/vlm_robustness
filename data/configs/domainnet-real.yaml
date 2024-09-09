@@ -1,0 +1,29 @@
+datasets:
+  domainnet-real:
+    build_info:
+      annotations:
+        train:
+          storage:
+            - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/domainnet/real_train_split.json
+            - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/domainnet/classes_data.json
+          url:
+            - None
+            - None
+        val:
+          storage:
+            - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/domainnet/real_val_split.json
+            - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/domainnet/classes_data.json
+          url:
+            - None
+            - None
+        test:
+          storage:
+            - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/domainnet/real_test.json
+            - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/domainnet/classes_data.json
+          url:
+            - None
+            - None
+      images:
+        storage: /srv/kira-lab/share4/chuang475/datasets/domainnet
+    class_name_key: clip_bench_label
+    data_type: images

@@ -1,0 +1,76 @@
+ # Copyright (c) 2022, salesforce.com, inc.
+ # All rights reserved.
+ # SPDX-License-Identifier: BSD-3-Clause
+ # For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+
+model:
+  arch: paligemma_vqa
+  model_type: paligemma-3b-pt-224
+  # load_pretrained: True
+  # pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
+  load_finetuned: True
+<<<<<<< HEAD
+  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/adamh_1e-3_0.5_back/20240830181/checkpoint_best.pth'
+=======
+<<<<<<< HEAD
+  finetuned: '/nethome/bmaneech3/flash/LAVIS/lavis/output/PALIGEMMA/VQA/PA/qkvo_s1_r1024_relu_10/20240817110/checkpoint_best.pth'
+=======
+  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/DomainNet-Real/adamh_1e-3/0.5/20240822015/checkpoint_best.pth'
+>>>>>>> 403460e48f448a9373a7dcc1a723cbc8d3c8f828
+>>>>>>> cb33b0cee934e55f224e67cd7effdabc058e21b2
+
+  # lora
+  use_lora: 0
+  use_adapter: 1
+  use_parallel_adapter: 1
+  target_modules: "q_proj k_proj v_proj o_proj"
+  scaling: 1
+  bottleneck_size: 1024
+  non_linearity: "relu"
+  adapter_dropout: 0.1 
+
+  # wise
+<<<<<<< HEAD
+  # wise: 1
+=======
+  wise: 0
+>>>>>>> 403460e48f448a9373a7dcc1a723cbc8d3c8f828
+
+
+datasets:
+  coco_vqa_cp: # name of the dataset builder
+    vis_processor:
+        eval:
+          name: "blip_image_eval"
+          image_size: 448
+    text_processor:
+        eval:
+          name: "blip_question"
+
+run:
+  task: vqa
+
+  # optimization-specific
+  batch_size_train: 16
+  batch_size_eval: 16
+  num_workers: 4
+
+  # inference-specific
+  max_len: 10
+  min_len: 1
+  num_beams: 5
+  num_ans_candidates: 128
+  inference_method: "generate"
+  prompt: "Question: {} Answer:"
+
+  seed: 42
+  output_dir: "output/PALIGEMMA/VQACP/PA"
+
+  evaluate: True
+  test_splits: ["val"]
+
+  # distribution-specific
+  device: "cuda"
+  world_size: 8
+  dist_url: "env://"
+  distributed: True

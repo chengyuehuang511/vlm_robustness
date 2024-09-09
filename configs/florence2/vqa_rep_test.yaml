@@ -1,0 +1,49 @@
+ # Copyright (c) 2022, salesforce.com, inc.
+ # All rights reserved.
+ # SPDX-License-Identifier: BSD-3-Clause
+ # For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+
+model:
+  arch: florence2_vqa
+  model_type: Florence-2-large-ft
+  load_pretrained: True
+  pretrained: 'https://huggingface.co/microsoft/Florence-2-large-ft'
+
+
+datasets:
+  coco_vqa_rephrasings: # name of the dataset builder
+    vis_processor:
+        eval:
+          name: "blip_image_eval"
+          image_size: 448
+    text_processor:
+        eval:
+          name: "blip_question"
+
+run:
+  task: vqa
+
+  # optimization-specific
+  batch_size_train: 16
+  batch_size_eval: 16
+  num_workers: 4
+
+  # inference-specific
+  max_len: 10
+  min_len: 1
+  num_beams: 5
+  num_ans_candidates: 128
+  inference_method: "generate"
+  prompt: "Question: {} Answer:"
+
+  seed: 42
+  output_dir: "output/FLORENCE2/VQA_REP"
+
+  evaluate: True
+  test_splits: ["val"]
+
+  # distribution-specific
+  device: "cuda"
+  world_size: 8
+  dist_url: "env://"
+  distributed: True

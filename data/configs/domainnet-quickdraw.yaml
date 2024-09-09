@@ -1,0 +1,15 @@
+datasets:
+  domainnet-quickdraw:
+    build_info:
+      annotations:
+        test:
+          storage:
+            - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/domainnet/quickdraw_test.json
+            - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/domainnet/classes_data.json
+          url:
+            - None
+            - None
+      images:
+        storage: /srv/kira-lab/share4/chuang475/datasets/domainnet
+    class_name_key: clip_bench_label
+    data_type: images

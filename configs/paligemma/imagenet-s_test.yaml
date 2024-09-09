@@ -1,0 +1,78 @@
+ # Copyright (c) 2022, salesforce.com, inc.
+ # All rights reserved.
+ # SPDX-License-Identifier: BSD-3-Clause
+ # For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+
+model:
+  arch: paligemma_vqa
+  model_type: paligemma-3b-pt-224
+  load_pretrained: True
+  pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
+  load_finetuned: False
+  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/1e-3/20240721224/checkpoint_best.pth'
+
+  # lora
+  use_lora: 1
+  target_modules: "q_proj k_proj v_proj o_proj"
+  lora_rank: 8
+
+  # wise
+  wise: 0
+
+
+datasets:
+  imagenet-s: # name of the dataset builder
+    question_type: what-is-in-image
+    type: eval
+
+run:
+  task: classifier_vqa_followup
+
+  # follow-up questions
+  followup_cfg:
+    arg_max_or_average_syn_leaves: arg_max_syn
+    arg_max_or_average_syn_parents: arg_max_syn
+    canonical_mode_leaves: none
+    canonical_mode_parents: none
+    canonical_threshold: 0.37
+    consider_neighbors: 0
+    followup_prompt: 'Question: What type of {} is this? Short answer:'
+    model_name: EVA01-g-14/laion400m_s11b_b41k
+    package_name: open-clip
+    templates_name_leaves: openai_imagenet_template
+    templates_name_parents: openai_imagenet_template
+    use_synonyms_leaves: false
+    use_synonyms_parents: true
+  followup_prev_dir: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET-S/20240813025/
+  # lora: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET-S/20240815004/
+  # spd: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET-S/20240815000/
+  # spd_wise: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET-S/20240815012/
+  # wise: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET-S/20240815010/
+  # fft: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET-S/20240813025/
+  # zs: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET-S/20240813130/
+
+
+  # optimization-specific
+  batch_size_train: 16
+  batch_size_eval: 16
+  num_workers: 4
+
+  # inference-specific
+  max_len: 10
+  min_len: 1
+  num_beams: 5
+  num_ans_candidates: 128
+  inference_method: "generate"
+  prompt: "Question: {} Short answer:"
+
+  seed: 42
+  output_dir: "output/PALIGEMMA/IMAGENET-S"
+
+  evaluate: True
+  test_splits: ["val"]
+
+  # distribution-specific
+  device: "cuda"
+  world_size: 8
+  dist_url: "env://"
+  distributed: True
