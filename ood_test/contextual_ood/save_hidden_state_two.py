@@ -53,7 +53,7 @@ ds_split_2_file = {
     "vqa_rephrasings_test": "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/vqa_rephrasings/combined_data.json",
     "vqa_vs_train" : "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/train/combined_data.json", 
     "vqa_vs_id_val" : "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/val/combined_data.json", 
-    "vqa_vs_id_test" : "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/ID_test_combined_ann.json", 
+    "vqa_vs_id_test" : "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/combined_data.json", 
     "vqa_vs_ood_test" : "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/combined_data.json", 
     "vqa_vs_KO" : "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KO/combined_data.json",
     "vqa_vs_KOP" : "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KOP/combined_data.json", 
@@ -161,20 +161,32 @@ def get_hidden_states(inputs, concept_type="joint", hidden_layer=19) :
     return 
         concept_hidden_states : (batch size, # of concept, hidden dim)
     """
-    image_hidden_state = hidden_states[0][:, 0:256, :] #(batch size, hidden dim) 
-    u_image_vector = torch.mean(image_hidden_state, dim=1).unsqueeze(1)
-    concept_hidden_vectors = u_image_vector 
-    
-    # for i in range(len(hidden_states)) : 
-    u_hidden_vector =  torch.mean(hidden_states[-1], dim=1) 
-    cur_hidden_vectors = u_hidden_vector.unsqueeze(1) # dim 1 = concept
-    concept_hidden_vectors = torch.cat([concept_hidden_vectors, cur_hidden_vectors], dim = 1)
 
-    del hidden_states 
-    del image_hidden_state 
-    del u_image_vector
-    del u_hidden_vector
-    del cur_hidden_vectors 
+
+
+    # image_hidden_state = hidden_states[0][:, 0:256, :] #(batch size, seq length, hidden dim) 
+    # u_image_vector = torch.mean(image_hidden_state, dim=1).unsqueeze(1)
+    # concept_hidden_vectors = u_image_vector 
+    
+    # # for i in range(len(hidden_states)) : 
+    # u_hidden_vector =  torch.mean(hidden_states[-1], dim=1) 
+    # cur_hidden_vectors = u_hidden_vector.unsqueeze(1) # dim 1 = concept
+    # concept_hidden_vectors = torch.cat([concept_hidden_vectors, cur_hidden_vectors], dim = 1)
+
+    question_hidden_state = hidden_states[9][:, 256:, :] #(batch size, seq length, hidden dim) #what layer should i do? 1?
+    concept_hidden_vectors = torch.mean(question_hidden_state, dim=1).unsqueeze(1)
+
+    last_question_hidden_state = torch.mean(hidden_states[-1][:,256:,:], dim=1) .unsqueeze(1)
+    concept_hidden_vectors = torch.cat([concept_hidden_vectors, last_question_hidden_state], dim=1)
+
+   # del hidden_states 
+    # del image_hidden_state 
+    # del u_image_vector
+    # del u_hidden_vector
+    # del cur_hidden_vectors 
+    del hidden_states
+    del question_hidden_state
+    del last_question_hidden_state
     torch.cuda.empty_cache()
     
 
@@ -269,7 +281,7 @@ concept : joint/image/question etc.
 """
 
 #how to organize when you get the score 
-concept_type = ["joint", "image"] #
+concept_type = ["question"] #
 
 
 splits =[
@@ -277,11 +289,11 @@ splits =[
     #(train, test, concept)
     #vqav2 train with all others
     #train_stuff = sample[0], test_stuff = sample[1]
-    [("vqa_rephrasings", "test"),("vqa_vs", "id_val")], 
+    [("vqa_v2", "train"), ("vqa_v2","val")],
+    [("vqa_rephrasings", "test"), ("vqa_vs", "id_val")], 
     [("vqa_ce","test"), ("vqa_v2","train")],
-    [("vqa_vs", "id_test"), ("vqa_v2","test")]
+    [("vqa_v2","test"), ("vqa_vs", "id_test")]
 
-    # [("vqa_vs", "id_test"),("vqa_vs", "KO")],
     # [("vqa_vs", "KO"), ("vqa_vs", "KOP")],
     # [("vqa_vs", "KW"), ("vqa_vs", "KW_KO")],
     # [("vqa_vs", "KWP"),("vqa_vs", "QT")],
@@ -297,7 +309,7 @@ if os.path.exists(results_file) :
 else : 
     results_dict = {} 
 
-hidden_layer_name = ["image", "joint_lastl"]
+hidden_layer_name = ["q_mid", "q_last"]
 
 # for i in range(1,20) : 
 #     hidden_layer_name.append(f"joint_l{i}")
@@ -318,10 +330,10 @@ if __name__ == "__main__" :
 
         if (f"{train_split}" in results_dict): 
             if (f"{test_split}" in results_dict[f"{train_split}"]) : 
-                if (concept_type in results_dict[f"{train_split}"][f"{test_split}"]) : 
+                if (concept_type[0] in results_dict[f"{train_split}"][f"{test_split}"]) : 
                     print(f"already measured")
                     continue  
-
+                
         with open(train_file, 'r') as f :
             train_data = json.load(f)
 
@@ -348,7 +360,7 @@ if __name__ == "__main__" :
                 inputs, labels = batch 
                 inputs = inputs.to(device) #don't forget to add puts to gpu 
             
-                enc_vectors = get_hidden_states(inputs)
+                enc_vectors = get_hidden_states(inputs, concept_type)
                 enc_vectors_cpu = enc_vectors.cpu() #(batchsize, concept, hidden size)
 
                 #free up memory so next batch can use GPU compute 
@@ -387,7 +399,7 @@ if __name__ == "__main__" :
                 inputs, labels = batch 
                 inputs = inputs.to(device)
 
-                enc_vectors = get_hidden_states(inputs)
+                enc_vectors = get_hidden_states(inputs, concept_type)
                 enc_vectors_cpu = enc_vectors.cpu() #(batchsize, concept, hidden size)
 
                 test_vectors.append(enc_vectors_cpu)

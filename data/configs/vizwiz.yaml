@@ -18,10 +18,10 @@ datasets:
               - https://textvqa.org/dataset/
               - https://textvqa.org/dataset/
           storage:
-              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vizwiz/val/combined_data.json
+              - /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/vizwiz/val/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
-              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vizwiz/val/question.json
-              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vizwiz/val/annotation.json
+              - /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/vizwiz/val/question.json
+              - /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/vizwiz/val/annotation.json
         test:
           url:
               - https://textvqa.org/dataset/
@@ -29,9 +29,9 @@ datasets:
               - https://textvqa.org/dataset/
               - https://textvqa.org/dataset/
           storage:
-              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vizwiz/val/combined_data.json
+              - /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/vizwiz/val/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
-              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vizwiz/val/question.json
-              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/vizwiz/val/annotation.json
+              - /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/vizwiz/val/question.json
+              - /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/vizwiz/val/annotation.json
       images:
           storage: /srv/datasets/vizwiz/data/Images/

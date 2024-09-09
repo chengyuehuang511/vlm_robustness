@@ -18,7 +18,7 @@ datasets:
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
           storage:
-              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/ok-vqa/val/combined_data.json
+              - /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/ok-vqa/val/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
               - /srv/datasets/ok-vqa_dataset/OpenEnded_mscoco_val2014_questions.json
               - /srv/datasets/ok-vqa_dataset/mscoco_val2014_annotations.json
@@ -29,7 +29,7 @@ datasets:
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
               - http://data.lip6.fr/cadene/murel/vqacp2.tar.gz
           storage:
-              - /nethome/chuang475/flash/projects/vlm_robustness/tmp/datasets/ok-vqa/val/combined_data.json
+              - /coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/ok-vqa/val/combined_data.json
               - /coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json
               - /srv/datasets/ok-vqa_dataset/OpenEnded_mscoco_val2014_questions.json
               - /srv/datasets/ok-vqa_dataset/mscoco_val2014_annotations.json

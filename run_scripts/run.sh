@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --job-name=test_vs
-#SBATCH --output=test_vs.out
+#SBATCH --job-name=test
+#SBATCH --output=test.out
 #SBATCH --partition="kira-lab"
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
@@ -15,5 +15,5 @@ conda activate riplenv
 cd /nethome/bmaneech3/flash/vlm_robustness
 
 
-srun -u python -m torch.distributed.run --nproc_per_node=1 /nethome/bmaneech3/flash/vlm_robustness/test_gen.py
+srun -u python -m torch.distributed.run --nproc_per_node=1 /nethome/bmaneech3/flash/vlm_robustness/ood_test/contextual_ood/hist_vis.py
 

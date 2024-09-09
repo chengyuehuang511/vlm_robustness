@@ -6,19 +6,28 @@
 model:
   arch: paligemma_vqa
   model_type: paligemma-3b-pt-224
-  load_pretrained: True
-  pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
+  # load_pretrained: True
+  # pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
   load_finetuned: True
   finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/adamh_1e-3_0.5_back/20240830181/checkpoint_best.pth'
   # '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/adamp/1e-3_wd1e-4_nopre_k0/20240804121/checkpoint_best.pth'
+>>>>>>> 403460e48f448a9373a7dcc1a723cbc8d3c8f828
 
   # lora
-  use_lora: 1
+  use_lora: 0
+  use_adapter: 1
+  use_parallel_adapter: 1
   target_modules: "q_proj k_proj v_proj o_proj"
-  lora_rank: 8
-
+  scaling: 1
+  bottleneck_size: 1024
+  non_linearity: "relu"
+  adapter_dropout: 0.1 
   # wise
+<<<<<<< HEAD
+  # wise: 1
+=======
   wise: 0
+>>>>>>> 403460e48f448a9373a7dcc1a723cbc8d3c8f828
 
 
 datasets:
@@ -48,7 +57,7 @@ run:
   prompt: "Question: {} Answer:"
 
   seed: 42
-  output_dir: "output/PALIGEMMA/ADVQA"
+  output_dir: "output/PALIGEMMA/ADVQA/PA"
 
   evaluate: True
   test_splits: ["val"]

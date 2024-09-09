@@ -33,3 +33,42 @@ WARNING:py.warnings:/nethome/bmaneech3/flash/miniconda3/envs/riplenv/lib/python3
 WARNING:root:rank 0 starts merging results.
 WARNING:root:rank 0 starts merging results.
 WARNING:root:rank 0 starts merging results.
+WARNING:root:rank 0 starts merging results.
+slurmstepd: error: *** STEP 939525.0 ON megabot CANCELLED AT 2024-08-12T21:49:28 ***
+W0812 21:49:28.636817 140129694065024 torch/distributed/elastic/agent/server/api.py:741] Received Signals.SIGTERM death signal, shutting down workers
+W0812 21:49:28.637435 140129694065024 torch/distributed/elastic/multiprocessing/api.py:851] Sending process 3775382 closing signal SIGTERM
+W0812 21:49:28.637584 140129694065024 torch/distributed/elastic/multiprocessing/api.py:851] Sending process 3775383 closing signal SIGTERM
+W0812 21:49:28.637706 140129694065024 torch/distributed/elastic/multiprocessing/api.py:851] Sending process 3775384 closing signal SIGTERM
+W0812 21:49:28.637831 140129694065024 torch/distributed/elastic/multiprocessing/api.py:851] Sending process 3775385 closing signal SIGTERM
+W0812 21:49:28.637955 140129694065024 torch/distributed/elastic/multiprocessing/api.py:851] Sending process 3775386 closing signal SIGTERM
+W0812 21:49:28.638080 140129694065024 torch/distributed/elastic/multiprocessing/api.py:851] Sending process 3775387 closing signal SIGTERM
+W0812 21:49:28.638203 140129694065024 torch/distributed/elastic/multiprocessing/api.py:851] Sending process 3775388 closing signal SIGTERM
+W0812 21:49:28.638346 140129694065024 torch/distributed/elastic/multiprocessing/api.py:851] Sending process 3775389 closing signal SIGTERM
+Traceback (most recent call last):
+  File "/nethome/bmaneech3/flash/miniconda3/envs/riplenv/lib/python3.9/runpy.py", line 197, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/nethome/bmaneech3/flash/miniconda3/envs/riplenv/lib/python3.9/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/nethome/bmaneech3/flash/miniconda3/envs/riplenv/lib/python3.9/site-packages/torch/distributed/run.py", line 883, in <module>
+    main()
+  File "/nethome/bmaneech3/flash/miniconda3/envs/riplenv/lib/python3.9/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 347, in wrapper
+    return f(*args, **kwargs)
+  File "/nethome/bmaneech3/flash/miniconda3/envs/riplenv/lib/python3.9/site-packages/torch/distributed/run.py", line 879, in main
+    run(args)
+  File "/nethome/bmaneech3/flash/miniconda3/envs/riplenv/lib/python3.9/site-packages/torch/distributed/run.py", line 870, in run
+    elastic_launch(
+  File "/nethome/bmaneech3/flash/miniconda3/envs/riplenv/lib/python3.9/site-packages/torch/distributed/launcher/api.py", line 132, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/nethome/bmaneech3/flash/miniconda3/envs/riplenv/lib/python3.9/site-packages/torch/distributed/launcher/api.py", line 254, in launch_agent
+    result = agent.run()
+  File "/nethome/bmaneech3/flash/miniconda3/envs/riplenv/lib/python3.9/site-packages/torch/distributed/elastic/metrics/api.py", line 123, in wrapper
+    result = f(*args, **kwargs)
+  File "/nethome/bmaneech3/flash/miniconda3/envs/riplenv/lib/python3.9/site-packages/torch/distributed/elastic/agent/server/api.py", line 733, in run
+    result = self._invoke_run(role)
+  File "/nethome/bmaneech3/flash/miniconda3/envs/riplenv/lib/python3.9/site-packages/torch/distributed/elastic/agent/server/api.py", line 876, in _invoke_run
+    time.sleep(monitor_interval)
+  File "/nethome/bmaneech3/flash/miniconda3/envs/riplenv/lib/python3.9/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 76, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 3775379 got signal: 15
+srun: error: megabot: task 0: Exited with exit code 1
+srun: Terminating StepId=939525.0

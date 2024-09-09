@@ -2,19 +2,20 @@ model:
   arch: paligemma_vqa
   model_type: paligemma-3b-pt-224  # paligemma-3b-pt-224
   # load_pretrained: True
-  
   # pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
-  load_finetuned: True 
-  finetuned: "/nethome/bmaneech3/flash/LAVIS/lavis/output/PALIGEMMA/VQA/PA/qkvo_s1_r1024_relu_10/20240811115/checkpoint_0.pth"
 
+  #done 3 epochs + 3 epochs + 4 epochs 
+  load_finetuned: True 
+  #latest checkpoint : /nethome/bmaneech3/flash/LAVIS/lavis/output/PALIGEMMA/VQA/SA/qkvo_s1_r512_relu_10/20240827171/result/test_vqa_result.json
+  finetuned: "/nethome/bmaneech3/flash/LAVIS/lavis/output/PALIGEMMA/VQA/SA/qkvo_s1_r512_relu_10/20240824205/checkpoint_best.pth"
   
   # lora
   use_lora: 0
   use_adapter: 1
-  use_parallel_adapter: 1
+  use_parallel_adapter: 0
   target_modules: "q_proj k_proj v_proj o_proj"
   scaling: 1
-  bottleneck_size: 1024
+  bottleneck_size: 512
   non_linearity: "relu"
   adapter_dropout: 0.1 
 
@@ -40,7 +41,6 @@ datasets:
 
 run:
   task: vqa
-   
   # optimizer
   opt: "adam"
   lr_sched: "linear_warmup_cosine_lr"
@@ -49,7 +49,7 @@ run:
   warmup_steps: 1000
   warmup_lr: 1e-6 # 1e-8 3e-7
   weight_decay: 1e-6 # 3e-7 # 5e-5 0.5 1 1.5 2
-  max_epoch: 10
+  max_epoch: 4
   accum_grad_iters: 2 # 1
   lr_layer_decay: 0.9
 
@@ -67,7 +67,7 @@ run:
   prompt: "Question: {} Answer:"
 
   seed: 42
-  output_dir: "output/PALIGEMMA/VQA/PA/qkvo_s1_r1024_relu_10"
+  output_dir: "output/PALIGEMMA/VQA/SA/qkvo_s1_r512_relu_10"
 
   amp: False
 
