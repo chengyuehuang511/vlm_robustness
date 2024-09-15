@@ -5,7 +5,6 @@ import copy
 import math
 import logging
 from typing import List, Dict, Optional
-import torch.nn.functional as F
 
 
 def orthogonal_component(a, b, strength=1.0, return_projection=False):
@@ -166,7 +165,7 @@ class PCGrad(Optimizer):
             bias_correction2 = 1 - beta2 ** step
             
             """projecting conflicting gradients"""
-            condition = weight_decay * (param if pre is None else param - pre)
+            condition = param if pre is None else param - pre
             # condition_buffer[i] += torch.sum(grad * condition)
             # if condition_buffer[i] < 0.0:
             dot = torch.sum(grad * condition)
@@ -177,21 +176,21 @@ class PCGrad(Optimizer):
                 loss_strength, reg_strength, loss_correct, reg_correct = self.tpcgrad.step(grad, condition, lr, dot, grad_norm, condition_norm)
                 # TODO
                 if dot < 0.0:
-                    grad = (grad - loss_strength * loss_correct) + (condition - reg_strength * reg_correct)
+                    grad = (grad - loss_strength * loss_correct) + weight_decay * (condition - reg_strength * reg_correct)
                 else:
-                    grad = grad + condition
+                    grad = grad + weight_decay * condition
             else:
                 if dot < 0.0:
                     if self.proj_term == "both":
-                        grad = orthogonal_component(grad, condition, self.strength) + orthogonal_component(condition, grad, self.strength)
+                        grad = orthogonal_component(grad, condition, self.strength) + weight_decay * orthogonal_component(condition, grad, self.strength)
                     elif self.proj_term == "reg":
-                        grad = grad + orthogonal_component(condition, grad, self.strength)
+                        grad = grad + weight_decay * orthogonal_component(condition, grad, self.strength)
                     elif self.proj_term == "grad":
-                        grad = orthogonal_component(grad, condition, self.strength) + condition
+                        grad = orthogonal_component(grad, condition, self.strength) + weight_decay * condition
                     else:
                         raise ValueError("Invalid proj_term value: {}".format(self.proj_term))
                 else:
-                    grad = grad + condition
+                    grad = grad + weight_decay * condition
             
             exp_avg.mul_(beta1).add_(grad, alpha=1 - beta1)
             exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value=1 - beta2)
@@ -225,7 +224,7 @@ class TPCGrad(object):
         self.weight_decay = weight_decay
 
         # AdamUtil parameteres
-        self.mu = 1.0
+        self.mu = 10.0
         print("mu: ", self.mu)
         self.beta1 = 0.9
         self.beta2 = 0.999
@@ -263,8 +262,9 @@ class TPCGrad(object):
             lr_prev = self.lr[self.j]
 
             # Calculate gradient for gamma
-            loss_strength_grad = torch.sum(F.normalize(grad + condition) * F.normalize(loss_correct_prev))
-            reg_strength_grad = torch.sum(F.normalize(grad + condition) * F.normalize(reg_correct_prev))
+            loss_strength_grad = lr_prev * torch.sum((grad + self.weight_decay * condition) * loss_correct_prev)
+            reg_strength_grad = self.weight_decay * lr_prev * torch.sum((grad + self.weight_decay * condition) * reg_correct_prev)
+            # reg_strength_grad = lr_prev * torch.sum((grad + self.weight_decay * condition) * reg_correct_prev)
 
             loss_strength, reg_strength = self._adam_util(loss_strength_prev, loss_strength_grad, reg_strength_prev, reg_strength_grad)
             loss_strength = self.threshold(loss_strength)

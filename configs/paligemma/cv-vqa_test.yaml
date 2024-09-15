@@ -6,35 +6,18 @@
 model:
   arch: paligemma_vqa
   model_type: paligemma-3b-pt-224
-  # load_pretrained: True
-  # pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
+  load_pretrained: True
+  pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
   load_finetuned: True
-<<<<<<< HEAD
-  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/adamh_1e-3_0.5_back/20240830181/checkpoint_best.pth'
-=======
-<<<<<<< HEAD
-  finetuned: '/nethome/bmaneech3/flash/LAVIS/lavis/output/PALIGEMMA/VQA/PA/qkvo_s1_r1024_relu_10/20240817110/checkpoint_best.pth'
-=======
-  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/DomainNet-Real/adamh_1e-3/0.5/20240822015/checkpoint_best.pth'
->>>>>>> 403460e48f448a9373a7dcc1a723cbc8d3c8f828
->>>>>>> cb33b0cee934e55f224e67cd7effdabc058e21b2
+  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/tpcgrad_1e-3_1e-4_mu1/20240912135/checkpoint_best.pth'
 
   # lora
-  use_lora: 0
-  use_adapter: 1
-  use_parallel_adapter: 1
+  use_lora: 1
   target_modules: "q_proj k_proj v_proj o_proj"
-  scaling: 1
-  bottleneck_size: 1024
-  non_linearity: "relu"
-  adapter_dropout: 0.1 
+  lora_rank: 8
 
   # wise
-<<<<<<< HEAD
-  # wise: 1
-=======
   wise: 0
->>>>>>> 403460e48f448a9373a7dcc1a723cbc8d3c8f828
 
 
 datasets:
@@ -64,7 +47,7 @@ run:
   prompt: "Question: {} Answer:"
 
   seed: 42
-  output_dir: "output/PALIGEMMA/CV-VQA/PA"
+  output_dir: "output/PALIGEMMA/CV-VQA"
 
   evaluate: True
   test_splits: ["val"]
