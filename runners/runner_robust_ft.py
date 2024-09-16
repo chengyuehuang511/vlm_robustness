@@ -824,6 +824,21 @@ class RunnerRobustFT(RunnerBase):
                                     'pre': params_anchor}]
                 self._optimizer = MOP(param_group,**optimizer_params)
             
+            elif opt == "spcg":
+                optimizer_params = {
+                    "lr": lr,
+                    "weight_decay": weight_decay, #args.weight_decay, 1
+                    "use_lora": use_lora,
+                } 
+                params_to_opt = [x[1] for x in self._model.named_parameters() if x[1].requires_grad]
+                if use_lora:
+                    param_group = [{'params':params_to_opt}]
+                else:
+                    params_anchor = copy.deepcopy(params_to_opt)
+                    param_group = [{'params':params_to_opt,
+                                    'pre': params_anchor}]
+                self._optimizer = SPCG(param_group,**optimizer_params)
+            
             elif opt == "adam":
                 self._optimizer = torch.optim.AdamW(trainable_params, lr=lr, weight_decay=weight_decay)
             else:

@@ -14,4 +14,5 @@ export CUBLAS_WORKSPACE_CONFIG=:4096:8
 export PYTHONHASHSEED=42
 export TOKENIZERS_PARALLELISM=false
 
+# /nethome/chuang475/flash/miniconda3/envs/lavis
 srun -u /coc/testnvme/chuang475/miniconda3/envs/lavis_same/bin/python -m torch.distributed.run --nproc_per_node=8 train.py --cfg-path configs/paligemma/vqav2_train.yaml
