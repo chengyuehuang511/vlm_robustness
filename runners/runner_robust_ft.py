@@ -36,6 +36,7 @@ from torch.utils.data.dataset import ChainDataset
 
 from optimizer import *
 import copy
+from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 
 
 class RunnerBase:
@@ -853,3 +854,62 @@ class RunnerRobustFT(RunnerBase):
             print("optimizer: ", self._optimizer)
         
         return self._optimizer
+    
+    def _load_checkpoint(self, url_or_filename):
+        """
+        Resume from a checkpoint.
+        """
+        print("url ", url_or_filename)
+        if is_url(url_or_filename):
+            cached_file = download_cached_file(
+                url_or_filename, check_hash=False, progress=True
+            )
+            checkpoint = torch.load(cached_file, map_location=self.device)
+        elif os.path.isfile(url_or_filename):
+            checkpoint = torch.load(url_or_filename, map_location=self.device)
+        else:
+            raise RuntimeError("checkpoint url or path is invalid")
+
+        state_dict = checkpoint["model"]
+
+        use_lora = int(self.config.model_cfg.get("use_lora", 0))
+        lora_alpha = int(self.config.model_cfg.get("lora_alpha", 16))
+        lora_rank = int(self.config.model_cfg.get("lora_rank", 4))
+        target_modules = self.config.model_cfg.get("target_modules", "q_proj k_proj v_proj o_proj").split()
+
+        if use_lora == 1:
+            lora_config = LoraConfig(
+                r=lora_rank,  # 4
+                lora_alpha=lora_alpha,
+                lora_dropout=0.05,
+                bias="none",
+                target_modules=target_modules,  # ['q_proj', 'k_proj', 'v_proj', 'o_proj'],  # qformer, qkv
+            )
+            
+            logging.info(lora_config)
+            # model = prepare_model_for_kbit_training(model)
+            
+            self._model = get_peft_model(self._model, lora_config)
+            logging.info(self._model.print_trainable_parameters())
+
+        for key in list(state_dict.keys()):
+            start_key = "base_model.model.model."
+            start_key_2 = "model."
+            if key.startswith(start_key):
+                state_dict[key[len(start_key):]] = state_dict.pop(key)
+            elif key.startswith(start_key_2):
+                state_dict[key[len(start_key_2):]] = state_dict.pop(key)
+        # Load the current state_dict of the model
+        current_state_dict = self.unwrap_dist_model(self.model).state_dict()
+        for key in state_dict.keys():
+            assert key in current_state_dict, f"key {key} not in current_state_dict"
+            current_state_dict[key] = state_dict[key]
+
+        self.unwrap_dist_model(self.model).load_state_dict(current_state_dict)
+
+        self.optimizer.load_state_dict(checkpoint["optimizer"])
+        if self.scaler and "scaler" in checkpoint:
+            self.scaler.load_state_dict(checkpoint["scaler"])
+
+        self.start_epoch = checkpoint["epoch"] + 1
+        logging.info("Resume checkpoint from {}".format(url_or_filename))

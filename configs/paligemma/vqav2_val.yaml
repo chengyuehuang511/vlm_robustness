@@ -4,7 +4,7 @@ model:
   load_pretrained: True
   pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
   load_finetuned: True
-  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/tpcgrad_1e-3_1e-4_mu1/20240912135/checkpoint_best.pth'
+  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/spcg_1e-3_mu0.5/20240918154/checkpoint_best.pth'
   # domainnet-real, adamh: adamh_1e-3/0.5/20240822015
   # domainnet-real: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/DomainNet-Real/1e-3/20240821234/checkpoint_best.pth'
   # adamp:/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/20240715010/checkpoint_best.pth'
@@ -20,6 +20,9 @@ model:
   # tpcgrad_1e-3_1e-4_mu1e-2/20240910111
   # tpcgrad_1e-3_1e-4_mu1/20240912135
   # tpcgrad_1e-3_1e-4_mu100/20240912165
+
+  # spcg_1e-3_mu1/20240917115
+  # spcg_1e-3_mu0.5/20240918154
 
   # lora
   use_lora: 1

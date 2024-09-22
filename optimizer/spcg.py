@@ -29,9 +29,13 @@ def orthogonal_component(a, b, strength=1.0, return_projection=False):
 
 class SPCG(Optimizer):
     def __init__(self, params, lr=1e-3, betas=(0.9, 0.999), eps=1e-8,
-                 weight_decay=0, amsgrad=False, exclude_set={}, use_lora=False):
+                 weight_decay=0, amsgrad=False, exclude_set={}, use_lora=False, trainable_wd=True):
         self.exclude_set = exclude_set
         self.use_lora = use_lora
+        self.trainable_wd = trainable_wd
+        if self.trainable_wd:
+            print("Trainable strengths!")
+            self.tpcgrad = TPCGrad()
         
         print("Weight decay is the orthogonal component strength!")
 
@@ -128,6 +132,7 @@ class SPCG(Optimizer):
                    group['weight_decay'],
                    group['eps']
                    )
+        self.tpcgrad.incre_counters() # Increase counters for TPCGrad
         return loss
 
     def adam(self, 
@@ -163,12 +168,18 @@ class SPCG(Optimizer):
             dot = torch.sum(grad * condition)
             grad_norm = torch.norm(grad)
             condition_norm = torch.norm(condition)
-
-            lamb = 0
+            
+            lamb = torch.tensor(0.0).to(grad.device)
+            if self.trainable_wd:
+                loss_correct = dot / (condition_norm ** 2 + 1e-8) * condition
+                weight_decay = self.tpcgrad.step(grad, loss_correct)  # weight_decay = loss_strength
+            
             if dot < 0.0:
                 lamb = -weight_decay * (dot / (condition_norm ** 2))
                 grad += lamb * condition
-            print(lamb)
+            
+            # print("weight_decay: ", weight_decay.data)
+            print("lamb: ", lamb.data.item())
             
             exp_avg.mul_(beta1).add_(grad, alpha=1 - beta1)
             exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value=1 - beta2)
@@ -193,3 +204,72 @@ class SPCG(Optimizer):
             else:
                 pre = group['pre'][i]
                 update_parameter(param, grad, exp_avg, exp_avg_sq, step, pre)
+
+
+class TPCGrad(object):
+    def __init__(self):
+        self.threshold = torch.nn.Hardtanh(0,1)
+        self.j = 0 # Buffer counter
+
+        # AdamUtil parameteres
+        self.mu = 5e-2
+        print("mu: ", self.mu)
+        self.beta1 = 0.9
+        self.beta2 = 0.999
+        self.t = 1
+        
+        # Buffers for loss
+        self.loss_strength_buff = []
+        self.loss_first_m_strength = []
+        self.loss_second_m_strength = []
+        self.loss_correct = []
+    
+    @torch.no_grad()
+    def step(self, grad, loss_correct):
+
+        if self.t == 1:
+            loss_strength = torch.tensor(0).to(grad.device)
+            self._update_buffers(loss_strength)
+        else:
+            # Get previous values
+            loss_strength_prev = self.loss_strength_buff[self.j]
+            loss_correct_prev = self.loss_correct[self.j]
+
+            # Calculate gradient for gamma
+            loss_strength_grad = torch.sum(F.normalize(grad) * F.normalize(loss_correct_prev))
+
+            loss_strength = self._adam_util(loss_strength_prev, loss_strength_grad)
+            loss_strength = self.threshold(loss_strength)
+
+        # Save updated values
+        self._update_buffers(loss_strength, loss_correct)
+        print("==================== t ====================", self.t)
+        print("j: ", self.j)
+        print("loss_strength: ", loss_strength.data.item())
+        self.j += 1
+        return loss_strength
+        
+    def incre_counters(self):
+        self.t += 1
+        self.j = 0
+    
+    @torch.no_grad()
+    def _adam_util(self, loss_prev, loss_grad):
+        loss_first_moment = self.beta1 * self.loss_first_m_strength[self.j] + (1-self.beta1) * loss_grad
+        loss_second_moment = self.beta2 * self.loss_second_m_strength[self.j] + (1-self.beta2) * loss_grad**2
+        self.loss_first_m_strength[self.j] = loss_first_moment
+        self.loss_second_m_strength[self.j] = loss_second_moment
+        loss_first_moment = loss_first_moment / (1-self.beta1**self.t)
+        loss_second_moment = loss_second_moment / (1-self.beta2**self.t)
+
+        return loss_prev  - self.mu * loss_first_moment/(torch.sqrt(loss_second_moment)+1e-8)
+    
+    def _update_buffers(self, loss_strength, loss_correct=None):
+        if loss_correct is None:
+            self.loss_first_m_strength.append(0.0)
+            self.loss_second_m_strength.append(0.0)
+            self.loss_strength_buff.append(loss_strength)
+            self.loss_correct.append(0.0)
+        else:
+            self.loss_strength_buff[self.j] = loss_strength
+            self.loss_correct[self.j] = loss_correct

@@ -70,7 +70,7 @@ run:
   prompt: "Question: {} Answer:"
 
   seed: 42
-  output_dir: "output/PALIGEMMA/VQA/spcg_1e-3_1e-1"
+  output_dir: "output/PALIGEMMA/VQA/spcg_1e-3_mu0.5"
 
   amp: False
 

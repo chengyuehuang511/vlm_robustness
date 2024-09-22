@@ -4,7 +4,7 @@ datasets:
     type: eval
 model:
   arch: paligemma_vqa
-  finetuned: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/DomainNet-Real/tpcgrad_normafter_1e-3_1e-4_mu1e-1/20240915123/checkpoint_best.pth
+  finetuned: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/DomainNet-Real/spcg_1e-3_mu0.5/20240917203/checkpoint_best.pth
   # /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/1e-3/20240721224/checkpoint_best.pth
   load_finetuned: true
   load_pretrained: true
