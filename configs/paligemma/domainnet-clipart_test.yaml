@@ -6,6 +6,7 @@ model:
   arch: paligemma_vqa
   finetuned: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/DomainNet-Real/pcgrad_1e-3_1e-4_0.5/20240906232/checkpoint_best.pth
   # /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/1e-3/20240721224/checkpoint_best.pth
+  # DomainNet-Real/1e-3/20240821234
   # DomainNet-Real/adamh_1e-3/0.5/20240822015
   # adamh_1e-3_0.5_ortho/20240826013
   # adamh_1e-3_0.5_improve/20240827020
