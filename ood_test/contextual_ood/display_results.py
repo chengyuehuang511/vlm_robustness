@@ -21,7 +21,6 @@ with open(f, 'r') as file :
 
 
 
-
 import matplotlib.pyplot as plt
 import pandas as pd
 from adjustText import adjust_text
@@ -56,25 +55,55 @@ from scipy.stats import pearsonr
 with open("/nethome/bmaneech3/flash/vlm_robustness/result_output/contextual_ood/maha_score_dict.json", 'r') as file:
     combined_ood_perf = json.load(file)["vqa_v2_train"]
 
-plot_types = ["image", "joint_lastl", "q_mid", "q_last"]
+plot_types = ["pt_joint", "pt_image"]
 
 
-
+#pretrained performance
 perf_dict = { 
-    "vqa_v2_val" : 90.9, 
-    "ivvqa_test": 98.68, 
-    "cvvqa_test": 70.49, 
-    "vqa_rephrasings_test": 85.55, 
-    "vqa_ce_test" : 79.81,
-    "advqa_test" : 56.86, 
-    "textvqa_test": 44.25, 
-    "vizwiz_test": 24.62,
-    "okvqa_test" : 53.84,
-    "vqa_cp_test" : 90.42
-    # "vqa_vs_id_val": 54.41
+    "vqa_v2_val" : 54.42, 
+    "ivvqa_test": 63.95, 
+    "cvvqa_test": 44.72, 
+    "vqa_rephrasings_test": 50.1, 
+    "vqa_ce_test" : 30.68,
+    "advqa_test" : 30.46, 
+    "textvqa_test": 14.86, 
+    "vizwiz_test": 16.84,
+    "okvqa_test" : 28.6,
+    "vqa_cp_test" : 54.29
 }
 
 
+#Finetuned performance 
+
+# perf_dict = { 
+#     "vqa_v2_val" : 90.9, 
+#     "ivvqa_test": 98.68, 
+#     "cvvqa_test": 70.49, 
+#     "vqa_rephrasings_test": 85.55, 
+#     "vqa_ce_test" : 79.81,
+#     "advqa_test" : 56.86, 
+#     "textvqa_test": 44.25, 
+#     "vizwiz_test": 24.62,
+#     "okvqa_test" : 53.84,
+#     "vqa_cp_test" : 90.42
+# }
+
+#modify pt and ft key values 
+
+
+
+
+
+title_dict = {
+    "image" : "Vision Shift", 
+    "joint" : "V+Q Joint Shift", 
+    "vqa" : "V+Q+A Joint Shift", 
+    "q_mid" :"Question Mid layer Shift", 
+    "q_last" : "Question Last layer shift",
+    "pt_joint" : "Pretrain Joint Shift", 
+    "pt_image" : "Pretrain Image Shift"
+
+}
 
 for plot_type in plot_types : 
     shift_values = [] 
@@ -89,18 +118,17 @@ for plot_type in plot_types :
         # if data_split == "vqa_cp_test" or data_split == "vqa_vs_id_val" : 
         if  data_split == "vqa_vs_id_val" or data_split == "vqa_lol_test" or data_split == "vqa_v2_train": 
             continue 
+
+
+        print(data_split, end = ", ")
         
         perf_value = perf_dict[data_split]
         shift_value = results[plot_type]
-            
-            # print(plot_type)
-            # print("shift_values ", shift_values)
-            
+
         shift_values.append(shift_value)
         perf_values.append(perf_value)
         labels.append(f'{data_split}')
         
-
 
     plt.figure(figsize=(10, 6))
     plt.scatter(shift_values, perf_values, alpha=0.7)
@@ -115,12 +143,12 @@ for plot_type in plot_types :
 
     adjust_text(texts, arrowprops=dict(arrowstyle="-", color='grey', lw=0.5))
 
-    plt.title(f'Shift vs Performance for : {plot_type}')
-    plt.xlabel('Shift Value')
-    plt.ylabel('Performance Value')
+    plt.title(title_dict[plot_type])
+    plt.xlabel('Shift Score')
+    plt.ylabel('Accuracy')
     plt.grid(True)
     # plt.legend()
-    plt.savefig(f"/nethome/bmaneech3/flash/vlm_robustness/result_output/{plot_type}_ood_perf.jpg")
+    plt.savefig(f"/nethome/bmaneech3/flash/vlm_robustness/result_output/ft_{plot_type}_ood_perf.jpg")
 
 
     if len(shift_values) > 1 and len(perf_values) > 1:

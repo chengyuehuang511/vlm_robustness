@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#SBATCH --job-name=inspectdrop
-#SBATCH --output=inspectdrop.out
-#SBATCH --partition="overcap"
+#SBATCH --job-name=run_umap
+#SBATCH --output=run_umap.out
+#SBATCH --partition="kira-lab"
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=7
@@ -15,4 +15,5 @@ conda activate riplenv
 cd /nethome/bmaneech3/flash/vlm_robustness
 
 
-srun -u python -m torch.distributed.run --nproc_per_node=1 /nethome/bmaneech3/flash/vlm_robustness/ood_test/inspect_grad.py
+srun -u python -m torch.distributed.run --nproc_per_node=1 /nethome/bmaneech3/flash/vlm_robustness/ood_test/contextual_ood/get_umap.py
+

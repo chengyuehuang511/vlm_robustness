@@ -11,6 +11,7 @@ from torchvision.transforms import InterpolationMode
 import gc 
 import math 
 import torch.nn.functional as F
+# from measure import score_func
 
 # from data.builders import load_dataset, DatasetZoo
 
@@ -23,6 +24,8 @@ torch.cuda.empty_cache()
 torch.set_grad_enabled(False)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 GLOBAL_CONCEPT = "joint"
+INCLUDE_ANSWER = False
+COR_SHIFT = True 
 ds_2_img = { 
     "advqa" : "/srv/datasets/coco/", 
     "cvvqa" : "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/cv-vqa/val/BS/vedika2/nobackup/thesis/IMAGES_counting_del1_edited_VQA_v2/",
@@ -71,6 +74,8 @@ ds_split_2_file = {
 }
 
 ans_label_map = {} 
+id_2_ans_map = {} 
+
 #store ans_label_map in json 
 
 
@@ -79,10 +84,10 @@ model_id = "google/paligemma-3b-ft-vqav2-224"
 
 # quantization_config = BitsAndBytesConfig(load_in_8bit=True)
 #quantize model to reduce size 
-model = PaliGemmaForConditionalGeneration.from_pretrained(model_id, 
-                                                        device_map ="auto",
-                                                        torch_dtype=torch.bfloat16,
-                                                        revision="bfloat16").eval()
+# model = PaliGemmaForConditionalGeneration.from_pretrained(model_id, 
+                                                        # device_map ="auto",
+                                                        # torch_dtype=torch.bfloat16,
+                                                        # revision="bfloat16").eval()
 
 # question_model = AutoModel.from_pretrained('nvidia/NV-Embed-v2', trust_remote_code=True)
 
@@ -97,146 +102,33 @@ processor = PaliGemmaProcessor.from_pretrained(model_id)
 #dataloader + processor : 
 
 IMAGE_SIZE = 224
-BATCH_SIZE = 4
+BATCH_SIZE = 1000
 HIDDEN_SIZE = 2048 
-COMP_BATCH_SIZE = 500
+COMP_BATCH_SIZE = 1000 
 
 resize_transform = transforms.Resize(
     (IMAGE_SIZE, IMAGE_SIZE), interpolation=InterpolationMode.BICUBIC
 )
-
-class MeasureOODDataset(Dataset) : 
-    
-    def __init__(self, data, ds_name):
-        self.data = data #list of dictionary elements 
-        self.ds_name = ds_name 
-        self.vis_root = ds_2_img[ds_name]
-
-    def __len__(self):
-        return len(self.data)
-
-    def __getitem__(self, idx):
-        sample = self.data[idx]
-        if "answer" in sample : 
-            label = sample["answer"]
-            if isinstance(sample["answer"], list) : 
-                label = Counter(sample['answer']).most_common(1)[0][0]
-
-        else : 
-            label = 0 
-
-        question = sample["question"]
-        if GLOBAL_CONCEPT == "joint" : 
-            image_path = os.path.join(self.vis_root , sample["image"]) 
-            input_image = Image.open(image_path).convert('RGB')
-            resized_image = resize_transform(input_image)
-            # inputs = processor(question, resized_image, padding=True)
-
-            #convert label to id for conversion to tensors
-            if label not in ans_label_map : 
-                n = len(ans_label_map)
-                ans_label_map[label] = n
-
-            label = ans_label_map[label]
-            
-            return question, resized_image, label #must return tensor to parallelize 
-    
-        return question 
-    @staticmethod 
-    def collate_fn(batch):
-        if GLOBAL_CONCEPT == "joint" : 
-            questions, images, labels = zip(*batch)
-
-            inputs = processor(text=questions, images=images, padding=True)
-            # print(type(labels), labels.size())
-            # print(labels)
-            labels = torch.tensor(labels)
-
-            #extract inputs if needed 
-            return inputs, labels
-        else : 
-            print("helloo")
-            questions = batch 
-            print("question", questions)
-            return questions 
-    
-MAX_LENGTH = 2048 
-def get_hidden_states(inputs, concept_type="joint", hidden_layer=19) :
-    if GLOBAL_CONCEPT == "question" : 
-        # question_model.forward(**inputs, return_dict=True, output_hidden_states=True)
-        #inputs : [list of strings]
-        print("Input", inputs)
-        print(inputs[0])
-        emb = question_model.encode(inputs, max_length=MAX_LENGTH)
-        emb = F.normalize(emb,p=2, dim=1)
-        concept_hidden_vectors = emb.unsqueeze(1)
-        print("verify sentence emb size", emb.size()) 
-
-    else : 
-        with torch.no_grad() : 
-            output = model.forward(**inputs, return_dict=True, output_hidden_states=True)
-        hidden_states = output.hidden_states #(layer, BATCH SIZE, seq length, hiddensize)
-        print(len(hidden_states))
-
-        # output_hidden_state = hidden_states[-1] #average all vectors together  
-        # image_hidden_state = hidden_states[0][:, 0:256, :] #first image encoder after projection 
-
-        """
-        output_hidden_state : (batch size, seq length, hidden dim)
-        image_hidden_state : (batch size, seq length, hidden dim)
-
-        return 
-            concept_hidden_states : (batch size, # of concept, hidden dim)
-        """
-
-        
-        image_hidden_state = hidden_states[0][:, 0:256, :] #(batch size, hidden dim) 
-        u_image_vector = torch.mean(image_hidden_state, dim=1).unsqueeze(1)
-        concept_hidden_vectors = u_image_vector 
-        
-        # for i in range(len(hidden_states)) : 
-        u_hidden_vector =  torch.mean(hidden_states[-1], dim=1) 
-        cur_hidden_vectors = u_hidden_vector.unsqueeze(1) # dim 1 = concept
-        concept_hidden_vectors = torch.cat([concept_hidden_vectors, cur_hidden_vectors], dim = 1)
-
-        del hidden_states 
-        del image_hidden_state 
-        del u_image_vector
-        del u_hidden_vector
-        del cur_hidden_vectors 
-        torch.cuda.empty_cache()
-    
-
-    print(f"concept_hidden_vectors : {concept_hidden_vectors.size()}")
-    return concept_hidden_vectors #(batch size, #concepts, hidden size)
-
-
-#store covariance matrix 
-cov_path_file = "/nethome/bmaneech3/flash/vlm_robustness/result_output/contextual_ood/vqa_v2_inv_cov.pth"
-def score_func(train_vectors, test_vectors, metric="maha", peranswerType=False) : 
-    
+def score_func(train_vectors, test_vectors,cov_path_file, label_id, metric="maha", peranswerType=False) : 
     #do them in batches to avoid memory error 
-
+    
     print("Train vector size", train_vectors.size())
     print("Test vector size", test_vectors.size())
 
     #perAnswerType Logic
     #train_vectors : (#concepts C , batch size N, hidden size H)
     #test_vectors : (#concepts, batch size, hidden size)
-    torch.cuda.empty_cache()
-
-    # train_vectors = train_vectors.to(device) 
+    train_vectors = train_vectors.to(device) 
     # train_vectors = train_vectors
     print(train_vectors.dtype)
-    train_vectors = train_vectors.to(torch.bfloat16)
-    u_vector = torch.mean(train_vectors, dim=1, keepdim=True).to(device) #find mean in vector (concept, batch size , hidden size) -> (C, 1, H)
+    u_vector = torch.mean(train_vectors, dim=1, keepdim=True) #find mean in vector (concept, batch size , hidden size) -> (C, 1, H)
     print("Size of mean vector", u_vector.size())
     print(torch.cuda.memory_allocated())
 
     if torch.isinf(u_vector).any() or torch.isnan(u_vector).any() : 
         raise Exception("u vector has NaN values")
 
-    # train_vectors_cpu = train_vectors.detach().cpu()   
+    train_vectors = train_vectors.detach().cpu()   
     c, n, h = train_vectors.size() 
     print(f"size (num_concept, samples, hidden size) : {c, n , h}")
     
@@ -246,8 +138,16 @@ def score_func(train_vectors, test_vectors, metric="maha", peranswerType=False) 
 
     print("========================")
     print(f"TRAINING SAMPLE {n} samples")
-    if metric == "maha" : 
-        if not os.path.exists(cov_path_file) : 
+    if metric == "maha" :
+        label_exist = False 
+        cov_dict = {}
+        if os.path.exists(cov_path_file) : 
+            cov_dict = torch.load(cov_path_file)
+            if label_id in cov_dict : 
+                inv_cov = cov_dict[label_id]
+                label_exist = True 
+        
+        if not os.path.exists(cov_path_file) or not label_exist : 
             for i in range(n_batch) : 
                 start_ind = i * COMP_BATCH_SIZE
                 end_ind = min(n - 1, (i+1)*COMP_BATCH_SIZE)
@@ -291,11 +191,13 @@ def score_func(train_vectors, test_vectors, metric="maha", peranswerType=False) 
 
             if torch.isinf(inv_cov).any() or torch.isnan(inv_cov).any() : 
                 raise Exception("inv cov matrix has NaN values")
-            torch.save(inv_cov, cov_path_file)
+            
+            cov_dict[label_id] = inv_cov 
+
+            torch.save(cov_dict, cov_path_file)
             del cov
-        else : 
-            inv_cov = torch.load(cov_path_file)
-    # del train_vectors 
+        
+    del train_vectors 
     
     total_res = torch.zeros(c)
     c, n_test, _ = test_vectors.size()
@@ -309,7 +211,6 @@ def score_func(train_vectors, test_vectors, metric="maha", peranswerType=False) 
         inv_cov = torch.eye(h)
     inv_cov = inv_cov.to(dtype=test_vectors.dtype)
     inv_cov = inv_cov.to(device)
-    print("Size of inv cov", inv_cov.size())
 
     test_results_vectors = [] #(c, n, 1)
     #test batches 
@@ -377,9 +278,102 @@ def score_func(train_vectors, test_vectors, metric="maha", peranswerType=False) 
     # return avg score for each concept + (c, n, 1) 
     return total_res.tolist(), test_results_vectors #(concept, 1) 
 
-#organize structure : # for each split : {ds_name}_{split} -> store hidden states per ds_split , concept 
-#store hidden states : ds_name, split (ds_split), concpept -> store as tensor 
-#.pth filename : /nethome/bmaneech3/flash/vlm_robustness/result_output/contextual_ood/hidden_states/{ds_name}_{split}_{concept}.pth
+class MeasureOODDataset(Dataset) : 
+    global ans_label_map
+    global id_2_ans_map
+    
+    def __init__(self, data, ds_name, ans_label_map = {}, id_2_ans_map = {}):
+        self.data = data #list of dictionary elements 
+        self.ds_name = ds_name 
+        self.vis_root = ds_2_img[ds_name]
+        self.ans_label_map = ans_label_map 
+        self.id_2_ans_map = id_2_ans_map 
+
+        # co = len(ans_label_map)
+        # for sample in self.data : 
+        #     try : 
+        #         label = sample["answer"]
+        #         if isinstance(sample["answer"], list) : 
+        #             label = Counter(sample['answer']).most_common(1)[0][0]
+        #             print("verify label", label)
+
+        #         if label not in self.ans_label_map : 
+        #             self.ans_label_map[label] = co 
+        #             self.id_2_ans_map[co] = label
+        #             co += 1 
+
+        #     except Exception as e : 
+        #         raise Exception(self.ds_name, "doesn't have an answer key")
+            
+
+
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, idx):
+        sample = self.data[idx]
+        if "answer" in sample : 
+            label = sample["answer"]
+            if isinstance(sample["answer"], list) : 
+                label = Counter(sample['answer']).most_common(1)[0][0]
+                print("verify label", label)
+
+        else : 
+            label = 0 
+            print("NOOO Dataset doesn't contain answer labels")
+
+        question = sample["question"]
+        if GLOBAL_CONCEPT == "joint" : 
+            image_path = os.path.join(self.vis_root , sample["image"]) 
+            input_image = Image.open(image_path).convert('RGB')
+            resized_image = resize_transform(input_image)
+
+            label = sample["answer"]
+            if isinstance(sample["answer"], list) : 
+                label = Counter(sample['answer']).most_common(1)[0][0]
+                print("verify label", label)
+            # inputs = processor(question, resized_image, padding=True)
+
+            #convert label to id for conversion to tensors
+            # if label not in ans_label_map : 
+                # print("converting label")
+                # n = len(ans_label_map)
+                # ans_label_map[label] = n #{word: idx}
+                # id_2_ans_map[n] = label
+                # print("Updated ans_label_map:", len(ans_label_map))  # Show the state after update
+                # print(ans_label_map.keys())
+
+            print("label ", label)
+            if INCLUDE_ANSWER : 
+                question = f"{question} : {label}"
+                print("new question: ", question)
+
+            label = self.ans_label_map[label]
+            
+            return question, resized_image, label #must return tensor to parallelize 
+    
+        return question 
+    @staticmethod 
+    def collate_fn(batch):
+        if GLOBAL_CONCEPT == "joint" : 
+            questions, images, labels = zip(*batch)
+
+            inputs = processor(text=questions, images=images, padding=True)
+            # print(type(labels), labels.size())
+            # print(labels)
+            labels = torch.tensor(labels)
+            #extract inputs if needed 
+            # print("DATALOADERR Verify", ans_label_map)
+
+            return inputs, labels
+        else : 
+            # print("helloo")
+            questions = batch #didn't do processing with images? 
+            # print("question", questions)
+            return questions 
+    
+
 
 #measure ood score : 
 """
@@ -392,26 +386,27 @@ concept : joint/image/question etc.
 
 #how to organize when you get the score 
 concept_type = ["joint", "image"] #
+visited = []
 
-
+answer_list_file = "/coc/pskynet6/chuang475/.cache/lavis/coco/annotations/answer_list.json"
 splits =[
     #ds_name, split, file_name
     #(train, test, concept)
     #vqav2 train with all others
     #train_stuff = sample[0], test_stuff = sample[1]
     # [("vqa_v2","train"), ("vqa_v2","train")],
-    # [("vqa_v2","train"), ("vqa_v2","val")], 
-    # [("vqa_v2","train"), ("advqa", "test")],
-    # [("vqa_v2","train"), ("cvvqa", "test")]
-    # [("vqa_v2","train"), ("ivvqa", "test")],
-    # [("vqa_v2","train"), ("okvqa", "test")], 
-    # [("vqa_v2","train"), ("textvqa", "test")], 
-    # [("vqa_v2","train"), ("vizwiz", "test")] 
+    [("vqa_v2","train"), ("vqa_v2","val")], 
+    [("vqa_v2","train"), ("advqa", "test")],
+    [("vqa_v2","train"), ("cvvqa", "test")],
+    [("vqa_v2","train"), ("ivvqa", "test")],
+    [("vqa_v2","train"), ("okvqa", "test")], 
+    [("vqa_v2","train"), ("textvqa", "test")], 
+    [("vqa_v2","train"), ("vizwiz", "test")], 
     [("vqa_v2","train"), ("vqa_cp", "test")], 
-    # [("vqa_v2","train"), ("vqa_ce", "test")], 
+    [("vqa_v2","train"), ("vqa_ce", "test")], 
     
-    # [("vqa_v2","train"), ("vqa_rephrasings", "test")],
-    # [("vqa_v2","train"), ("vqa_vs", "id_val")], 
+    [("vqa_v2","train"), ("vqa_rephrasings", "test")],
+    [("vqa_v2","train"), ("vqa_vs", "id_val")]
     # [("vqa_v2","train"), ("vqa_v2","test")],
 
     # [("vqa_v2","train"), ("vqa_vs", "KO")],
@@ -427,24 +422,35 @@ splits =[
     # [("vqa_v2", "train"), ("vqa_lol", "test")]
 ]
 
-results_file = "/coc/pskynet4/bmaneech3/vlm_robustness/result_output/contextual_ood/maha_score_dict.json"
+results_file = "/coc/pskynet4/bmaneech3/vlm_robustness/result_output/contextual_ood/maha_ans_score_dict.json"
 if os.path.exists(results_file) : 
     with open(results_file, 'r') as file : 
         results_dict = json.load(file) #read from results dict 
 else : 
     results_dict = {} 
 
-hidden_layer_name = ["image", "joint"]
+hidden_layer_name = ["ans_corr_image", "ans_corr_joint"]
 
 # for i in range(1,20) : 
 #     hidden_layer_name.append(f"joint_l{i}")
+ans_map_file = '/nethome/bmaneech3/flash/vlm_robustness/result_output/contextual_ood/ans_map.json'
+id_2_map_file = '/nethome/bmaneech3/flash/vlm_robustness/result_output/contextual_ood/id_ans_map.json'
 
+if os.path.exists(ans_map_file) : 
+    with open(ans_map_file, 'r') as file : 
+        ans_label_map = json.load(file)
+
+    with open(id_2_map_file, 'r') as file : 
+        id_2_ans_map = json.load(file)
+        id_2_ans_map = {int(k): v for k, v in id_2_ans_map.items()}
+
+                
 #store result vector for each tensor size (n_samples, 1) in order index
 if __name__ == "__main__" : 
-        
+
     for measure_instance in splits : 
-        print(torch.cuda.memory_allocated())
-        print("Memory summary", torch.cuda.memory_summary(device=None, abbreviated=False))
+        # print(torch.cuda.memory_allocated())
+        # print("Memory summary", torch.cuda.memory_summary(device=None, abbreviated=False))
         # results_file = "/coc/pskynet4/bmaneech3/vlm_robustness/result_output/contextual_ood/maha_score_dict.json"
         # if os.path.exists(results_file) : 
         #     with open(results_file, 'r') as file : 
@@ -471,129 +477,169 @@ if __name__ == "__main__" :
         with open(train_file, 'r') as f :
             train_data = json.load(f)
 
-
         with open(test_file, 'r') as f : 
             test_data = json.load(f)
 
+        indiv_result_file = f"/nethome/bmaneech3/flash/vlm_robustness/result_output/contextual_ood/hidden_states/{train_ds_split}_{'_'.join(concept_type)}.pth"
 
-        train_hidden_state_file = f"/coc/pskynet4/bmaneech3/vlm_robustness/result_output/contextual_ood/hidden_states/{train_ds_split}_{'_'.join(concept_type)}.pth"
-        if not os.path.exists(train_hidden_state_file) : 
+        # if train_ds_split not in visited : 
+        dataset = MeasureOODDataset(train_data, train_ds_name, ans_label_map, id_2_ans_map)
+        # concept_type = "joint"
 
-            dataset = MeasureOODDataset(train_data, train_ds_name)
-            # concept_type = "joint"
+        dataloader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=False, collate_fn=dataset.collate_fn, num_workers=1)
 
-            dataloader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=False, collate_fn=dataset.collate_fn, num_workers=2)
+        #VQAV2 -> store results of torch
+        # train_vectors = []
+        train_ans_vectors = [None for i in range(len(id_2_ans_map))] 
+        co = 1 
+        #indiv results : (C, samples, hidden size)
+        train_vectors = torch.load(indiv_result_file)
+        i = 0 
+        for batch in dataloader : 
+            _, labels = batch 
+            print(f"Current train batch {co}")
 
-            #VQAV2 -> store results of torch
-            train_vectors = []
-            co = 1 
-            for batch in dataloader : 
-                print(f"Current train batch {co}")
-                co += 1
-
-                inputs, labels = batch 
-                inputs = inputs.to(device) #don't forget to add puts to gpu 
+            # break
             
-                enc_vectors = get_hidden_states(inputs)
-                enc_vectors_cpu = enc_vectors.detach().cpu() #(batchsize, concept, hidden size)
-
-                # #free up memory so next batch can use GPU compute 
-
-                del inputs
-
-                # inputs = batch 
-                # print(type(**inputs))
-                # inputs = inputs.to(device) #don't forget to add puts to gpu 
-                # assert len(**inputs) == len(list(**inputs)), "not equal tuple & list input size"
-                # print("input", list(inputs))
-                # enc_vectors = get_hidden_states(list(inputs))
-                # enc_vectors_cpu = enc_vectors.detach().cpu() #(batchsize, concept, hidden size)
-
-                #free up memory so next batch can use GPU compute 
-
-                # del inputs, enc_vectors 
-                # del inputs
-                del enc_vectors
-
-                train_vectors.append(enc_vectors_cpu) #(batch size, concepts, hidden size)
-
-            #on cpu now 
-            train_vectors = torch.cat(train_vectors, dim=0).to(device) #(n, concepts, hidden size)
-            train_vectors = train_vectors.permute(1,0,2) #(concepts, n, hidden size)
-
-            print(f"final train vectors size : {train_vectors.size()}")
+            cur_train_vectors = train_vectors[:, BATCH_SIZE*i: min(BATCH_SIZE*(i+1), train_vectors.size(1) - 1), :] #(c, batchsize, h)
+            print("cur_batch_size", cur_train_vectors)
+            assert (cur_train_vectors.size(1) == labels.size(0)), "The number of samples in vectors and labels must match."
             
-            torch.save(train_vectors.detach().cpu(), train_hidden_state_file)
-            del train_vectors
-            torch.cuda.empty_cache()
+            # inputs = inputs.to(device) #don't forget to add puts to gpu 
 
-        test_hidden_state_file = f"/coc/pskynet4/bmaneech3/vlm_robustness/result_output/contextual_ood/hidden_states/{test_ds_split}_{'_'.join(concept_type)}.pth"
-        if not os.path.exists(test_hidden_state_file) : 
-  
-            dataset = MeasureOODDataset(test_data, test_ds_name)
-            # concept_type = "joint"
+            if COR_SHIFT : 
+                for label_id in id_2_ans_map : 
+                    # print(type(label_id))
+                    mask = (labels == int(label_id))
+                    indices = torch.nonzero(mask).squeeze() #non zero = condition true 
+                    selected_vectors = cur_train_vectors[:, indices,:] #(concept, no. matched samples, hidden size)
+                    print("verify select samples size",)
+                    if train_ans_vectors[int(label_id)] == None : 
+                        train_ans_vectors[int(label_id)] = selected_vectors
 
-            dataloader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=False,collate_fn=dataset.collate_fn, num_workers=2)
-
-            #VQAV2 -> store results of torch
-            test_vectors = []
-            co = 1 
-            for batch in dataloader : 
-                print(f"Current test batch {co}")
-
-                co += 1 
-                inputs, labels = batch 
-                inputs = inputs.to(device)
-
-                enc_vectors = get_hidden_states(inputs)
-                enc_vectors_cpu = enc_vectors.detach().cpu() #(batchsize, concept, hidden size)
-
-                # test_vectors.append(enc_vectors_cpu)
-                # del inputs
-                # del enc_vectors 
-                # inputs = batch 
-                # inputs = inputs.to(device)
-                # assert len(**inputs) == len(list(**inputs)), "not equal tuple & list input size"
-
-                # enc_vectors = get_hidden_states(list(inputs))
-                # enc_vectors_cpu = enc_vectors.detach().cpu() #(batchsize, concept, hidden size)
-
-                test_vectors.append(enc_vectors_cpu)
-                del inputs
-                del enc_vectors 
- 
-            test_vectors = torch.cat(test_vectors, dim=0).to(device)
-            test_vectors = test_vectors.permute(1, 0, 2)
-
-            print(f"final test vectors size : {test_vectors.size()}")
-            
-            torch.save(test_vectors.detach().cpu(), test_hidden_state_file)
-            del test_vectors 
-            torch.cuda.empty_cache()
+                    elif selected_vectors.dim() == 3:
+                        print(selected_vectors.size())
+                        train_ans_vectors[int(label_id)] = torch.cat([train_ans_vectors[label_id], selected_vectors], dim=1)
+            i+=1 
         
-        #on cpu 
-        print("test fi;e", test_hidden_state_file)
-        train_vectors = torch.load(train_hidden_state_file) #(CONCEPT, batch size, hidden)
-        test_vectors = torch.load(test_hidden_state_file)
+            co += 1
 
+        
+        visited.append(train_ds_split)
+        # ans_label_map = dataset.ans_label_map
+        # id_2_ans_map = dataset.id_2_ans_map
+        # print(ans_label_map)
+        # print("ans_label_map",len(ans_label_map))
+        # print("id 2 ans map", len(id_2_ans_map))
 
+        # with open('/nethome/bmaneech3/flash/vlm_robustness/result_output/contextual_ood/ans_map.json', 'w') as ans_file : 
+        #     json.dump(ans_label_map, ans_file)
+
+        # with open('/nethome/bmaneech3/flash/vlm_robustness/result_output/contextual_ood/id_ans_map.json', 'w') as ans_file : 
+        #     json.dump(id_2_ans_map, ans_file)
+    
+        #on cpu now 
+        print("verify ans vector size", train_ans_vectors.size())
+        #store train ans vectors 
+        train_ans_file = f"/nethome/bmaneech3/flash/vlm_robustness/result_output/contextual_ood/hidden_states/ans/{train_ds_split}_{'_'.join(concept_type)}.pth"
+        torch.save(train_ans_vectors, train_ans_file)
+
+        # torch.cuda.empty_cache()
+
+        # with open(ans_map_file, 'r') as ans_file : 
+        #     ans_label_map = json.load(ans_file)
+
+        # with open(id_2_map_file, 'r') as ans_file : 
+        #     id_2_ans_map = json.load(ans_file)
+  
+        dataset = MeasureOODDataset(test_data, test_ds_name, ans_label_map, id_2_ans_map)
+        # concept_type = "joint"
+
+        dataloader = DataLoader(dataset, batch_size=BATCH_SIZE, shuffle=False,collate_fn=dataset.collate_fn, num_workers=1)
+
+        #VQAV2 -> store results of torch
+        test_vectors = []
+        indiv_result_file = f"/nethome/bmaneech3/flash/vlm_robustness/result_output/contextual_ood/hidden_states/{test_ds_split}_{'_'.join(concept_type)}.pth"
+
+        co = 1 
+        test_ans_vectors = [None for i in range(len(id_2_ans_map))] 
+
+        #indiv results : (C, samples, hidden size)
+        test_vectors = torch.load(indiv_result_file)
+        i = 0 
+        for batch in dataloader : 
+            _, labels = batch 
+            print(f"Current test batch {co}")
+            co += 1
+            # break 
+
+            cur_test_vectors = test_vectors[:, BATCH_SIZE*i: min(BATCH_SIZE*(i+1), test_vectors.size(1) - 1), :] #(c,batchsize, h)
+            print("cur_batch_size", cur_test_vectors)
+            assert (cur_test_vectors.size(1) == labels.size(0)), "The number of samples in vectors and labels must match."
+
+            # inputs = inputs.to(device) #don't forget to add puts to gpu 
+
+            if COR_SHIFT : 
+                for label_id in id_2_ans_map : 
+                    mask = (labels == int(label_id))
+                    indices = torch.nonzero(mask).squeeze() #non zero = condition true 
+                    selected_vectors = cur_test_vectors[:, indices,:] #(concept, no. matched samples, hidden size)
+                    print("verify select samples size",)
+                    if test_ans_vectors[label_id] == None : 
+                        test_ans_vectors[label_id] = selected_vectors
+
+                    elif selected_vectors.dim() == 3 : 
+                        test_ans_vectors[label_id] = torch.cat([test_ans_vectors[label_id], selected_vectors], dim=1)
+            i+=1 
+        
+        #on cpu now 
+        print("verify ans vector size", test_ans_vectors.size())
+        test_ans_file = f"/nethome/bmaneech3/flash/vlm_robustness/result_output/contextual_ood/hidden_states/ans/{test_ds_split}_{'_'.join(concept_type)}.pth"
+        torch.save(test_ans_vectors, test_ans_file)
+        #store test ans vectors 
+        # ans_label_map = dataset.ans_label_map
+        # id_2_ans_map = dataset.id_2_ans_map
+        # print("ans_label_map",len(ans_label_map))
+        # print("id 2 ans map", len(id_2_ans_map))
+        # with open('/nethome/bmaneech3/flash/vlm_robustness/result_output/contextual_ood/ans_map.json', 'w') as ans_file : 
+        #     json.dump(ans_label_map, ans_file)
+
+        # with open('/nethome/bmaneech3/flash/vlm_robustness/result_output/contextual_ood/id_ans_map.json', 'w') as ans_file : 
+        #     json.dump(id_2_ans_map, ans_file)
+
+        # torch.cuda.empty_cache()
+        train_ans_file = f"/nethome/bmaneech3/flash/vlm_robustness/result_output/contextual_ood/hidden_states/ans/{train_ds_split}_{'_'.join(concept_type)}.pth"
+
+        train_vectors = torch.load(train_ans_file)
         n_train = train_vectors.size(1)
         n_test = test_vectors.size(1)
         
         batch_inc = n_train // COMP_BATCH_SIZE
+        ans_scores = [0,0]
+        ans_count = 0
+        answer_shift_list = [0 for i in range(len(id_2_ans_map))]
+        #per answer 
+        for label_id in id_2_ans_map : 
+            train_vectors = train_ans_vectors[label_id]
+            test_vectors = test_ans_vectors[label_id] #(c, no. of samples, h)
+            print(f"word : {id_2_ans_map[label_id]}, {train_vectors.size()}, {test_vectors.size()}")
+            if (train_vectors == None or test_vectors == None) or (train_vectors.size(1) < 10 or test_vectors.size(1) < 10): 
+                print("too few words", id_2_ans_map[label_id])
 
-        scores, test_results_vectors = score_func(train_vectors, test_vectors) #list of score per concept 
-        print(f"Score {scores}")
+            cov_path_file = "/nethome/bmaneech3/flash/vlm_robustness/result_output/contextual_ood/vqa_v2_ans_inv_cov.pth"
 
-        #store test results vectors  
-        indiv_result_file = f"/coc/pskynet4/bmaneech3/vlm_robustness/result_output/contextual_ood/indiv_result/{test_ds_split}_{'_'.join(concept_type)}.pth"
+            scores, test_results_vectors = score_func(train_vectors, test_vectors, cov_path_file, label_id) #list of score per concept 
+            word_ans = id_2_ans_map[label_id]
+            for j in range(len(hidden_layer_name)) : 
+                ans_scores[j] += scores[j]
+            ans_count += 1
+            answer_shift_list[int(label_id)] = scores 
+            print(f"Score {scores}") 
+        ans_scores = [elem/ans_count for elem in ans_scores] #average score across all answer labels 
+        
+        with open(f"/nethome/bmaneech3/flash/vlm_robustness/result_output/contextual_ood/ans_shift/{test_ds_split}_{'_'.join(concept_type)}.pth", 'w') as ans_file:
+            json.dumps(answer_shift_list, ans_file)
 
-        if not os.path.exists(indiv_result_file) : 
-            torch.save(test_results_vectors.detach().cpu(), indiv_result_file)
-
-        #don't actually because after next iteration - garbage collector takes care 
-        del train_vectors 
-        del test_vectors 
         del test_results_vectors
     
         torch.cuda.empty_cache()
@@ -601,7 +647,7 @@ if __name__ == "__main__" :
 
         #train_vectors, test_vectors : (batch size, concepts, hidden size)
         
-        for concept_name, score in zip(hidden_layer_name, scores) : 
+        for concept_name, score in zip(hidden_layer_name, ans_scores) : 
             if math.isnan(score) : 
                 score = None
 

@@ -45,6 +45,9 @@ def display_dataset(file_name, file_type) :
             print("question type",data[1000]["question_type"])
             
 f = [ 
+    "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/vqacp2/train/vqacp_v2_train_annotations.json",
+    "/coc/pskynet6/chuang475/.cache/lavis/coco/annotations/v2_mscoco_val2014_annotations.json" 
+
 
     # "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/ID_test_combined_ann.json"
     # "/coc/pskynet6/chuang475/.cache/lavis/coco/annotations/vqa_test.json",
@@ -52,7 +55,7 @@ f = [
     # "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/advqa/val/v1_mscoco_val2017_advqa_annotations_new.json"
 
     # "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/cv-vqa/val/BS/vedika2/nobackup/thesis/mini_datasets_qa_COUNTING_DEL_1/0.1_0.0/v2_mscoco_val2014_annotations.json"
-    "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/advqa/val/combined_data.json",
+    # "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/advqa/val/combined_data.json",
     # "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/vqavs/test/OOD-Test/KO/combined_data.json"
     # "/coc/pskynet6/chuang475/.cache/lavis/coco/annotations/vqa_val_eval.json"
     # "/coc/pskynet6/chuang475/.cache/lavis/coco/annotations/vqa_test.json"
@@ -86,7 +89,8 @@ for i in f :
 
 
 # ds_split_2_file = { 
-#     "vqa_v2_train" : "/coc/pskynet6/chuang475/.cache/lavis/coco/annotations/vqa_train.json",
+    # "vqa_v2_train" : "/coc/pskynet6/chuang475/.cache/lavis/coco/annotations/vqa_train.json",
+    
 #     "vqa_v2_val" : "/coc/pskynet6/chuang475/.cache/lavis/coco/annotations/vqa_val_eval.json", 
 #     "vqa_v2_test": "/coc/pskynet6/chuang475/.cache/lavis/coco/annotations/vqa_test.json" , 
 #     "advqa_test" : "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/advqa/val/combined_data.json", 

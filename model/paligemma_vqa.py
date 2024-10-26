@@ -59,6 +59,7 @@ class PaliGemma_VQA(BaseModel):  # TODO
             model_id,
             torch_dtype=dtype,
             revision="bfloat16",
+            device_map ="auto"
             # load_in_8bit=True,
             # quantization_config=quantization_config,
         )
@@ -144,8 +145,12 @@ class PaliGemma_VQA(BaseModel):  # TODO
         # print("Paligemma recieves the following samples", len(samples))
 
         model_inputs = self.processor(text=samples["text_input_raw"], images=samples["image_raw"], suffix=samples["multiple_choice_answer"], return_tensors="pt", padding="longest").to(self.dtype).to(self.device)
-        # print("model_inputs", model_inputs)
+        print("model_inputs", model_inputs)
         outputs = self.model(**model_inputs)
+
+
+        """Updated""" 
+        # outputs = self.model.forward(samples)
         # print("outputs", outputs)
         loss = outputs.loss
         # print("loss: ", loss)
@@ -338,6 +343,7 @@ class PaliGemma_VQA(BaseModel):  # TODO
             w0 = copy.deepcopy(w0)
         
         if load_finetuned:
+            print("yay finetune")
             model.load_checkpoint_from_config(cfg)
             # if use_adapter != 1 : 
             #     model.load_checkpoint_from_config(cfg)
@@ -383,6 +389,8 @@ class PaliGemma_VQA(BaseModel):  # TODO
         current_state_dict = self.model.state_dict()
 
         # Update the current state_dict with the new parameters
+        print("STATE DICT KEYs", state_dict.keys())
+        print("CURRENT STATE keys", current_state_dict.keys())
         for key in state_dict.keys():
             assert key in current_state_dict, f"key {key} not in current_state_dict"
             current_state_dict[key] = state_dict[key]

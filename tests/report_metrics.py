@@ -22,7 +22,8 @@ def report_metrics(result_file, ques_file, anno_file):
     # n is precision of accuracy (number of places after decimal), default is 2
     vqa_scorer = VQAEval(vqa, vqa_result, n=2)
     logging.info("Start VQA evaluation.")
-    vqa_scorer.evaluate()
+    incorrect_samples = vqa_scorer.evaluate()
+    
 
     # print accuracies
     overall_acc = vqa_scorer.accuracy["overall"]
