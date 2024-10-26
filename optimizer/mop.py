@@ -5,13 +5,13 @@ import math
 import logging
 from typing import List, Dict, Optional
 
-class AdamH(Optimizer):
+class MOP(Optimizer):
     def __init__(self, params, lr=1e-3, betas=(0.9, 0.999), eps=1e-8,
-                 weight_decay=0, amsgrad=False, exclude_set={}, use_lora=False, norm_type="l2", ortho=False):
-        self.norm_type = norm_type
+                 weight_decay=0, amsgrad=False, exclude_set={}, use_lora=False):
         self.exclude_set = exclude_set
         self.use_lora = use_lora
-        self.ortho = ortho
+        self.proj_term = "reg"
+        print("proj_term: ", self.proj_term)
 
         if not 0.0 <= lr:
             raise ValueError("Invalid learning rate: {}".format(lr))
@@ -25,11 +25,11 @@ class AdamH(Optimizer):
             raise ValueError("Invalid weight_decay value: {}".format(weight_decay))
         defaults = dict(lr=lr, betas=betas, eps=eps,
                         weight_decay=weight_decay, amsgrad=amsgrad)
-        super(AdamH, self).__init__(params, defaults)
+        super(MOP, self).__init__(params, defaults)
 
 
     def __setstate__(self, state):
-        super(AdamH, self).__setstate__(state)
+        super(MOP, self).__setstate__(state)
         for group in self.param_groups:
             group.setdefault('amsgrad', False)
 
@@ -131,23 +131,23 @@ class AdamH(Optimizer):
             else:
                 return (exp_avg_sq.sqrt() / math.sqrt(bias_correction2)).add_(eps)
         
-        def orthogonal_component(a, b):
-            # Ensure b is not a zero matrix
-            if torch.allclose(b, torch.zeros_like(b)):
-                raise ValueError("Matrix b must not be the zero matrix.")
-            
-            # Calculate the projection of a onto b
-            b_norm_squared = torch.sum(b * b, dim=-1, keepdim=True)
-            projection = torch.sum(a * b, dim=-1, keepdim=True) / b_norm_squared * b
-            
-            # Subtract the projection from a to get the orthogonal component
-            orthogonal = a - projection
-            
-            return orthogonal
+        def compute_gamma(a, b):
+            if torch.sum(a * b) >= torch.sum(a * a):
+                return 1
+            if torch.sum(a * b) >= torch.sum(b * b):
+                return 0
+            return -1.0 * (torch.sum(a * b) - torch.sum(b * b)) / (torch.sum(a * a) + torch.sum(b * b) - 2 * torch.sum(a * b))
         
         def update_parameter(param, grad, exp_avg, exp_avg_sq, step, pre=None):
             bias_correction1 = 1 - beta1 ** step
             bias_correction2 = 1 - beta2 ** step
+            
+            """multi objective optimization"""
+            print("grad norm: ", torch.norm(grad))
+            print("param - pre norm: ", torch.norm(param - pre if pre is not None else param))
+            gamma = compute_gamma(grad, weight_decay * (param - pre if pre is not None else param))
+            print("gamma: ", gamma)
+            grad = gamma * grad + (1 - gamma) * weight_decay * (param - pre if pre is not None else param)
             
             exp_avg.mul_(beta1).add_(grad, alpha=1 - beta1)
             exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value=1 - beta2)
@@ -155,52 +155,8 @@ class AdamH(Optimizer):
             denom = compute_denominator(exp_avg_sq, bias_correction2, max_exp_avg_sqs[i] if amsgrad else None)
             step_size = lr / bias_correction1
             
-            d_p = step_size * exp_avg / denom 
-            new_p = param - d_p  # no regularization
-            
-            condition = -param if pre is None else pre - param
-            condition = -condition
-            condition_buffer[i] += torch.sum(grad * condition)
-            if condition_buffer[i] < 0.0:
-                ratio = self._ratio(new_p, param, pre)
-                # print("ratio: ", ratio)
-                """
-                # if self.ortho:
-                #     # not working because it's the wrong direction
-                #     param.copy_(orthogonal_component(-condition, -grad) + (torch.zeros_like(param) if pre is None else pre))
-                #     new_p = param - d_p
-                # decay = weight_decay * ratio * (new_p if pre is None else new_p - pre)
-                
-                # improve  --> more gradient descent
-                # decay += weight_decay * ratio * ratio * grad
-                # decay += weight_decay * ratio * d_p
-                """
-
-                # improve  --> less gradient descent (proj current direction)
-                # decay -= ratio * (1 - ratio * weight_decay) * grad
-                # decay = weight_decay * ratio * (param if pre is None else param - pre)
-                # new_p = param - decay
-                new_p = param
-                # ortho full grad
-                ortho_gd = orthogonal_component(-d_p, -condition)
-                # ortho proj grad
-                # ortho_gd -= weight_decay * ratio * ortho_gd
-                new_p += ortho_gd
-                
-                """
-                # more gradient descent
-                new_p -= d_p
-                
-                # new_p -= decay
-                """
-
-                # Orthogonal Gradient Descent
-                # ortho_gd = orthogonal_component(-d_p, -condition)
-                # new_p = param + ortho_gd
-
-                # new_p = param
-            
-            param.copy_(new_p)
+            d_p = step_size * exp_avg / denom
+            param.copy_(param - d_p)
         
         for i, param in enumerate(group['params']):
             if param.grad is None: 
@@ -216,19 +172,3 @@ class AdamH(Optimizer):
             else:
                 pre = group['pre'][i]
                 update_parameter(param, grad, exp_avg, exp_avg_sq, step, pre)
-
-    # 3 alpha
-    def _ratio(self, new_p: torch.Tensor, param: torch.Tensor, pre: Optional[torch.Tensor] = None) -> torch.Tensor:
-        if pre is None:
-            pre = torch.zeros_like(new_p)
-        
-        if self.norm_type == "mars":
-            curr_norm, prev_norm = self._mars_norm(new_p - pre), self._mars_norm(param - pre)
-        else:
-            curr_norm, prev_norm = torch.norm(new_p - pre), torch.norm(param - pre)
-        
-        ratio = (curr_norm - prev_norm) / curr_norm 
-        return torch.nn.functional.hardtanh(ratio, 0.0, 1.0)
-
-    def _mars_norm(self, tensor):
-        return torch.sum(torch.abs(tensor), dim=tuple(range(1,tensor.dim())), keepdim=True) + 1e-8

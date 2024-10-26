@@ -690,7 +690,8 @@ class RunnerRobustFT(RunnerBase):
         """
         A property to get the DDP-wrapped model on the device.
         """
-        print("Device check", self._model.device , self.device)
+
+        print("Device Check", self._model.device != self.device)
         # move model to device
         if self._model.device != self.device:
             self._model = self._model.to(self.device)
@@ -701,10 +702,11 @@ class RunnerRobustFT(RunnerBase):
                     self._wrapped_model = DDP(
                         self._model, device_ids=[self.config.run_cfg.gpu]
                     )
+                    print(self._wrapped_model)
+                    
             else:
                 self._wrapped_model = self._model
 
-        print(self._wrapped_model)
         return self._wrapped_model
     
     @property
@@ -786,6 +788,41 @@ class RunnerRobustFT(RunnerBase):
                     param_group = [{'params':params_to_opt,
                                     'pre': params_anchor}]
                 self._optimizer = AdamH(param_group,**optimizer_params)
+            
+            elif opt == "pcgrad": 
+                params_to_opt = [x[1] for x in self._model.named_parameters() if x[1].requires_grad]
+                
+                optimizer_params = {
+                    "lr": lr,
+                    "weight_decay": weight_decay,
+                    "use_lora": use_lora,
+                    "proj_term": self.config.run_cfg.get("proj_term", "both"),
+                    "strength": self.config.run_cfg.get("pcgrad_strength", 1.0),
+                    "trainable_strength": self.config.run_cfg.get("trainable_strength", True),
+                }
+                
+                if use_lora:
+                    param_group = [{'params':params_to_opt}]
+                else:
+                    params_anchor = copy.deepcopy(params_to_opt)
+                    param_group = [{'params':params_to_opt,
+                                    'pre': params_anchor}]
+                self._optimizer = PCGrad(param_group,**optimizer_params)
+
+            elif opt == "mop":
+                optimizer_params = {
+                    "lr": lr,
+                    "weight_decay": weight_decay,
+                    "use_lora": use_lora,
+                } 
+                params_to_opt = [x[1] for x in self._model.named_parameters() if x[1].requires_grad]
+                if use_lora:
+                    param_group = [{'params':params_to_opt}]
+                else:
+                    params_anchor = copy.deepcopy(params_to_opt)
+                    param_group = [{'params':params_to_opt,
+                                    'pre': params_anchor}]
+                self._optimizer = MOP(param_group,**optimizer_params)
             
             elif opt == "adam":
                 self._optimizer = torch.optim.AdamW(trainable_params, lr=lr, weight_decay=weight_decay)

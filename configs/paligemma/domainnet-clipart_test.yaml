@@ -4,8 +4,9 @@ datasets:
     type: eval
 model:
   arch: paligemma_vqa
-  finetuned: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/DomainNet-Real/adamh_1e-3_0.5_more_gd/20240829212/checkpoint_best.pth
+  finetuned: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/DomainNet-Real/pcgrad_1e-3_1e-4_0.5/20240906232/checkpoint_best.pth
   # /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/1e-3/20240721224/checkpoint_best.pth
+  # DomainNet-Real/1e-3/20240821234
   # DomainNet-Real/adamh_1e-3/0.5/20240822015
   # adamh_1e-3_0.5_ortho/20240826013
   # adamh_1e-3_0.5_improve/20240827020
@@ -13,6 +14,16 @@ model:
   # adamh_1e-3_0.5_back/20240828201
   # adamh_1e-3_0.5_less_gd/20240829205
   # adamh_1e-3_0.5_more_gd/20240829212
+  # pcgrad_1e-3_1e-4/20240902133
+  # pcgrad_1e-3_1e-4_0.5/20240904174
+  # pcgrad_1e-3_1e-4_0.7/20240904210
+
+  # both
+  # pcgrad_1e-3_1e-4_0.1/20240906233  92.61
+  # pcgrad_1e-3_1e-4_0.5/20240906232  92.75
+  # pcgrad_1e-3_1e-4_0.7/20240906224  92.61
+  # pcgrad_1e-3_1e-4_0.9/20240906232  91.51
+  # pcgrad_1e-3_1e-4_1/20240906231  90.37
   load_finetuned: true
   load_pretrained: true
   lora_rank: 8
