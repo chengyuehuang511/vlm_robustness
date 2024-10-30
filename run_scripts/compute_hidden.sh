@@ -1,13 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name=newjoint
-#SBATCH --output=newjoint.out
-#SBATCH --error=newjoint.err
+#SBATCH --job-name=uniques
+#SBATCH --output=uniques.out
+#SBATCH --error=uniques.err
 #SBATCH --partition="kira-lab"
 #SBATCH --nodes=1
 #SBATCH --cpus-per-gpu=6
 #SBATCH --gpus-per-node="a40:8"
 #SBATCH --qos="short"
-#SBATCH -x shakey,nestor,voltron,chappie,puma,randotron,cheetah,baymax,tachikoma,uniblab,major,optimistprime,hk47,xaea-12,dave,crushinator,kitt,gundam
 #SBATCH --mem-per-gpu=45G
 source /nethome/bmaneech3/flash/miniconda3/bin/activate riplenv
 

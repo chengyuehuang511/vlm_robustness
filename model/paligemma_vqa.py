@@ -58,8 +58,7 @@ class PaliGemma_VQA(BaseModel):  # TODO
         self.model = PaliGemmaForConditionalGeneration.from_pretrained(
             model_id,
             torch_dtype=dtype,
-            revision="bfloat16",
-            device_map ="auto"
+            revision="bfloat16"
             # load_in_8bit=True,
             # quantization_config=quantization_config,
         )
@@ -149,6 +148,8 @@ class PaliGemma_VQA(BaseModel):  # TODO
         outputs = self.model(**model_inputs)
 
 
+
+
         """Updated""" 
         # outputs = self.model.forward(samples)
         # print("outputs", outputs)
@@ -156,7 +157,87 @@ class PaliGemma_VQA(BaseModel):  # TODO
         # print("loss: ", loss)
     
         return {"loss": loss}
-    
+
+    def get_hidden_states(self, samples, concept_type, **kwargs) : 
+        image = samples["image_raw"]
+
+        # if isinstance(samples["text_input_raw"], str):
+        #     samples["text_input_raw"] = [samples["text_input_raw"]]
+        
+        text_input = samples["text_input_raw"]
+
+        # print("image", image)
+        # print("text_input", text_input)
+
+        # with self.maybe_autocast():
+        assert self.device == self.model.device, "model must be on same device"
+
+
+        if not any(True for concept in concept_type if "question" in concept) : 
+
+            inputs = self.processor(text=text_input, images=image, return_tensors="pt", padding="longest").to(self.dtype).to(self.device)
+
+        else : 
+            inputs = self.processor(text_input, return_tensors='pt',padding=True, truncation=True) 
+        # inputs = self.processor(text=samples["text_input_raw"], images=samples["image_raw"],  return_tensors="pt", padding="longest").to(self.dtype).to(self.device)
+
+        with torch.no_grad() : 
+            output = self.model.forward(**inputs, return_dict=True, output_hidden_states=True)
+        hidden_states = output.hidden_states #(layer, BATCH SIZE, seq length, hiddensize)
+
+        concept_hidden_vectors = None 
+
+        if any(True for concept in concept_type if "question" in concept) : 
+            question_hidden_states = hidden_states[-1]
+            attention_mask = inputs['attention_mask'].unsqueeze(-1) #(batch size, seq, hidden size)
+           
+            output = torch.sum(question_hidden_states * attention_mask, dim=1) #(batch size, seq, hidden size) -> (batch size, hidden size)
+
+            total = torch.sum(attention_mask, dim=1) #(batch size, hidden size)
+
+            mean_emb = output / total 
+
+
+            print("mean ques emb", mean_emb.size()) #(batch size, dim )
+            concept_hidden_vectors = mean_emb.unsqueeze(1) #(batch size, 1, dim)
+
+
+
+        if "image" in concept_type : 
+            image_hidden_states = hidden_states[0][:, :256, :]
+            image_hidden_states = torch.mean(image_hidden_states, dim=1).unsqueeze(1)
+            concept_hidden_vectors = image_hidden_states
+
+
+        #new joint 
+        if "joint" in concept_type or any(True for concept in concept_type if "joint" in concept): 
+            output_hidden_states = hidden_states[-1]
+            img_portion = output_hidden_states[:, 0:256, :]
+            ques_portion = output_hidden_states[:, 256:, :]
+
+            mean_img = torch.mean(img_portion, dim=1).unsqueeze(1) #(batch size, 1, dim)
+            mean_ques = torch.mean(ques_portion, dim=1).unsqueeze(1) #(batch size, 1, dim)
+
+            u_hidden_vectors = torch.mean(torch.cat([mean_img, mean_ques], dim=1), dim=1).unsqueeze(1)
+            print("dim joint emb", u_hidden_vectors.size())
+            if concept_hidden_vectors != None : 
+                concept_hidden_vectors = torch.cat([concept_hidden_vectors, u_hidden_vectors], dim=1)
+                
+            else : 
+                concept_hidden_vectors = u_hidden_vectors
+
+            del mean_img 
+            del mean_ques 
+
+        del hidden_states 
+        torch.cuda.empty_cache()
+
+        # concept_hidden_vectors = concept_hidden_vectors.permute(1,0,2)
+        print(f"concept_hidden_vectors : {concept_hidden_vectors.size()}")
+        
+        return concept_hidden_vectors # (batch size, #concepts, hidden size)
+
+            
     def predict_answers(
             self, 
             samples,
@@ -241,7 +322,7 @@ class PaliGemma_VQA(BaseModel):  # TODO
         return self._lemmatizer
 
     @classmethod
-    def from_config(cls, cfg):
+    def from_config(cls, cfg): 
         model_id = cfg.get("model_id", "google/paligemma-3b-pt-224")  # paligemma-3b-ft-vqav2-224  paligemma-3b-pt-448
         dtype = cfg.get("dtype", torch.bfloat16)
 
@@ -437,7 +518,6 @@ class PaliGemma_VQA(BaseModel):  # TODO
         self.model.load_state_dict(current_state_dict)
         logging.info("load checkpoint from %s" % url_or_filename)
 
-
 if __name__ == "__main__":
     # Example usage:
     model_id = "google/paligemma-3b-ft-vqav2-448"
@@ -453,6 +533,15 @@ if __name__ == "__main__":
         "text_input_raw": ["caption es", "caption es: "],
     }
     with torch.inference_mode():
-        model = PaliGemma_VQA(model_id=model_id, dtype=dtype).to(device)
-        output = model.predict_answers(samples)
-        print(output)
+        # model = PaliGemma_VQA(model_id=model_id, dtype=dtype).to(device)
+
+        with open("/nethome/bmaneech3/flash/vlm_robustness/configs/paligemma/iv-vqa_test.yaml", 'r') as file:
+            config = yaml.safe_load(file)  # Use safe_load for security
+        
+        model =  PaliGemma_VQA().from_cfg(config)
+        print(model)
+        
+        # output = model.predict_answers(samples)
+        # print(output)
+
+

@@ -9,3 +9,4 @@
 
 cd /nethome/chuang475/flash/projects/vlm_robustness/
 srun -u /nethome/chuang475/flash/miniconda3/envs/lavis/bin/python -m torch.distributed.run --nproc_per_node=8 train.py --cfg-path configs/florence2/vqav2_train.yaml
+

@@ -1,23 +1,41 @@
 #!/bin/bash
-#SBATCH --job-name=digrapood
-#SBATCH --output=digrapood.out
-#SBATCH --error=digrapood.err
-#SBATCH --partition="overcap"
+
+#SBATCH --job-name=rundigrap
+#SBATCH --output=rundigrap.out
+#SBATCH --partition="kira-lab"
 #SBATCH --nodes=1
-#SBATCH --cpus-per-gpu=6
-#SBATCH --gpus-per-node="a100:8"
-#SBATCH --qos="short"
-#SBATCH -x shakey,nestor,voltron,chappie,puma,randotron,cheetah,baymax,tachikoma,uniblab,major,optimistprime,hk47,xaea-12,dave,crushinator,kitt,gundam
-#SBATCH --mem-per-gpu=60G
+#SBATCH --gpus-per-node="a40:8"
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=7
+
+export CUBLAS_WORKSPACE_CONFIG=:4096:8
+export PYTHONUNBUFFERED=TRUE
 source /nethome/bmaneech3/flash/miniconda3/bin/activate riplenv
 
-
 conda activate riplenv
-export CUBLAS_WORKSPACE_CONFIG=:4096:8
-export PYTHONHASHSEED=42
-export TOKENIZERS_PARALLELISM=false
-export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 cd /nethome/bmaneech3/flash/vlm_robustness
 
 
-srun -u python -m torch.distributed.run --nproc_per_node=8 /nethome/bmaneech3/flash/vlm_robustness/ood_test/contextual_ood/digrapmeasure.py
+srun -u python -m torch.distributed.run --nproc_per_node=8 /nethome/bmaneech3/flash/vlm_robustness/ood_test/contextual_ood/test_model.py --cfg-path /nethome/bmaneech3/flash/vlm_robustness/configs/digrap/advqa_test.yaml
+
+srun -u python -m torch.distributed.run --nproc_per_node=8 /nethome/bmaneech3/flash/vlm_robustness/ood_test/contextual_ood/test_model.py --cfg-path /nethome/bmaneech3/flash/vlm_robustness/configs/digrap/cvvqa_test.yaml
+
+srun -u python -m torch.distributed.run --nproc_per_node=8 /nethome/bmaneech3/flash/vlm_robustness/ood_test/contextual_ood/test_model.py --cfg-path /nethome/bmaneech3/flash/vlm_robustness/configs/digrap/ivvqa_test.yaml
+
+srun -u python -m torch.distributed.run --nproc_per_node=8 /nethome/bmaneech3/flash/vlm_robustness/ood_test/contextual_ood/test_model.py --cfg-path /nethome/bmaneech3/flash/vlm_robustness/configs/digrap/okvqa_test.yaml
+
+srun -u python -m torch.distributed.run --nproc_per_node=8 /nethome/bmaneech3/flash/vlm_robustness/ood_test/contextual_ood/test_model.py --cfg-path /nethome/bmaneech3/flash/vlm_robustness/configs/digrap/textvqa_test.yaml
+
+srun -u python -m torch.distributed.run --nproc_per_node=8 /nethome/bmaneech3/flash/vlm_robustness/ood_test/contextual_ood/test_model.py --cfg-path /nethome/bmaneech3/flash/vlm_robustness/configs/digrap/vqace_test.yaml
+
+srun -u python -m torch.distributed.run --nproc_per_node=8 /nethome/bmaneech3/flash/vlm_robustness/ood_test/contextual_ood/test_model.py --cfg-path /nethome/bmaneech3/flash/vlm_robustness/configs/digrap/vqacp_test.yaml
+
+srun -u python -m torch.distributed.run --nproc_per_node=8 /nethome/bmaneech3/flash/vlm_robustness/ood_test/contextual_ood/test_model.py --cfg-path /nethome/bmaneech3/flash/vlm_robustness/configs/digrap/vqarep_test.yaml
+
+srun -u python -m torch.distributed.run --nproc_per_node=8 /nethome/bmaneech3/flash/vlm_robustness/ood_test/contextual_ood/test_model.py --cfg-path /nethome/bmaneech3/flash/vlm_robustness/configs/digrap/vqav2_val.yaml
+
+srun -u python -m torch.distributed.run --nproc_per_node=8 /nethome/bmaneech3/flash/vlm_robustness/ood_test/contextual_ood/test_model.py --cfg-path /nethome/bmaneech3/flash/vlm_robustness/configs/digrap/vqav2_train.yaml
+
+srun -u python -m torch.distributed.run --nproc_per_node=8 /nethome/bmaneech3/flash/vlm_robustness/ood_test/contextual_ood/test_model.py --cfg-path /nethome/bmaneech3/flash/vlm_robustness/configs/digrap/vizwiz_test.yaml
+
+

@@ -47,7 +47,10 @@ class RunnerBase:
     """
 
     def __init__(self, cfg, task, model, datasets, job_id):
+        
         self.config = cfg
+        print("config", self.config)
+
         self.job_id = job_id
 
         self.task = task
@@ -481,6 +484,8 @@ class RunnerBase:
                 During training, we will reload the best checkpoint for validation.
                 During testing, we will use provided weights and skip reloading the best checkpoint .
         """
+
+        
         data_loader = self.dataloaders.get(split_name, None)
         assert data_loader, "data_loader for split {} is None.".format(split_name)
 
@@ -503,6 +508,47 @@ class RunnerBase:
                 split_name=split_name,
                 epoch=cur_epoch,
             )
+
+    """MODIFY FOR measure OOD"""
+    @torch.no_grad() 
+    def get_hidden_states(self, skip_reload=True) : 
+        for split_name in self.test_splits: 
+
+            run_config = self.config.run_cfg
+            print("run config", run_config)
+            ft_method = run_config.get("ft_method", "lora")
+            print("datasets config key", self.config.datasets_cfg.keys())
+            ds_split_name = '_'.join([list(self.config.datasets_cfg.keys())[0], split_name])
+
+            concept = self.config.run_cfg.get("concepts", ["image", "joint"])
+            print("concept", concept)
+
+            output_dir = f"/nethome/bmaneech3/flash/vlm_robustness/result_output/contextual_ood/hidden_states/{ft_method}/{ds_split_name}_{'_'.join(concept)}.pth"
+            print("verify output_dir", output_dir)
+            if os.path.exists(output_dir) : 
+                print("file already exists - skipping")
+                continue
+
+            data_loader = self.dataloaders.get(split_name, None)
+            assert data_loader, "data_loader for split {} is None.".format(split_name)
+            model = self.unwrap_dist_model(self.model)
+
+            model.eval()
+
+            hidden_states = self.task.get_hidden_states(model, data_loader, concept) 
+            # hidden_states = hidden_states.permute(1,0,2)    #final hidden states (concept, batch size, hidden dim)
+            #hidden_states = {qid: tensor}
+
+            #save tensor 
+            print("tensor dimension", len(hidden_states))
+
+            # print(f"Saving tensor to {/nethome/bmaneech3/flash/vlm_robustness/result_output/contextual_ood/hidden_states}")
+
+            torch.save(hidden_states, output_dir)
+
+            print(f"Successfully saved tensor to {output_dir}")
+
+        
 
     def unwrap_dist_model(self, model):
         if self.use_distributed:

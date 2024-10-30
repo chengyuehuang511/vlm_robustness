@@ -52,7 +52,7 @@ run:
   prompt: "Question: {} Answer:"
 
   seed: 42
-  output_dir: "output/PALIGEMMA/ADVQA/PA"
+  output_dir: "output/PALIGEMMA/ADVQA"
 
   evaluate: True
   test_splits: ["val"]

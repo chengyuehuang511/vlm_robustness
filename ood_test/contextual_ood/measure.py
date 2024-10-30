@@ -145,13 +145,11 @@ def get_hidden_states(inputs, hidden_layer=19) :
     #prioritize order -> image, joint, question
 
     #maybe for pretrained models? 
-
     # if "question" in concept_type: 
     #     emb = question_model.encode(inputs, max_length=MAX_LENGTH)
     #     emb = F.normalize(emb,p=2, dim=1)
     #     concept_hidden_vectors = emb.unsqueeze(1)
     #     print("verify sentence emb size", emb.size()) 
-
 
     with torch.no_grad() : 
         output = model.forward(**inputs, return_dict=True, output_hidden_states=True)
@@ -434,7 +432,7 @@ if __name__ == "__main__" :
 
                 # del inputs, enc_vectors 
                 del inputs
-                del enc_vector
+                del enc_vectors
                 train_vectors.append(enc_vectors_cpu) #(batch size, concepts, hidden size, ans dim if )
 
             #on cpu now 

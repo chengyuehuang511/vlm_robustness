@@ -17,6 +17,14 @@ from lavis.common.registry import registry
 from lavis.common.vqa_tools.vqa import VQA
 from lavis.common.vqa_tools.vqa_eval import VQAEval
 from lavis.tasks.base_task import BaseTask
+from lavis.common.logger import MetricLogger, SmoothedValue
+
+
+
+import torch.distributed as dist
+from lavis.common.dist_utils import get_rank, get_world_size, is_main_process, is_dist_avail_and_initialized
+from lavis.datasets.data_utils import prepare_sample
+
 
 @registry.register_task("vqa")
 class VQATask(BaseTask):
@@ -163,6 +171,64 @@ class VQATask(BaseTask):
 
         return metrics
 
+    
+
+    """
+    Adding get hidden states
+    """
+
+    def get_hidden_states(self, model, data_loader, concept, cuda_enabled=True):
+        metric_logger = MetricLogger(delimiter="  ")
+        header = "Evaluation"
+        # TODO make it configurable
+        print_freq = 10
+
+
+        results = {} 
+        for samples in metric_logger.log_every(data_loader, print_freq, header):
+            samples = prepare_sample(samples, cuda_enabled=cuda_enabled)
+            # print("model device :", model.device)
+            # print("samples  device: ", samples.device)
+            
+            print(samples)
+            instance_ids = samples["instance_id"] #(1, # questions)
+            print(len(instance_ids))
+            output_hidden_states = model.get_hidden_states(samples, concept).to('cpu') #(batch size, concept, hidden_dim)
+
+            assert len(instance_ids) == output_hidden_states.size(0), "ques id lengths != batch size"
+
+            for idx, qid in enumerate(instance_ids) : 
+                results[qid] = output_hidden_states[idx] #each ques id = tensor (concept, hidden_dim)
+
+            # # eval_output = self.valid_step(model=model, samples=samples)
+            # if results != [] : 
+            #     results = torch.cat([results, output_hidden_states], dim=1)
+            # else : 
+            #     results = output_hidden_states
+            # results.extend(output_hidden_states)
+            # del output_hidden_states
+
+
+        if is_dist_avail_and_initialized():
+            dist.barrier()
+            print("merging results across the gpus")
+
+            all_results = [{} for _ in range(dist.get_world_size())]
+            print("size ", dist.get_world_size())
+            dist.all_gather_object(all_results, results)
+
+            # Combine results into a single dictionary
+            merged_results = {}
+            for gpu_results in all_results:
+                merged_results.update(gpu_results)
+
+        #stack the results
+    
+
+        return merged_results 
+
+        
+
     @dist_utils.main_process
     def _report_metrics(self, result_file, split):
         """
@@ -233,7 +299,7 @@ def convert_to_coco_gt(data, outpath_questions, outpath_annotations, split, samp
 
         
 
-@registry.register_task("aok_vqa")
+# @registry.register_task("aok_vqa")
 class AOKVQATask(VQATask):
     def valid_step(self, model, samples):
         answers = model.predict_answers(
@@ -318,7 +384,7 @@ class AOKVQATask(VQATask):
 
 
 
-@registry.register_task("gqa")
+# @registry.register_task("gqa")
 class GQATask(VQATask):
     def valid_step(self, model, samples):
         answers = model.predict_answers(
@@ -406,7 +472,7 @@ class GQATask(VQATask):
         return metrics
 
 
-@registry.register_task("discrn_qa")
+# @registry.register_task("discrn_qa")
 class DisCRNTask(VQATask):
     def valid_step(self, model, samples):
         answers = model.predict_answers(
@@ -477,3 +543,8 @@ class DisCRNTask(VQATask):
         logging.info(metrics)
 
         return metrics
+
+
+
+
+
