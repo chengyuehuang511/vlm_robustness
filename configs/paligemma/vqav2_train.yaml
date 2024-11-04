@@ -51,7 +51,7 @@ run:
   min_lr: 1e-4 # 0
   warmup_steps: 1000
   warmup_lr: 1e-4 # 1e-8 3e-7
-  weight_decay: 1e-1 # 3e-7 # 5e-5 0.5 1 1.5 2
+  weight_decay: 1e-4 # 3e-7 # 5e-5 0.5 1 1.5 2
   max_epoch: 10
   accum_grad_iters: 2 # 1
   lr_layer_decay: 0.9
@@ -70,7 +70,7 @@ run:
   prompt: "Question: {} Answer:"
 
   seed: 42
-  output_dir: "output/PALIGEMMA/VQA/spcg_1e-3_mu0.5"
+  output_dir: "output/PALIGEMMA/VQA/spcg_1e-3_mu0.5_k1e6"
 
   amp: False
 

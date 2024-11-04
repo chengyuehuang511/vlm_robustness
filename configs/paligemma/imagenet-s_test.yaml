@@ -8,8 +8,8 @@ model:
   model_type: paligemma-3b-pt-224
   load_pretrained: True
   pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
-  load_finetuned: False
-  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/1e-3/20240721224/checkpoint_best.pth'
+  load_finetuned: True
+  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET1K/lp_1e-3/20240824124/checkpoint_best.pth'
 
   # lora
   use_lora: 1
@@ -26,7 +26,7 @@ datasets:
     type: eval
 
 run:
-  task: classifier_vqa_followup
+  task: classifier_vqa
 
   # follow-up questions
   followup_cfg:
@@ -43,7 +43,7 @@ run:
     templates_name_parents: openai_imagenet_template
     use_synonyms_leaves: false
     use_synonyms_parents: true
-  followup_prev_dir: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET-S/20240813025/
+  # followup_prev_dir: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET-S/20240813025/
   # lora: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET-S/20240815004/
   # spd: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET-S/20240815000/
   # spd_wise: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET-S/20240815012/

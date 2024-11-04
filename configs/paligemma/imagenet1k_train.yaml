@@ -3,8 +3,8 @@ model:
   model_type: paligemma-3b-pt-224  # paligemma-3b-pt-224
   load_pretrained: True
   pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
-  load_finetuned: False
-  finetuned: ''
+  load_finetuned: True
+  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET1K/lp_1e-3/20240824124/checkpoint_best.pth'
 
   # lora
   use_lora: 1
@@ -21,8 +21,8 @@ datasets:
 run:
   task: classifier_vqa
   # optimizer
-  opt: "spcg"
-  adamp_k: 0.5 # 0.5 1
+  opt: "adam"
+  adamp_k: 0 # 0.5 1
   lr_sched: "linear_warmup_cosine_lr"
   init_lr: 1e-3  # 1e-5 3e-6
   min_lr: 1e-4 # 0
@@ -47,7 +47,7 @@ run:
   prompt: "Question: {} Short answer:"
 
   seed: 42
-  output_dir: "output/PALIGEMMA/IMAGENET1K/spcg_1e-3_mu5e-2"
+  output_dir: "output/PALIGEMMA/IMAGENET1K/lpft_1e-3"
 
   amp: False
   # resume_ckpt_path: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/IMAGENET1K/spcg_1e-3_mu10/20240918200/checkpoint_best.pth'

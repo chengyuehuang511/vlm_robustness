@@ -23,6 +23,9 @@ model:
 
   # spcg_1e-3_mu1/20240917115
   # spcg_1e-3_mu0.5/20240918154
+  # /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/spcg_1e-3_mu1e-1/20240917113/checkpoint_best.pth
+  # /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/spcg_1e-3_mu1e-2/20240917114/checkpoint_best.pth
+  # /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/spcg_1e-3_mu10/20240917220/checkpoint_best.pth
 
   # lora
   use_lora: 1

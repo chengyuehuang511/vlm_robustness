@@ -1,1 +1,3 @@
 output/
+ood_test/contextual_ood/region_samples/
+ood_test/contextual_ood/xttn_results

@@ -26,13 +26,13 @@ run:
   proj_term: "both"
   pcgrad_strength: 1.0
   adamh_ortho: False
-  adamp_k: 0.5 # 0.5 1
+  adamp_k: 0 # 0.5 1
   lr_sched: "linear_warmup_cosine_lr"
   init_lr: 1e-3  # 1e-5 3e-6
   min_lr: 1e-4 # 0
   warmup_steps: 1000
   warmup_lr: 1e-4 # 1e-8 3e-7
-  weight_decay: 1 # 3e-7 # 5e-5 0.5 1 1.5 2
+  weight_decay: 1e-4 # 3e-7 # 5e-5 0.5 1 1.5 2
   max_epoch: 10
   accum_grad_iters: 2 # 1
   lr_layer_decay: 0.9
@@ -51,7 +51,7 @@ run:
   prompt: "Question: {} Short answer:"
 
   seed: 42
-  output_dir: "output/PALIGEMMA/DomainNet-Real/spcg_1e-3_mu10"
+  output_dir: "output/PALIGEMMA/DomainNet-Real/spcg_1e-3_1e-4_k1e6"
 
   amp: False
 

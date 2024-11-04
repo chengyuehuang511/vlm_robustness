@@ -10,11 +10,7 @@ from torchvision import transforms
 from torchvision.transforms import InterpolationMode
 import gc 
 import math 
-# from data.builders import load_dataset, DatasetZoo
 
-# dataset_zoo = DatasetZoo()
-# # coco_vqa_vs
-# vqa_vs = load_dataset("coco_vqa_vs")
 torch.cuda.empty_cache()
 
 #globally set no gradient tracking
@@ -45,7 +41,7 @@ ds_split_2_file = {
     "ivvqa_test" : "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/iv-vqa/val/BS/vedika2/nobackup/thesis/mini_datasets_qa/0.1_0.1/combined_data.json",
     "okvqa_test" : "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/ok-vqa/val/combined_data.json",
     "textvqa_test" : "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/textvqa/val/combined_data.json",
-    "textvqa_train" : "/nethome/bmaneech3/flash/vlm_robustness/tmp/datasets/textvqa/train/combined_data.json", 
+    "textvqa_train" : "/coc/pskynet4/bmaneech3/vlm_robustness/tmp/datasets/textvqa/train/combined_data.json", 
     "vizwiz_test" :  "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/vizwiz/val/combined_data.json",
     "vqa_ce_test" : "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/vqace/val/combined_data_subset.json",
     "vqa_cp_train" : "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/vqacp2/train/vqacp_v2_train_questions.json", 
@@ -75,8 +71,6 @@ ans_label_map = {}
 #don't forget to put model to device 
 model_id = "google/paligemma-3b-ft-vqav2-224"
 
-# quantization_config = BitsAndBytesConfig(load_in_8bit=True)
-#quantize model to reduce size 
 model = PaliGemmaForConditionalGeneration.from_pretrained(model_id, 
                                                         device_map ="auto",
                                                         torch_dtype=torch.bfloat16,
@@ -117,7 +111,6 @@ class MeasureOODDataset(Dataset) :
             label = sample["answer"]
             if isinstance(sample["answer"], list) : 
                 label = Counter(sample['answer']).most_common(1)[0][0]
-
         else : 
             label = 0 
 
@@ -125,7 +118,7 @@ class MeasureOODDataset(Dataset) :
 
         image_path = os.path.join(self.vis_root , sample["image"]) 
         input_image = Image.open(image_path).convert('RGB')
-        resized_image = resize_transform(input_image)
+        resized_image = resize_transform(input_image)  # TODO: check how previous code was resizing images
         # inputs = processor(question, resized_image, padding=True)
 
         #convert label to id for conversion to tensors

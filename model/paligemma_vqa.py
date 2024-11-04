@@ -81,67 +81,8 @@ class PaliGemma_VQA(BaseModel):  # TODO
             return contextlib.nullcontext()
 
     def forward(self, samples, **kwargs):
-        # print("questions: ", samples["text_input_raw"])
-        # print("answers", answers)
-        # print("weight", samples["weight"])
-        # print("n_answers", samples["n_answers"])
-        
-        # image_stack = []
-        # questions_stack = []
-
-        # assert len(samples["answer"]) == sum(samples["n_answers"])
-        # assert len(samples["text_input_raw"]) == len(samples["n_answers"])
-        # assert len(samples["image_raw"]) == len(samples["n_answers"])
-
-        # for b, n in enumerate(samples["n_answers"]):
-        #     # image
-        #     image_stack += [samples["image_raw"][b]] * n
-        #     # questions
-        #     questions_stack += [samples["text_input_raw"][b]] * n
-
-        # model_inputs = self.processor(text=questions_stack, images=image_stack, suffix=samples["answer"], return_tensors="pt", padding="longest").to(self.device)
-        # model_inputs = self.processor(text=samples["text_input_raw"], images=samples["image_raw"], suffix=samples["multiple_choice_answer"], return_tensors="pt", padding="longest").to(self.device)
-        # if samples["text_input_raw"] == ['Is there a light on?']:
-        #     # print("model_inputs", model_inputs)
-        #     # save json file of model_inputs
-        #     # import json
-        #     # with open("model_inputs.json", "w") as f:
-        #     #     json.dump(model_inputs, f)
-
-        #     # save model.state_dict() into a file
-        #     torch.save(self.model.state_dict(), "model_state_dict.pth")
-
-        #     # save image_raw, text_input_raw and multiple_choice_answer into 3 files
-        #     # import pickle
-        #     # with open("image_raw.pkl", "wb") as f:
-        #     #     pickle.dump(samples["image_raw"], f)
-        #     # with open("text_input_raw.pkl", "wb") as f:
-        #     #     pickle.dump(samples["text_input_raw"], f)
-        #     # with open("multiple_choice_answer.pkl", "wb") as f:
-        #     #     pickle.dump(samples["multiple_choice_answer"], f)
-            
-        # print the trainable parameters require_grad==True
-        # print("Trainable parameters: ")
-        # for name, param in self.model.named_parameters():
-        #     if param.requires_grad == False:
-        #         print(name)
-        # for name, param in self.model.named_parameters():
-        #     print(f"{name} requires_grad: {param.requires_grad}")
-
-        # print('state_dict: ', self.model.state_dict())
-        # print('language_model.lm_head.weight: ', self.model.state_dict()['language_model.lm_head.weight'])
-        # print(id(self.model))
-        # print("model_inputs", model_inputs)
-
-        # # Monitoring gradients
-        # for name, param in self.model.named_parameters():
-        #     param.requires_grad_(True)
-        #     print(f"Gradients for {name}: {param.grad}")
-        #     print(f"If Leaf: {param.is_leaf}")
-        
-        # with self.maybe_autocast():
-        # print("Paligemma receiving the following kwargs", kwargs)
-        # print("Paligemma recieves the following samples", len(samples))
+        # if prompt:
+        #     text_input = [prompt.format(question) for question in samples["text_input_raw"]]
 
         model_inputs = self.processor(text=samples["text_input_raw"], images=samples["image_raw"], suffix=samples["multiple_choice_answer"], return_tensors="pt", padding="longest").to(self.dtype).to(self.device)
         # print("model_inputs", model_inputs)
@@ -151,6 +92,29 @@ class PaliGemma_VQA(BaseModel):  # TODO
         # print("loss: ", loss)
     
         return {"loss": loss}
+    
+    def return_all_outputs(self, samples, **kwargs):
+        model_inputs = self.processor(text=samples["text_input_raw"], images=samples["image_raw"], suffix=samples["multiple_choice_answer"], return_tensors="pt", padding="longest").to(self.dtype).to(self.device)
+        outputs = self.model(**model_inputs, output_attentions=True)
+        return model_inputs, outputs
+    
+    def attn_scores(self, samples):
+        with torch.inference_mode():
+            tokens, outputs = self.return_all_outputs(samples)
+        
+        img_ratio = []
+        txt_ratio = []
+        for i in range(len(samples['image_raw'])):
+            attn = outputs.attentions[-1][i].mean(dim=0)  #-1: lastlayer (batch_size, num_heads, seq_len, seq_len) -> (batch_size, seq_len, seq_len)
+
+            img_token_idx = tokens['input_ids'][i] == 257152
+            suffix_token_idx = tokens['token_type_ids'][i] == 1
+            prefix_token_idx = (img_token_idx == False) & (suffix_token_idx == False)
+
+            img_ratio.append((attn[img_token_idx][:, prefix_token_idx].sum(dim=1) / attn[img_token_idx][:, img_token_idx].sum(dim=1)).mean().item())
+            txt_ratio.append((attn[prefix_token_idx][:, prefix_token_idx].sum(dim=1) / attn[prefix_token_idx][:, img_token_idx].sum(dim=1)).mean().item())
+
+        return img_ratio, txt_ratio
     
     def predict_answers(
             self, 

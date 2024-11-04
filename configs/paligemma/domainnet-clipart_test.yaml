@@ -4,7 +4,7 @@ datasets:
     type: eval
 model:
   arch: paligemma_vqa
-  finetuned: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/DomainNet-Real/spcg_1e-3_mu0.5/20240917203/checkpoint_best.pth
+  finetuned: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/DomainNet-Real/spcg_1e-3_mu10/20240917204/checkpoint_best.pth
   # /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/1e-3/20240721224/checkpoint_best.pth
   # DomainNet-Real/adamh_1e-3/0.5/20240822015
   # adamh_1e-3_0.5_ortho/20240826013
@@ -42,6 +42,13 @@ model:
 
   # spcg_1e-3_mu1e-1/20240916170
   # spcg_1e-3_mu0.5/20240917203
+  # /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/DomainNet-Real/spcg_1e-3_mu1/20240917115/checkpoint_best.pth
+  # /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/DomainNet-Real/spcg_1e-3_mu1e-2/20240916182/checkpoint_best.pth
+  # /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/DomainNet-Real/spcg_1e-3_mu10/20240917204/checkpoint_best.pth
+
+  # /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/DomainNet-Real/adamp_1e-3_1e-4_k0/20240924203/checkpoint_best.pth
+  # /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/DomainNet-Real/lp_1e-3/20240824012/checkpoint_best.pth
+  # /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/DomainNet-Real/lpft_1e-3/20240824121/checkpoint_best.pth
   load_finetuned: true
   load_pretrained: true
   lora_rank: 8

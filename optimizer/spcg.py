@@ -180,6 +180,8 @@ class SPCG(Optimizer):
             
             # print("weight_decay: ", weight_decay.data)
             print("lamb: ", lamb.data.item())
+            print("exp_avg.shape: ", exp_avg.shape)
+            print("grad.shape: ", grad.shape)
             
             exp_avg.mul_(beta1).add_(grad, alpha=1 - beta1)
             exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value=1 - beta2)
@@ -192,6 +194,7 @@ class SPCG(Optimizer):
         
         for i, param in enumerate(group['params']):
             if param.grad is None: 
+                print(f"param.grad {i} is None")
                 continue
             
             grad = param.grad
@@ -207,13 +210,18 @@ class SPCG(Optimizer):
 
 
 class TPCGrad(object):
+    """
+    Hyper-parameter optimizer
+    """
     def __init__(self):
-        self.threshold = torch.nn.Hardtanh(0,1)
         self.j = 0 # Buffer counter
 
         # AdamUtil parameteres
-        self.mu = 5e-2
+        self.mu = 5e-1
+        self.kappa = 1
         print("mu: ", self.mu)
+        print("kappa:", self.kappa)
+        self.threshold = torch.nn.Hardtanh(0, self.kappa)
         self.beta1 = 0.9
         self.beta2 = 0.999
         self.t = 1
