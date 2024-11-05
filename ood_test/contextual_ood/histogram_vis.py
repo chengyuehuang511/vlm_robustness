@@ -263,7 +263,6 @@ for concept in concept_type :
         dataset_labels = [train_ds_name, test_ds_name] 
 
         datasets = [train_vectors, test_vectors]  
-        
 
         for c in range(datasets[0].shape[0]):  
             #c = current concept type 
@@ -314,7 +313,7 @@ for concept in concept_type :
             # #top samples 
             print(f"Running for {hidden_layer_name[c]}_top, {test_ds_split}")
 
-            # sheet_name = f"{hidden_layer_name[c]}_top"
+            sheet_name = f"{hidden_layer_name[c]}_top"
             k = 50
             # random_idxs = torch.randint(low=0, high=train_top_samples.size(0), size=(k,))
             # train_top_samples = train_top_samples[random_idxs]

@@ -190,15 +190,18 @@ class VQATask(BaseTask):
             # print("model device :", model.device)
             # print("samples  device: ", samples.device)
             
-            print(samples)
-            instance_ids = samples["instance_id"] #(1, # questions)
+            # print(samples)
+            instance_ids = samples["instance_id"] #(1, batch size)
             print(len(instance_ids))
             output_hidden_states = model.get_hidden_states(samples, concept).to('cpu') #(batch size, concept, hidden_dim)
 
             assert len(instance_ids) == output_hidden_states.size(0), "ques id lengths != batch size"
 
-            for idx, qid in enumerate(instance_ids) : 
-                results[qid] = output_hidden_states[idx] #each ques id = tensor (concept, hidden_dim)
+            for idx, instance_id in enumerate(instance_ids) : 
+                if instance_id in results : 
+                    raise Exception("duplicate instance id")
+                
+                results[instance_id] = output_hidden_states[idx] #each ques id = tensor (concept, hidden_dim)
 
             # # eval_output = self.valid_step(model=model, samples=samples)
             # if results != [] : 
@@ -224,7 +227,6 @@ class VQATask(BaseTask):
 
         #stack the results
     
-
         return merged_results 
 
         

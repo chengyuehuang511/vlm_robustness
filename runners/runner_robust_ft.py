@@ -512,18 +512,20 @@ class RunnerBase:
     """MODIFY FOR measure OOD"""
     @torch.no_grad() 
     def get_hidden_states(self, skip_reload=True) : 
-        for split_name in self.test_splits: 
 
+        for split_name in self.test_splits: 
             run_config = self.config.run_cfg
             print("run config", run_config)
-            ft_method = run_config.get("ft_method", "lora")
+
+            ft_method = run_config.get("ft_method")
+            
             print("datasets config key", self.config.datasets_cfg.keys())
             ds_split_name = '_'.join([list(self.config.datasets_cfg.keys())[0], split_name])
 
             concept = self.config.run_cfg.get("concepts", ["image", "joint"])
             print("concept", concept)
 
-            output_dir = f"/nethome/bmaneech3/flash/vlm_robustness/result_output/contextual_ood/hidden_states/{ft_method}/{ds_split_name}_{'_'.join(concept)}.pth"
+            output_dir = f"/nethome/bmaneech3/flash/vlm_robustness/result_output/contextual_ood/hidden_states/{ft_method}/{ds_split_name}_{'_'.join(concept)}_new.pth"
             print("verify output_dir", output_dir)
             if os.path.exists(output_dir) : 
                 print("file already exists - skipping")
@@ -588,6 +590,8 @@ class RunnerBase:
                 # map-style dataset are concatenated together
                 # setup distributed sampler
                 if self.use_distributed:
+                    print("using is distributed sampler: ")
+                    print(f"shuffle set to {is_train}")
                     sampler = DistributedSampler(
                         dataset,
                         shuffle=is_train,
@@ -599,7 +603,8 @@ class RunnerBase:
                         sampler = sampler if is_train else None
                 else:
                     sampler = None
-
+                    
+                print(f"shuffle print {sampler is None and is_train}")
                 loader = DataLoader(
                     dataset,
                     batch_size=bsz,

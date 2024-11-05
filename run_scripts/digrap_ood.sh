@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#SBATCH --job-name=rundigrap
-#SBATCH --output=rundigrap.out
-#SBATCH --partition="kira-lab"
+#SBATCH --job-name=rundigrap_2
+#SBATCH --output=rundigrap_2.out
+#SBATCH --partition="overcap"
 #SBATCH --nodes=1
 #SBATCH --gpus-per-node="a40:8"
 #SBATCH --ntasks-per-node=1

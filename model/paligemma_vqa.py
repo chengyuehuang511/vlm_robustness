@@ -2,7 +2,7 @@ import logging
 from PIL import Image
 import requests
 import torch
-from transformers import AutoProcessor, PaliGemmaForConditionalGeneration, PaliGemmaConfig, PaliGemmaProcessor, BitsAndBytesConfig
+from transformers import AutoProcessor, PaliGemmaForConditionalGeneration, PaliGemmaConfig, PaliGemmaProcessor, BitsAndBytesConfig, BertModel, AutoTokenizer, AutoImageProcessor, ViTModel
 from lavis.common.registry import registry
 from lavis.models.base_model import BaseModel
 from lavis.common.utils import get_abs_path, is_url, download_cached_file
@@ -50,6 +50,13 @@ class PaliGemma_VQA(BaseModel):  # TODO
         self.dtype = dtype
 
         self.processor = AutoProcessor.from_pretrained(model_id)
+        self.tokenizer = AutoTokenizer.from_pretrained("google-bert/bert-base-uncased")
+        # print("self.device : ", self.device)
+        self.question_model = BertModel.from_pretrained("bert-base-uncased", torch_dtype=torch.float16, attn_implementation="sdpa")
+        
+        self.image_processor = AutoImageProcessor.from_pretrained("google/vit-base-patch16-224-in21k")
+        self.image_model = ViTModel.from_pretrained("google/vit-base-patch16-224-in21k")
+
         
         model_config = PaliGemmaConfig.from_pretrained(model_id)
 
@@ -148,8 +155,6 @@ class PaliGemma_VQA(BaseModel):  # TODO
         outputs = self.model(**model_inputs)
 
 
-
-
         """Updated""" 
         # outputs = self.model.forward(samples)
         # print("outputs", outputs)
@@ -159,75 +164,139 @@ class PaliGemma_VQA(BaseModel):  # TODO
         return {"loss": loss}
 
     def get_hidden_states(self, samples, concept_type, **kwargs) : 
+        print("model", self.model_id)
         image = samples["image_raw"]
-
-        # if isinstance(samples["text_input_raw"], str):
-        #     samples["text_input_raw"] = [samples["text_input_raw"]]
-        
         text_input = samples["text_input_raw"]
 
-        # print("image", image)
-        # print("text_input", text_input)
-
-        # with self.maybe_autocast():
         assert self.device == self.model.device, "model must be on same device"
 
+        """
+        Concept types : 
+        - BERT question -> uni_question
+        - ViT image -> uni_image (TODO)
 
-        if not any(True for concept in concept_type if "question" in concept) : 
+        Pretrain PaliGemma
+        - ques_pt (TODO)
+        - image_pt (TODO)
+        - joint_pt (TODO)
+        
+        - ques_ft (TODO)
+        - image_ft (with image_joint)
+        - joint 
+        """
 
-            inputs = self.processor(text=text_input, images=image, return_tensors="pt", padding="longest").to(self.dtype).to(self.device)
+        if self.device != self.question_model.device : 
+            self.question_model = self.question_model.to(self.device)
 
-        else : 
-            inputs = self.processor(text_input, return_tensors='pt',padding=True, truncation=True) 
-        # inputs = self.processor(text=samples["text_input_raw"], images=samples["image_raw"],  return_tensors="pt", padding="longest").to(self.dtype).to(self.device)
 
-        with torch.no_grad() : 
-            output = self.model.forward(**inputs, return_dict=True, output_hidden_states=True)
-        hidden_states = output.hidden_states #(layer, BATCH SIZE, seq length, hiddensize)
+        assert self.device == self.question_model.device, "question model must be on same device"
 
-        concept_hidden_vectors = None 
-
+        hidden_states = None 
         if any(True for concept in concept_type if "question" in concept) : 
+            print("Running BERT")
+            inputs = self.tokenizer(text=text_input, return_tensors='pt',padding=True, truncation=True).to(self.device)
+            
+            with torch.no_grad() : 
+                output = self.question_model.forward(**inputs, return_dict=True, output_hidden_states=True)
+
+            hidden_states = output.hidden_states
             question_hidden_states = hidden_states[-1]
             attention_mask = inputs['attention_mask'].unsqueeze(-1) #(batch size, seq, hidden size)
+
            
             output = torch.sum(question_hidden_states * attention_mask, dim=1) #(batch size, seq, hidden size) -> (batch size, hidden size)
-
             total = torch.sum(attention_mask, dim=1) #(batch size, hidden size)
 
             mean_emb = output / total 
 
+            print("mean ques emb", mean_emb.size()) #(batch size, dim)
+            concept_hidden_vectors = mean_emb.unsqueeze(1) #(batch size, 1, dim) 
+        elif "uni_image" in concept_type : 
+            print("Running ViT")
+            #get from pretrained image encoder  
 
-            print("mean ques emb", mean_emb.size()) #(batch size, dim )
-            concept_hidden_vectors = mean_emb.unsqueeze(1) #(batch size, 1, dim)
+            inputs = self.image_processor(image, return_tensors="pt").to(self.device)
+
+            with torch.no_grad():
+                outputs = self.image_model(**inputs, output_hidden_states=True)
+
+            image_hidden_states = outputs.hidden_states[-1]
+            print("image hidden states size : ", image_hidden_states.size())
+
+            mean_image_emb = torch.mean(image_hidden_states, dim=1).unsqueeze(1) #(batch size, 1, dim)
+
+            concept_hidden_vectors = mean_image_emb
 
 
 
-        if "image" in concept_type : 
-            image_hidden_states = hidden_states[0][:, :256, :]
-            image_hidden_states = torch.mean(image_hidden_states, dim=1).unsqueeze(1)
-            concept_hidden_vectors = image_hidden_states
+        else : #not question 
+            print("Running multimodal sections")
+            # inputs = self.processor(text_input, return_tensors='pt',padding=True, truncation=True) 
+            inputs = self.processor(text=samples["text_input_raw"], images=samples["image_raw"],  return_tensors="pt", padding="longest").to(self.dtype).to(self.device)
+            concept_hidden_vectors = None 
 
+            if "ques_ft" in concept_type : 
+                print("Running ques_ft")
+                attention_mask = inputs["attention_mask"]
+                attention_mask[:, :256] = 0 #mask out image tokens 
+                output = self.model.forward(**inputs, return_dict=True, output_hidden_states=True)
+                hidden_states = output.hidden_states[-1] 
+                ques_portion = hidden_states[:, 256:, :]
 
-        #new joint 
-        if "joint" in concept_type or any(True for concept in concept_type if "joint" in concept): 
-            output_hidden_states = hidden_states[-1]
-            img_portion = output_hidden_states[:, 0:256, :]
-            ques_portion = output_hidden_states[:, 256:, :]
+                #TODO mask out question padded tokens 
+                mask_tokens = inputs["attention_mask"][:, 256:].unsqueeze(-1) #(batch size, seq, 1)
 
-            mean_img = torch.mean(img_portion, dim=1).unsqueeze(1) #(batch size, 1, dim)
-            mean_ques = torch.mean(ques_portion, dim=1).unsqueeze(1) #(batch size, 1, dim)
+                # mean_ques = torch.mean(ques_portion, dim=1).unsqueeze(1) #(batch size, 1, dim)
+                output = torch.sum(ques_portion * mask_tokens, dim=1) #(batch size, hidden size) -> (batch size, hidden size)
+                total = torch.sum(mask_tokens, dim=1) #(batch size, 1)
 
-            u_hidden_vectors = torch.mean(torch.cat([mean_img, mean_ques], dim=1), dim=1).unsqueeze(1)
-            print("dim joint emb", u_hidden_vectors.size())
-            if concept_hidden_vectors != None : 
-                concept_hidden_vectors = torch.cat([concept_hidden_vectors, u_hidden_vectors], dim=1)
+                mean_ques = (output / total).unsqueeze(1) #(batch size, 1, dim)
+
+                concept_hidden_vectors = mean_ques 
+            
+
+            if "image" in concept_type or "joint" in concept_type : 
+
+                with torch.no_grad() : 
+                    output = self.model.forward(**inputs, return_dict=True, output_hidden_states=True)
+                hidden_states = output.hidden_states #(layer, BATCH SIZE, seq length, hiddensize)
                 
-            else : 
-                concept_hidden_vectors = u_hidden_vectors
+                
+                if "image" in concept_type : 
+                    print("Running image_ft")
+                    image_hidden_states = hidden_states[0][:, :256, :] #first 256 vectors
+                    image_hidden_states = torch.mean(image_hidden_states, dim=1).unsqueeze(1) #(batch size, 1, dim)
+                    concept_hidden_vectors = image_hidden_states
 
-            del mean_img 
-            del mean_ques 
+                #new joint 
+                if "joint" in concept_type or any(True for concept in concept_type if "joint" in concept): 
+                    print("Running image_ft")
+                    output_hidden_states = hidden_states[-1]
+                    img_portion = output_hidden_states[:, 0:256, :]
+                    ques_portion = output_hidden_states[:, 256:, :]
+
+
+                    #TODO mask out question padded tokens 
+                    mask_tokens = inputs["attention_mask"][:, 256:].unsqueeze(-1) #(batch size, seq, 1)
+                    mean_img = torch.mean(img_portion, dim=1).unsqueeze(1) #(batch size, 1, dim)
+
+                    # mean_ques = torch.mean(ques_portion, dim=1).unsqueeze(1) #(batch size, 1, dim)
+                    output = torch.sum(ques_portion * mask_tokens, dim=1) #(batch size, seq, hidden size) -> (batch size, hidden size)
+                    total = torch.sum(mask_tokens, dim=1) #(batch size, hidden size)
+
+                    mean_ques = (output / total).unsqueeze(1) #(batch size, 1, dim)
+
+
+                    u_hidden_vectors = torch.mean(torch.cat([mean_img, mean_ques], dim=1), dim=1).unsqueeze(1) #(batch size, 1, dim)
+                    print("dim joint emb", u_hidden_vectors.size())
+                    if concept_hidden_vectors != None : 
+                        concept_hidden_vectors = torch.cat([concept_hidden_vectors, u_hidden_vectors], dim=1)
+                        
+                    else : 
+                        concept_hidden_vectors = u_hidden_vectors
+
+                    del mean_img 
+                    del mean_ques 
 
         del hidden_states 
         torch.cuda.empty_cache()

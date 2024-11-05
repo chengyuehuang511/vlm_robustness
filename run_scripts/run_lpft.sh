@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --job-name=runlpft
-#SBATCH --output=runlpft.out
+#SBATCH --job-name=runlpft_2
+#SBATCH --output=runlpft_2.out
 #SBATCH --partition="overcap"
 #SBATCH --nodes=1
 #SBATCH --gpus-per-node="a40:8"

@@ -206,7 +206,6 @@ def process_qid_2_score(emb_tensor, split, concept) :
 
 
 
-
 def get_ques_id(emb_tensor, thres, split) : 
     st,en = thres
     mask = (emb_tensor >= st) & (emb_tensor <= en) 

@@ -92,8 +92,8 @@ class DatasetZoo:
 
 dataset_zoo = DatasetZoo()
 # coco_vqa_vs
-vqa_vs = load_dataset("coco_vqa_vs")
+# vqa_vs = load_dataset("coco_vqa_vs")
 
-print(vqa_vs.keys())
-print(vqa_vs["train"][0])
+# print(vqa_vs.keys())
+# print(vqa_vs["train"][0])
 

@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=calcscore
-#SBATCH --output=calcscore.out
-#SBATCH --error=calcscore.err
+#SBATCH --job-name=calclp
+#SBATCH --output=calclp.out
+#SBATCH --error=calclp.err
 #SBATCH --partition="overcap"
 #SBATCH --nodes=1
 #SBATCH --cpus-per-gpu=6
@@ -20,4 +20,4 @@ export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 cd /nethome/bmaneech3/flash/vlm_robustness
 
 
-srun -u python -m torch.distributed.run --nproc_per_node=8 /nethome/bmaneech3/flash/vlm_robustness/ood_test/contextual_ood/measure.py --ft_method "lora"
+srun -u python -m torch.distributed.run --nproc_per_node=8 /nethome/bmaneech3/flash/vlm_robustness/ood_test/contextual_ood/measure.py --ft_method "lp"

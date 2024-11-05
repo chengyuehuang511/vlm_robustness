@@ -42,7 +42,6 @@ class COCOVQADataset(VQADataset, __DisplMixin):
         try : 
             image_path = os.path.join(self.vis_root, ann["image"])
 
-
         except Exception as e : 
             print(type(ann))
             print(ann)

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --job-name=run_lora
-#SBATCH --output=run_lora.out
+#SBATCH --job-name=run_lora_2
+#SBATCH --output=run_lora_2.out
 #SBATCH --partition="overcap"
 #SBATCH --nodes=1
 #SBATCH --gpus-per-node="a40:8"
