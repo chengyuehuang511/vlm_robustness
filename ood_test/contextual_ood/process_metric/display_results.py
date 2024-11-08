@@ -42,8 +42,26 @@ title_dict = {
     "pt_image" : "Pretrain Image Shift"
 }
 
-ft_methods = ["lora", "digrap", "fft","lp","lpft","spd"]
+# ft_methods = ["lora", "fft","lp","lpft", "ftp","spd", "uni_question", "vit"]
+# "fft", "lora", "lp", "lpft", "ftp", "spd", "digrap",
+ft_methods = [ "vit", "uni_question", "pt_emb"] 
+# PT 
+# FFT 
+# LoRA 
+# LP 
+# LPFT 
+# FTP
+# SPD 
+# DiGrap 
+
+
+
+
+# ViT (image)
+# BERT (question)
 # ft_methods = ["question"]
+
+
 test_splits = [
     # "coco_vqav2_train_val",
     "coco_advqa_val", 
@@ -63,9 +81,15 @@ performance_file_path = "/nethome/bmaneech3/flash/vlm_robustness/result_output/c
 
 with open(performance_file_path, 'r') as file : 
     perf_dict = json.load(file)
-concept_list = ["image", "joint"]
-for ft_method in ft_methods : 
-    results_file = f"/coc/pskynet4/bmaneech3/vlm_robustness/result_output/contextual_ood/{ft_method}_ood_score_dict.json"
+
+current_sheet =  spreadsheet.worksheet("FT method shift correlation")
+list_of_lists = current_sheet.get_all_values()
+corr_last_row = len(list_of_lists)
+
+concept_list = ["image", "joint", "uni_image", "ques_ft", "question"]
+for method_idx, ft_method in enumerate(ft_methods) : 
+
+    results_file = f"/coc/pskynet4/bmaneech3/vlm_robustness/result_output/contextual_ood/results_ood/{ft_method}_ood_score_dict.json"
     with open(results_file, 'r') as file : 
         results_dict = json.load(file)
 
@@ -74,32 +98,69 @@ for ft_method in ft_methods :
         for each split 
         - indiv_results : concept -> instance_id -> score (int)
     """
-    # list_of_lists = current_sheet.get_all_values()
-    # last_row = len(list_of_lists)
-    # current_sheet.update_cell(last_row + 1, 1, ft_method)
-    # list_of_lists = current_sheet.get_all_values()
-    # last_row = len(list_of_lists)
+    current_sheet =  spreadsheet.worksheet("ft_ood_shift")
+    list_of_lists = current_sheet.get_all_values()
+    last_row = len(list_of_lists)
+    current_sheet.update_cell(last_row + 1, 1, ft_method)
+    list_of_lists = current_sheet.get_all_values()
+    last_row = len(list_of_lists)
 
     print("ft_method", ft_method)
+    cells = [] 
     for concept in concept_list : 
-        # list_of_lists = current_sheet.get_all_values()
-        # last_row = len(list_of_lists)
-        # current_sheet.update_cell(last_row + 1, 2, concept)
+        current_sheet =  spreadsheet.worksheet("ft_ood_shift")
+        print(list(results_dict.values()))
+        if concept not in list(results_dict.values())[0].keys(): 
+            continue 
 
+        list_of_lists = current_sheet.get_all_values()
+        last_row = len(list_of_lists)
+        current_sheet.update_cell(last_row + 1, 2, concept)
+        #find correlation with performance for each concept
         perf_values = [] 
         shift_values = [] 
+
         for idx, test_split in enumerate(test_splits) : 
+
             # print("Test split", test_split)
             score = results_dict[test_split][concept]
-            perf_values.append(perf_dict[ft_method][test_split])
+
+            if not(ft_method == "vit" or ft_method == "uni_question") : 
+                perf_values.append(perf_dict[ft_method][test_split])
             shift_values.append(score)
+
+            cells.append(Cell(row=last_row+1, col=3+idx, value=str(round(score,2))))
 
             # current_sheet.update_cell(last_row+1, 3+idx, str(round(score,2)))  #round to 4 dp 
 
+        current_sheet.update_cells(cells)
+
+        if ft_method == "vit" or ft_method == "uni_question" : 
+            continue
         #calculate correlation score 
+        print("Switch to correlation sheet")
+        current_sheet =  spreadsheet.worksheet("FT method shift correlation")
+        current_sheet.update_cell(corr_last_row + method_idx + 1, 2, ft_method)
+
 
         correlation, p_value = pearsonr(shift_values, perf_values)
+        col_idx = 3
+        if concept == "ques_ft" or concept == "question" : 
+            col_idx = 3 
+
+        elif concept == "uni_image" or concept == "image" : 
+            col_idx = 4
+
+        else : 
+            col_idx = 5 
+
+
+        current_sheet.update_cell(corr_last_row + method_idx + 1, col_idx, f"{round(correlation, 2)}({round(p_value, 4)})")
+
+
         print(f"Correlation for {concept}: {correlation:.2f} (p-value: {p_value:.4f})")
+        time.sleep(50)
+
 
     
 

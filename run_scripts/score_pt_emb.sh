@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=calcdigrap
-#SBATCH --output=calcldigrap.out
-#SBATCH --error=calcdigrap.err
+#SBATCH --job-name=calcpt_emb
+#SBATCH --output=calcpt_emb.out
+#SBATCH --error=calcpt_emb.err
 #SBATCH --partition="overcap"
 #SBATCH --nodes=1
 #SBATCH --cpus-per-gpu=6
@@ -21,4 +21,4 @@ cd /nethome/bmaneech3/flash/vlm_robustness
 
 concept_list_json='[["image", "joint"], ["ques_ft"]]'
 
-srun -u python -m torch.distributed.run --nproc_per_node=1 /nethome/bmaneech3/flash/vlm_robustness/ood_test/contextual_ood/measure.py --ft_method "digrap"  --concept_list "$concept_list_json"
+srun -u python -m torch.distributed.run --nproc_per_node=1 /nethome/bmaneech3/flash/vlm_robustness/ood_test/contextual_ood/measure.py --ft_method "pt_emb"  --concept_list "$concept_list_json"

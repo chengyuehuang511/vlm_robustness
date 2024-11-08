@@ -184,7 +184,7 @@ def get_left_tail(arr1, hist, bin_edges) :
     indices = torch.nonzero(mask).squeeze()
 
     return  indices,  left_tail_range
-def retrieve_samples(raw_data, vis_path ,indices): 
+def retrieve_samples(raw_data,indices): 
     """
     retrieve the samples at given indices and return needed attributes 
     """

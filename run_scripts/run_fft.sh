@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --job-name=runfft
-#SBATCH --output=runfft.out
+#SBATCH --job-name=runfft_2
+#SBATCH --output=runfft_2.out
 #SBATCH --partition="overcap"
 #SBATCH --nodes=1
 #SBATCH --gpus-per-node="a40:8"

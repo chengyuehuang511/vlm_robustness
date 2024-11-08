@@ -13,6 +13,7 @@ import math
 import torch.nn.functional as F
 import argparse
 import logging 
+from datetime import datetime
 
 torch.cuda.empty_cache()
 
@@ -46,7 +47,7 @@ def create_cov_matrix(ft_method, train_dict, concept_type=["image","joint"], met
 
     
     u_vector = torch.mean(train_vectors, dim=1, keepdim=True) #find mean in vector (concept, batch size , hidden size) -> (C, 1, H)
-    print("Size of mean vector", u_vector.size())
+    logging.info(f"Size of mean vector {u_vector.size()}")
     # print(torch.cuda.memory_allocated())
 
     if torch.isinf(u_vector).any() or torch.isnan(u_vector).any() : 
@@ -54,14 +55,14 @@ def create_cov_matrix(ft_method, train_dict, concept_type=["image","joint"], met
 
     train_vectors = train_vectors.detach().cpu()   
     c, n, h = train_vectors.size() 
-    print(f"size (num_concept, samples, hidden size) : {c, n, h}")
+    logging.info(f"size (num_concept, samples, hidden size) : {c, n, h}")
     
     #store u_vectors for certain things? 
     n_batch = math.ceil(n / COMP_BATCH_SIZE)
     final_cov = torch.zeros(c,h,h) #(C,H,H)
 
-    print("========================")
-    print(f"TRAINING SAMPLE {n} samples")
+    logging.info("========================")
+    logging.info(f"TRAINING SAMPLE {n} samples")
  
     cov_path_file = f"/nethome/bmaneech3/flash/vlm_robustness/result_output/contextual_ood/cov_matrices/{ft_method}_{'_'.join(concept_type)}_inv_cov.pth"
 
@@ -71,7 +72,7 @@ def create_cov_matrix(ft_method, train_dict, concept_type=["image","joint"], met
         for i in range(n_batch) : 
             start_ind = i * COMP_BATCH_SIZE
             end_ind = min(n , (i+1)*COMP_BATCH_SIZE)
-            print(f"Running batch {start_ind} - {end_ind}")
+            logging.info(f"Running batch {start_ind} - {end_ind}")
             cur_vectors = train_vectors[:, start_ind : end_ind, :] #(concept, batch size, dim)
             cur_vectors = cur_vectors.to(device)
 
@@ -80,12 +81,12 @@ def create_cov_matrix(ft_method, train_dict, concept_type=["image","joint"], met
             diff =  cur_vectors - mean_vector  #f - u_c : (C, N ,H)
 
             diff = diff.permute(0,2,1)  #(C, H, N)
-            print("diff size", diff.size())
+            logging.info(f"diff size {diff.size()}")
 
             #covariance matrix : * = element wise multiplication 
-            print("diff dtype", diff.dtype)
+            logging.info(f"diff dtype {diff.dtype}")
             cov = torch.matmul(diff, diff.permute(0,2,1))  #(C, H, N) x (C, N, H) -> (C, H, H)
-            print("covariance matrix size", cov.size())
+            logging.info(f"covariance matrix size {cov.size()}")
             cov  = cov.detach().cpu() #(C, H, H)
             final_cov = final_cov + cov 
             co += end_ind - start_ind 
@@ -93,8 +94,8 @@ def create_cov_matrix(ft_method, train_dict, concept_type=["image","joint"], met
         assert co == n, "total process samples in inv cov != total samples"
         final_cov = final_cov / (n - 1) #n-1 for bias correction
 
-        print("min val cov", torch.min(final_cov))
-        print("max val cov", torch.max(final_cov))
+        logging.info(f"min val cov {torch.min(final_cov)}")
+        logging.info(f"max val cov {torch.max(final_cov)}")
         
         if torch.isinf(final_cov).any() or torch.isnan(final_cov).any() : 
             raise Exception("cov matrix has NaN values")
@@ -108,13 +109,13 @@ def create_cov_matrix(ft_method, train_dict, concept_type=["image","joint"], met
 
             inv_cov[i] = torch.linalg.pinv(reg_cov) # Σ^-1
 
-        print("min val cov", torch.min(inv_cov))
-        print("max val cov", torch.max(inv_cov))
+        logging.info(f"min val cov {torch.min(inv_cov)}")
+        logging.info(f"max val cov {torch.max(inv_cov)}")
 
         if torch.isinf(inv_cov).any() or torch.isnan(inv_cov).any() : 
             raise Exception("inv cov matrix has NaN values")
         torch.save(inv_cov, cov_path_file)
-        print("saved inv_cov matrix to : ", cov_path_file)
+        logging.info(f"saved inv_cov matrix to : {cov_path_file}")
         del cov
 
     del train_vectors 
@@ -136,8 +137,8 @@ def score_func(u_vector, test_dict, ft_method, concept_type=["image", "joint"], 
  
     c, n_test, h = test_vectors.size()
     total_res = torch.zeros(c)
-    print("========================")
-    print(f"TESTING SAMPLE {n_test} samples")
+    logging.info("========================")
+    logging.info(f"TESTING SAMPLE {n_test} samples")
     n_batch = math.ceil(n_test / COMP_BATCH_SIZE)
 
     cov_path_file = f"/nethome/bmaneech3/flash/vlm_robustness/result_output/contextual_ood/cov_matrices/{ft_method}_{'_'.join(concept_type)}_inv_cov.pth"
@@ -167,19 +168,24 @@ def score_func(u_vector, test_dict, ft_method, concept_type=["image", "joint"], 
         for i in range(c) : 
             diag = torch.diag(res_2[i]) #(1, n) 
             #verify correctness via shape 
-            print("diag size",diag.size())
+            logging.info(f"diag size {diag.size()}")
 
             if (diag < 0).any() : 
+                logging.error("Diagonal values can't be negative")
                 raise Exception("Diagonal values can't be negative")
             
-            assert diag.size(0) == cur_vectors.size(1) , "mismatch shape in diagonal values and n samples" 
+            try : 
+                assert diag.size(0) == cur_vectors.size(1) , "mismatch shape in diagonal values and n samples"
+            except AssertionError as e : 
+                logging.error(e) 
+                raise Exception("mismatch shape in diagonal values and n samples")
 
             #avg dist across all samples 
             maha_score = -1 * torch.sqrt(diag) #negative mahalanobis
 
             if cur_batch_results == None : 
                 cur_batch_results = maha_score.unsqueeze(0) #(1, b)
-                print("verify maha score shape", maha_score.size())
+                logging.info(f"verify maha score shape {maha_score.size()}")
 
             else : 
                 cur_batch_results = torch.cat([cur_batch_results, maha_score.unsqueeze(0)], dim = 0) #will be (c, n)
@@ -191,7 +197,7 @@ def score_func(u_vector, test_dict, ft_method, concept_type=["image", "joint"], 
         test_results_vectors.append(cur_batch_results) #(c, n)
 
         total_res = total_res + res  #(c)
-        print("Done a sample")
+        logging.info("Done a sample")
         del res_1 
         del res_2
         torch.cuda.empty_cache()
@@ -203,10 +209,11 @@ def score_func(u_vector, test_dict, ft_method, concept_type=["image", "joint"], 
         assert test_results_vectors.size(0) == n_test , "indiv results list not equal to total samples"
     except AssertionError as e : 
         logging.error(e)
+        raise Exception(e)
     
     del inv_cov 
     del test_vectors
-    print(f"res shape : {res.size()}")
+    logging.info(f"res shape : {res.size()}")
 
     # return avg score for each concept + (c, n, 1) 
     return total_res.tolist(), test_results_vectors #(concept, 1) 
@@ -242,16 +249,22 @@ concept_types :
 """
 
 # concept_list = ["image_ft", "joint", "ques_ft", "image", "question"]
-concept_list = [["image", "joint"], ["ques_ft"]]
+# concept_list = [["image", "joint"], ["ques_ft"]]
 if __name__ == "__main__" : 
     parser = argparse.ArgumentParser(description="Process a parameter.")
     parser.add_argument("--ft_method", type=str, required=True, help="The parameter to be processed")
+    parser.add_argument("--concept_list", type=str, required=True, help="JSON string of concept list")
+
     args = parser.parse_args()
     ft_method = args.ft_method
+    concept_list = json.loads(args.concept_list)
 
     log_output_dir = "/nethome/bmaneech3/flash/vlm_robustness/result_output/logs/"
     os.makedirs(os.path.join(log_output_dir, ft_method), exist_ok=True)
-    log_file = os.path.join(log_output_dir, "measure_shift.log")
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    log_filename = f"measure_shift_{timestamp}.log"
+    log_file = os.path.join(log_output_dir, ft_method, log_filename)
     
     logging.basicConfig(
     level=logging.INFO,
@@ -277,13 +290,14 @@ if __name__ == "__main__" :
     """
 
     for concept_type in concept_list : 
+        logging.info(f"Running concept : {concept_type}")
         #get train covariate matrix 
         train_file_name = f"{train_split}_{'_'.join(concept_type)}_new.pth"
         train_dict_path = os.path.join(hidden_states_path, ft_method, train_file_name) 
         train_dict = torch.load(train_dict_path) 
-        print("loading train dict")
+        logging.info("loading train dict")
         train_dict = {int(key): value for key, value in train_dict.items()}
-        print("converted to int")
+        logging.info("converted to int keys")
         
         u_vector = create_cov_matrix(ft_method, train_dict, concept_type=concept_type)
         
@@ -296,13 +310,19 @@ if __name__ == "__main__" :
 
             shift_scores, test_indiv_results = score_func(u_vector, test_dict, ft_method, concept_type=concept_type)
             logging.info(f"Test split : {test_split}" )
-            logging.info(concept_type, shift_scores)
+            logging.info(f"{concept_type}, {shift_scores}")
 
-            assert test_indiv_results.size(0) == len(test_dict) and test_indiv_results.size(1) == len(concept_type), "invalid test_indiv_results"
-
-            results_dict[test_split] = {} 
+            try : 
+                assert test_indiv_results.size(0) == len(test_dict) and test_indiv_results.size(1) == len(concept_type), "invalid test_indiv_results"
+            except AssertionError as e : 
+                logging.error(e) 
+                raise Exception(e)
+            
+            if test_split not in results_dict :
+                results_dict[test_split] = {}
+            
             #store indiv results file 
-            logging.info(f"test indiv results size : {test_indiv_results.size}") #(n, c)
+            logging.info(f"test indiv results size : {test_indiv_results.size()}") #(n, c)
             indiv_res_path = f"/nethome/bmaneech3/flash/vlm_robustness/result_output/contextual_ood/new_ft_indiv_result/{ft_method}/{test_split}_indiv_result.pth"
 
             if os.path.exists(indiv_res_path) : 
@@ -321,11 +341,24 @@ if __name__ == "__main__" :
                     assert len(indiv_results_dict) == len(test_dict), "length of indiv_results_dict != test_dict"
                 except AssertionError as e:
                     logging.error(f"Assertion failed: {e}")
+                    raise Exception(e)
+
 
             torch.save(indiv_results, indiv_res_path)
+            logging.info(f"Successfully saved to {indiv_res_path}")
+    #verify that results_dict has all the concepts 
 
+    try : 
+        assert len(results_dict["vizwiz_val"]) == sum(len(concept) for concept in concept_list), "not measured all concepts"
+
+    except AssertionError as e : 
+        logging.error(e)
+        raise Exception(e)
+    
     with open(results_file, 'w') as file : 
         json.dump(results_dict, file)
+
+    logging.info(f"Successfully saved to {results_file}")
 
 # #store result vector for each tensor size (n_samples, 1) in order index
 # if __name__ == "__main__" : 

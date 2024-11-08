@@ -14,8 +14,6 @@ import torch.nn.functional as F
 from transformers import BertModel, AutoTokenizer 
 
 
-
-
 torch.cuda.empty_cache()
 
 torch.set_grad_enabled(False)

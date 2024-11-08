@@ -48,7 +48,7 @@ def report_metrics(result_file, ques_file, anno_file, file_path):
     # n is precision of accuracy (number of places after decimal), default is 2
     vqa_scorer = VQAEval(vqa, vqa_result, n=2)
     logging.info("Start VQA evaluation.")
-    incorrect_samples = vqa_scorer.evaluate() #list of question_ids
+    incorrect_samples = vqa_scorer.evaluate() #list of instance_IDs
 
     # print accuracies
     overall_acc = vqa_scorer.accuracy["overall"]
@@ -94,7 +94,6 @@ dataset_answer_path = {
     'okvqa_test': '/srv/datasets/ok-vqa_dataset/mscoco_val2014_annotations.json',
     'vqa_cp_test': '/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/vqacp2/test/annotation_new.json',
     'vizwiz_test' : '/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/vizwiz/val/annotation.json'
-
 }
 
 dataset_question_path = { 

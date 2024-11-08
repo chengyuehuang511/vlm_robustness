@@ -1,0 +1,15 @@
+{
+    
+    "coco_vqav2_train_val" : "vqa_v2_train",
+    "coco_advqa_val" : "advqa", 
+    "coco_cv-vqa_val" : "cvvqa",
+    "coco_iv-vqa_val" : "ivvqa",
+    "coco_okvqa_val" : "okvqa",
+    "coco_vqa_ce_val" : "vqa_ce",
+    "coco_vqa_cp_val" : "vqa_cp",
+    "coco_vqa_raw_val" : "vqa_v2_val",
+    "coco_vqa_rephrasings_val" : "vqa_rephrasings",
+    "textvqa_val" : "textvqa",
+    "vizwiz_val" : "vizwiz"
+
+}

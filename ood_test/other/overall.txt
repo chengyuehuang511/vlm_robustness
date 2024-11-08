@@ -1,0 +1,110 @@
+{"agg_metrics": 56.86, "yes/no": 74.56, "other": 48.88, "numbers": 54.02}
+{"agg_metrics": 56.86, "yes/no": 74.56, "other": 48.88, "numbers": 54.02}
+{"agg_metrics": 56.86, "yes/no": 74.56, "other": 48.88, "numbers": 54.02}
+{"agg_metrics": 56.86, "yes/no": 74.56, "other": 48.88, "numbers": 54.02}
+{"agg_metrics": 56.86, "yes/no": 74.56, "other": 48.88, "numbers": 54.02}
+{"agg_metrics": 56.86, "yes/no": 74.56, "other": 48.88, "numbers": 54.02}
+{"agg_metrics": 56.86, "yes/no": 74.56, "other": 48.88, "numbers": 54.02}
+{"agg_metrics": 56.86, "yes/no": 74.56, "other": 48.88, "numbers": 54.02}
+{"agg_metrics": 70.49, "number": 70.49}
+{"agg_metrics": 98.68, "yes/no": 98.99, "other": 98.73, "number": 96.91}
+{"agg_metrics": 53.84, "other": 53.84}
+{"agg_metrics": 79.81, "other": 80.49, "number": 75.83, "yes/no": 99.72}
+{"agg_metrics": 90.42, "other": 85.73, "number": 90.32, "yes/no": 99.4}
+{"agg_metrics": 90.9, "other": 85.54, "yes/no": 99.54, "number": 86.29}
+{"agg_metrics": 56.86, "yes/no": 74.56, "other": 48.88, "numbers": 54.02}
+{"agg_metrics": 70.49, "number": 70.49}
+{"agg_metrics": 98.68, "yes/no": 98.99, "other": 98.73, "number": 96.91}
+{"agg_metrics": 53.84, "other": 53.84}
+{"agg_metrics": 79.81, "other": 80.49, "number": 75.83, "yes/no": 99.72}
+{"agg_metrics": 90.42, "other": 85.73, "number": 90.32, "yes/no": 99.4}
+{"agg_metrics": 90.9, "other": 85.54, "yes/no": 99.54, "number": 86.29}
+{"agg_metrics": 85.55, "other": 79.12, "number": 80.58, "yes/no": 95.77}
+{"agg_metrics": 44.25, "other": 44.25}
+{"agg_metrics": 49.82, "yes/no": 69.74, "other": 41.6, "numbers": 45.63}
+{"agg_metrics": 69.36, "number": 69.36}
+{"agg_metrics": 94.43, "yes/no": 95.55, "other": 95.29, "number": 86.5}
+{"agg_metrics": 48.3, "other": 48.3}
+{"agg_metrics": 71.73, "other": 75.16, "number": 55.07, "yes/no": 93.67}
+{"agg_metrics": 86.21, "other": 81.95, "number": 81.94, "yes/no": 96.56}
+{"agg_metrics": 86.29, "other": 81.8, "yes/no": 96.79, "number": 73.07}
+{"agg_metrics": 78.9, "other": 72.64, "number": 64.98, "yes/no": 91.96}
+{"agg_metrics": 42.08, "other": 42.08}
+{"agg_metrics": 22.92, "unanswerable": 10.53, "other": 28.89, "yes/no": 43.78, "number": 20.42}
+{"agg_metrics": 56.86, "yes/no": 74.56, "other": 48.88, "numbers": 54.02}
+{"agg_metrics": 70.49, "number": 70.49}
+{"agg_metrics": 98.68, "yes/no": 98.99, "other": 98.73, "number": 96.91}
+{"agg_metrics": 53.84, "other": 53.84}
+{"agg_metrics": 79.81, "other": 80.49, "number": 75.83, "yes/no": 99.72}
+{"agg_metrics": 90.42, "other": 85.73, "number": 90.32, "yes/no": 99.4}
+{"agg_metrics": 90.9, "other": 85.54, "yes/no": 99.54, "number": 86.29}
+{"agg_metrics": 85.55, "other": 79.12, "number": 80.58, "yes/no": 95.77}
+{"agg_metrics": 44.25, "other": 44.25}
+{"agg_metrics": 49.82, "yes/no": 69.74, "other": 41.6, "numbers": 45.63}
+{"agg_metrics": 69.36, "number": 69.36}
+{"agg_metrics": 94.43, "yes/no": 95.55, "other": 95.29, "number": 86.5}
+{"agg_metrics": 48.3, "other": 48.3}
+{"agg_metrics": 71.73, "other": 75.16, "number": 55.07, "yes/no": 93.67}
+{"agg_metrics": 86.21, "other": 81.95, "number": 81.94, "yes/no": 96.56}
+{"agg_metrics": 86.29, "other": 81.8, "yes/no": 96.79, "number": 73.07}
+{"agg_metrics": 78.9, "other": 72.64, "number": 64.98, "yes/no": 91.96}
+{"agg_metrics": 42.08, "other": 42.08}
+{"agg_metrics": 22.92, "unanswerable": 10.53, "other": 28.89, "yes/no": 43.78, "number": 20.42}
+{"agg_metrics": 63.87, "number": 63.87}
+{"agg_metrics": 87.83, "yes/no": 88.55, "other": 91.75, "number": 75.49}
+{"agg_metrics": 42.27, "other": 42.27}
+{"agg_metrics": 61.66, "other": 66.68, "number": 37.66, "yes/no": 85.85}
+{"agg_metrics": 78.48, "other": 74.49, "number": 73.5, "yes/no": 88.7}
+{"agg_metrics": 78.24, "other": 74.34, "yes/no": 90.07, "number": 58.98}
+{"agg_metrics": 69.61, "other": 65.03, "number": 51.15, "yes/no": 81.97}
+{"agg_metrics": 29.61, "other": 29.61}
+{"agg_metrics": 18.8, "unanswerable": 8.62, "other": 23.37, "yes/no": 40.24, "number": 18.4}
+{"agg_metrics": 45.68, "yes/no": 65.32, "other": 37.79, "numbers": 41.24}
+{"agg_metrics": 65.93, "number": 65.93}
+{"agg_metrics": 93.3, "yes/no": 94.17, "other": 95.09, "number": 84.77}
+{"agg_metrics": 43.27, "other": 43.27}
+{"agg_metrics": 72.73, "other": 77.53, "number": 49.83, "yes/no": 93.63}
+{"agg_metrics": 86.16, "other": 83.17, "number": 79.18, "yes/no": 95.52}
+{"agg_metrics": 85.97, "other": 82.85, "yes/no": 95.94, "number": 69.18}
+{"agg_metrics": 76.49, "other": 71.36, "number": 59.87, "yes/no": 88.96}
+{"agg_metrics": 31.41, "other": 31.41}
+{"agg_metrics": 19.01, "unanswerable": 8.18, "other": 23.91, "yes/no": 41.57, "number": 17.64}
+{"agg_metrics": 50.99, "yes/no": 69.11, "other": 43.98, "numbers": 46.54}
+{"agg_metrics": 67.93, "number": 67.93}
+{"agg_metrics": 92.61, "yes/no": 93.66, "other": 93.91, "number": 84.16}
+{"agg_metrics": 51.07, "other": 51.07}
+{"agg_metrics": 64.14, "other": 67.21, "number": 48.83, "yes/no": 92.22}
+{"agg_metrics": 81.41, "other": 76.2, "number": 77.34, "yes/no": 93.49}
+{"agg_metrics": 81.77, "other": 76.0, "yes/no": 94.13, "number": 68.03}
+{"agg_metrics": 76.66, "other": 69.74, "number": 62.39, "yes/no": 90.69}
+{"agg_metrics": 49.12, "other": 49.12}
+{"agg_metrics": 25.67, "unanswerable": 12.14, "other": 32.39, "yes/no": 45.3, "number": 23.4}
+{"agg_metrics": 50.9, "yes/no": 70.99, "other": 43.0, "numbers": 46.16}
+{"agg_metrics": 68.85, "number": 68.85}
+{"agg_metrics": 95.25, "yes/no": 96.18, "other": 96.11, "number": 88.43}
+{"agg_metrics": 50.11, "other": 50.11}
+{"agg_metrics": 73.52, "other": 76.66, "number": 58.22, "yes/no": 94.49}
+{"agg_metrics": 87.27, "other": 83.18, "number": 83.35, "yes/no": 97.13}
+{"agg_metrics": 87.39, "other": 82.92, "yes/no": 97.47, "number": 75.3}
+{"agg_metrics": 79.48, "other": 72.8, "number": 66.79, "yes/no": 92.64}
+{"agg_metrics": 43.56, "other": 43.56}
+{"agg_metrics": 23.05, "unanswerable": 10.04, "other": 29.35, "yes/no": 44.78, "number": 19.65}
+{"agg_metrics": 51.41, "yes/no": 70.79, "other": 43.49, "numbers": 47.23}
+{"agg_metrics": 68.56, "number": 68.56}
+{"agg_metrics": 95.16, "yes/no": 96.0, "other": 95.81, "number": 89.25}
+{"agg_metrics": 49.2, "other": 49.2}
+{"agg_metrics": 73.63, "other": 76.66, "number": 58.85, "yes/no": 94.75}
+{"agg_metrics": 87.19, "other": 82.98, "number": 83.75, "yes/no": 97.03}
+{"agg_metrics": 87.4, "other": 82.83, "yes/no": 97.38, "number": 76.02}
+{"agg_metrics": 79.29, "other": 72.57, "number": 67.07, "yes/no": 92.37}
+{"agg_metrics": 44.12, "other": 44.12}
+{"agg_metrics": 22.98, "unanswerable": 9.74, "other": 29.56, "yes/no": 44.09, "number": 15.76}
+{"agg_metrics": 30.46, "yes/no": 60.72, "other": 21.79, "numbers": 19.03}
+{"agg_metrics": 44.72, "number": 44.72}
+{"agg_metrics": 63.95, "yes/no": 67.81, "other": 69.1, "number": 32.11}
+{"agg_metrics": 28.6, "other": 28.6}
+{"agg_metrics": 30.68, "other": 33.5, "number": 15.96, "yes/no": 71.4}
+{"agg_metrics": 54.29, "other": 45.86, "number": 42.8, "yes/no": 76.37}
+{"agg_metrics": 54.42, "other": 44.97, "yes/no": 75.82, "number": 28.68}
+{"agg_metrics": 50.1, "other": 40.41, "number": 18.73, "yes/no": 73.62}
+{"agg_metrics": 16.84, "unanswerable": 7.55, "other": 20.97, "yes/no": 41.05, "number": 5.76}

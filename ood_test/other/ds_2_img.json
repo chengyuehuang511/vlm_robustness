@@ -1,7 +1,8 @@
 { 
     "advqa" : "/srv/datasets/coco/", 
     "cvvqa" : "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/cv-vqa/val/BS/vedika2/nobackup/thesis/IMAGES_counting_del1_edited_VQA_v2/",
-    "vqa_v2" : "/coc/pskynet6/chuang475/.cache/lavis/coco/images/", 
+    "vqa_v2_train" : "/coc/pskynet6/chuang475/.cache/lavis/coco/images/", 
+    "vqa_v2_val" : "/coc/pskynet6/chuang475/.cache/lavis/coco/images/", 
     "ivvqa": "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/iv-vqa/val/BS/vedika2/nobackup/thesis/final_edited_VQA_v2/Images/", 
     "okvqa" : "/srv/datasets/coco/",
     "textvqa" : "/coc/pskynet4/chuang475/projects/vlm_robustness/tmp/datasets/textvqa/", 

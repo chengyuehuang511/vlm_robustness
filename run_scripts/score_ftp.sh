@@ -18,6 +18,6 @@ export PYTHONHASHSEED=42
 export TOKENIZERS_PARALLELISM=false
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 cd /nethome/bmaneech3/flash/vlm_robustness
+concept_list_json='[["image", "joint"], ["ques_ft"]]'
 
-
-srun -u python -m torch.distributed.run --nproc_per_node=8 /nethome/bmaneech3/flash/vlm_robustness/ood_test/contextual_ood/measure.py --ft_method "ftp"
+srun -u python -m torch.distributed.run --nproc_per_node=1 /nethome/bmaneech3/flash/vlm_robustness/ood_test/contextual_ood/measure.py --ft_method "ftp"  --concept_list "$concept_list_json"
