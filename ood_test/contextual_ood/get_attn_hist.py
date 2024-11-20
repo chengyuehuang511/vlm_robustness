@@ -84,6 +84,7 @@ dataset_to_res_path = {
     'okvqa_test': '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/OKVQA/20240718013/result/val_vqa_result.json',
     'vqa_cp_test': '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQACP/20240716022/result/val_vqa_result.json', 
     'vizwiz_test'  : '', 
+    'vqa_rephrasings_test': '',
 }
 dataset_answer_path = {
     'vqa_v2_val': '/coc/pskynet6/chuang475/.cache/lavis/coco/annotations/v2_mscoco_val2014_annotations.json',
@@ -207,75 +208,155 @@ def process_qid_2_score(emb_tensor, split, token):
         with open(store_path, 'w') as file : 
             json.dump(qid_2_score, file)
 
+ood_threshold = 60
 
-for dataset, res_path in  dataset_to_res_path.items(): 
+for gt_dist in ["fft"]: #, "pt_emb"]:
+    for method in ["ftp", "lora", "lp", "lpft", "pt_emb", "spd"]:  # "fft", "ftp", "lora", "lp", "lpft", "pt_emb", "spd"
+        img_ratio_id_all = []
+        txt_ratio_id_all = []
 
-    incorrect_dict = {
-    } 
+        img_ratio_ood_all = []
+        txt_ratio_ood_all = []
 
-    print(f'Running for {dataset}')
+        img_ratio_all = []
+        txt_ratio_all = []
 
-    emb_tensor = torch.load(f"/coc/pskynet4/bmaneech3/vlm_robustness/result_output/contextual_ood/indiv_result/{dataset}_{concept}.pth")
-    if concept == "question":
-        emb_tensor = emb_tensor[1]
+        for dataset, res_path in  dataset_to_res_path.items(): 
 
-    attn_file = f"/coc/testnvme/chuang475/projects/vlm_robustness/ood_test/contextual_ood/xttn_results/{dataset}.csv"
-    img_ratio = pd.read_csv(attn_file)['img_ratio'].to_list()
-    txt_ratio = pd.read_csv(attn_file)['txt_ratio'].to_list()
+            incorrect_dict = {
+            } 
 
-    print(dataset)
-    
-    print("pth length", len(emb_tensor))
-    print("img_ratio length", len(img_ratio))
+            if dataset.startswith("textvqa") or dataset.startswith("vizwiz"):
+                if "test" in dataset:
+                    dataset_pth = dataset.replace("test", "val")
+            elif dataset.startswith("vqa_v2_val"):
+                dataset_pth = "coco_vqa_raw_val"
+            elif dataset.startswith("ivvqa"):
+                dataset_pth = "coco_iv-vqa_val"
+            elif dataset.startswith("cvvqa"):
+                dataset_pth = "coco_cv-vqa_val"
+            else:
+                if "test" in dataset:
+                    # substitute test with val
+                    dataset_pth = "coco_" + dataset.replace("test", "val")
+                else:
+                    dataset_pth = "coco_"
 
-    # emb_tensor = emb_tensor[0] #get only 1 concept 
-    
-    # process_qid_2_score(img_ratio, dataset, "image")
-    # process_qid_2_score(txt_ratio, dataset, "text")
+            print(f'Running for {dataset}')
 
-    img_store_path = f"/coc/testnvme/chuang475/projects/vlm_robustness/ood_test/contextual_ood/region_samples/{dataset}_image_attn_score.json"
-    txt_store_path = f"/coc/testnvme/chuang475/projects/vlm_robustness/ood_test/contextual_ood/region_samples/{dataset}_text_attn_score.json"
+            emb_tensor = torch.load(f"/coc/pskynet4/bmaneech3/vlm_robustness/result_output/contextual_ood/new_ft_indiv_result/{gt_dist}/{dataset_pth}_indiv_result.pth")  # gt distance score
+            emb_tensor = emb_tensor[concept]
 
-    img_qid_2_score = json.load(open(img_store_path, 'r'))
-    txt_qid_2_score = json.load(open(txt_store_path, 'r'))
-    
-    store_path = f"/coc/pskynet4/bmaneech3/vlm_robustness/result_output/contextual_ood/region_samples/{dataset}_{concept}_qid_score.json"
-    if concept == "joint" :
-        store_path = f"/coc/pskynet4/bmaneech3/vlm_robustness/result_output/contextual_ood/region_samples/{dataset}_qid_score.json"
-    qid_score = json.load(open(store_path, 'r'))
+            attn_file = f"/coc/testnvme/chuang475/projects/vlm_robustness/ood_test/contextual_ood/xttn_results/{method}/{dataset_pth}.csv"
+            img_ratio = pd.read_csv(attn_file)['img_ratio'].to_list()
+            txt_ratio = pd.read_csv(attn_file)['txt_ratio'].to_list()
 
-    img_ratio_list, txt_ratio_list, qid_score_list = [], [], []
-    for key in qid_score.keys() : 
-        img_ratio_list.append(img_qid_2_score[key])
-        txt_ratio_list.append(txt_qid_2_score[key])
-        qid_score_list.append(qid_score[key])
+            print(dataset)
+            
+            print("pth length", len(emb_tensor))
+            print("img_ratio length", len(img_ratio))
 
-    img_ratio_list = np.array(img_ratio_list)
-    txt_ratio_list = np.array(txt_ratio_list)
-    qid_score_list = np.array(qid_score_list)
+            # emb_tensor = emb_tensor[0] #get only 1 concept 
+            
+            # process_qid_2_score(img_ratio, dataset, "image")
+            # process_qid_2_score(txt_ratio, dataset, "text")
 
-    print("intersect length", len(img_ratio_list))
+            img_ratio_list = np.array(img_ratio)
+            txt_ratio_list = np.array(txt_ratio)
+            qid_score_list = []
 
-    # Define the number of bins
-    num_bins = 100
-    # all_maha_scores = [elem.item() for elem in emb_tensor]
+            for i in range(len(emb_tensor)) :
+                qid_score_list.append(emb_tensor[i].item())
 
-    # Compute bin indices based on qid_score_list
-    # bins_ = np.linspace(min(all_maha_scores), max(all_maha_scores), num_bins + 1)
-    bins = np.histogram(qid_score_list, bins=num_bins, range=(min(qid_score_list), max(qid_score_list)))[1]
-    bin_indices = np.digitize(qid_score_list, bins) - 1
+            qid_score_list = np.array(qid_score_list)
 
-    # Calculate mean img_ratio and txt_ratio for each bin
-    img_ratio_means = [img_ratio_list[bin_indices == i].mean() if len(img_ratio_list[bin_indices == i]) else 0 for i in range(num_bins)]
-    txt_ratio_means = [txt_ratio_list[bin_indices == i].mean() if len(txt_ratio_list[bin_indices == i]) else 0 for i in range(num_bins)]
+            # get the corresponding img_ratio and txt_ratio for qid_scre > ood_threshold
+            img_ratio_ood_all += img_ratio_list[qid_score_list > ood_threshold].tolist()
+            txt_ratio_ood_all += txt_ratio_list[qid_score_list > ood_threshold].tolist()
 
-    # Plotting
-    # plt.figure(figsize=(10, 6))
-    # plt.plot(bins[:-1], img_ratio_means, label='Mean img_ratio', marker='.', markersize=5, linestyle='-', linewidth=1.5)
-    # plt.plot(bins[:-1], txt_ratio_means, label='Mean txt_ratio', marker='*', markersize=5, linestyle='-', linewidth=1.5)
-    # plt.xlabel("Mahalanobis Score", fontsize=16)
-    # plt.ylabel("Mean Ratio", fontsize=16)
-    # plt.title("Mean img_ratio and txt_ratio per Mahalanobis Score bin", fontsize=16)
-    # plt.legend(fontsize=14)
-    # plt.savefig(f"/coc/testnvme/chuang475/projects/vlm_robustness/ood_test/contextual_ood/region_samples/attention_results/{dataset}_{concept}_attn_ratio.png")
-    # plt.close()
+            img_ratio_id_all += img_ratio_list[qid_score_list <= ood_threshold].tolist()
+            txt_ratio_id_all += txt_ratio_list[qid_score_list <= ood_threshold].tolist()
+
+            img_ratio_all += img_ratio_list.tolist()
+            txt_ratio_all += txt_ratio_list.tolist()
+
+            # """
+
+            # print("intersect length", len(img_ratio_list))
+
+            # Define the number of bins
+            num_bins = 50
+            # all_maha_scores = [elem.item() for elem in emb_tensor]
+
+            # Compute bin indices based on qid_score_list
+            # bins_ = np.linspace(min(all_maha_scores), max(all_maha_scores), num_bins + 1)
+            print(f"qid_score_list max: {qid_score_list.max()}, corresponding index {np.argmax(qid_score_list)}")
+            print(f"qid_score_list min: {qid_score_list.min()}, corresponding index {np.argmin(qid_score_list)}")
+            # bins = np.histogram(qid_score_list, bins=num_bins, range=(min(qid_score_list), max(qid_score_list)+5))[1]
+            bins = np.histogram(qid_score_list, bins=num_bins, range=(15, 105))[1]
+            # print("bins[-1]", bins[-1])
+            bin_indices = np.digitize(qid_score_list, bins) - 1
+            print("bin_indices max", bin_indices.max())
+            print("bin_indices min", bin_indices.min())
+
+            # Calculate mean img_ratio and txt_ratio for each bin
+            img_ratio_means = [img_ratio_list[bin_indices == i].mean() if len(img_ratio_list[bin_indices == i])>0 else 0 for i in range(num_bins)]
+            txt_ratio_means = [txt_ratio_list[bin_indices == i].mean() if len(txt_ratio_list[bin_indices == i])>0 else 0 for i in range(num_bins)]
+
+            # Plotting
+            # plt.figure(figsize=(10, 6))
+            # plt.plot(bins[:-1], img_ratio_means, label='Mean img_ratio', marker='.', markersize=5, linestyle='-', linewidth=1.5)
+            # plt.plot(bins[:-1], txt_ratio_means, label='Mean txt_ratio', marker='*', markersize=5, linestyle='-', linewidth=1.5)
+            # plt.xlabel("Mahalanobis Score", fontsize=16)
+            # plt.ylabel("Mean Ratio", fontsize=16)
+            # plt.title("Mean img_ratio and txt_ratio per Mahalanobis Score bin", fontsize=16)
+            # plt.legend(fontsize=14)
+            # plt.savefig(f"/coc/testnvme/chuang475/projects/vlm_robustness/ood_test/contextual_ood/region_samples/new_attention_results/{dataset}_{concept}_attn_ratio.png")
+            # plt.close()
+
+            # Plotting bar plots for img_ratio_means and txt_ratio_means
+            plt.bar(bins[:-1], img_ratio_means, width=(bins[1] - bins[0]) * 0.4, label=r'MI$_v$', color='blue', alpha=0.6, align='center')
+            plt.bar(bins[:-1] + (bins[1] - bins[0]) * 0.4, txt_ratio_means, width=(bins[1] - bins[0]) * 0.4, label=r'MI$_q$', color='orange', alpha=0.6, align='center')
+
+            # Adding a dotted red line at y=1
+            plt.axhline(y=1, color='red', linestyle=':', linewidth=1.5, label='MI=1')
+
+            # y-axis limits
+            plt.ylim(0, 4)
+
+            plt.yticks(fontsize=14)
+            plt.xticks(fontsize=14)
+
+            # Setting labels, title, and legend
+            plt.xlabel(r"Mahalanobis Score (ID $\rightarrow$ OOD)", fontsize=16)
+            plt.ylabel("Mean MI", fontsize=16)
+            # plt.title("Mean img_ratio and txt_ratio per Mahalanobis Score bin", fontsize=16)
+            plt.legend(fontsize=16, loc='upper right')
+
+            # Adding a grid
+            plt.grid(True, which='both', linestyle='--', linewidth=0.5, color='gray', alpha=0.7)
+
+            # Shading the background
+            plt.gca().set_facecolor('#f5f5f5')  # Light gray background for the plot area
+
+            # Saving the plot
+            folder = f"/coc/testnvme/chuang475/projects/vlm_robustness/ood_test/contextual_ood/region_samples/new_legend_attention_results/gt_{gt_dist}/{method}/"
+            os.makedirs(folder, exist_ok=True)
+            plt.savefig(f"/coc/testnvme/chuang475/projects/vlm_robustness/ood_test/contextual_ood/region_samples/new_legend_attention_results/gt_{gt_dist}/{method}/{dataset}_{concept}_attn_ratio.png")
+            plt.close()
+            # """
+        
+        """
+        assert len(img_ratio_id_all) == len(txt_ratio_id_all)
+        assert len(img_ratio_ood_all) == len(txt_ratio_ood_all)
+        assert len(img_ratio_all) == len(txt_ratio_all)
+        assert len(img_ratio_id_all) + len(img_ratio_ood_all) == len(img_ratio_all)
+
+        print("method", method)
+        print("img_ratio_id", np.array(img_ratio_id_all).mean())
+        print("txt_ratio_id", np.array(txt_ratio_id_all).mean())
+        print("img_ratio_ood", np.array(img_ratio_ood_all).mean())
+        print("txt_ratio_ood", np.array(txt_ratio_ood_all).mean())
+        print("img_ratio_all", np.array(img_ratio_all).mean())
+        print("txt_ratio_all", np.array(txt_ratio_all).mean())
+        """

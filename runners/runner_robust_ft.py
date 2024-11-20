@@ -38,6 +38,8 @@ from optimizer import *
 import copy
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 
+import pandas as pd
+
 
 class RunnerBase:
     """
@@ -504,6 +506,74 @@ class RunnerBase:
                 split_name=split_name,
                 epoch=cur_epoch,
             )
+
+
+    """MODIFY FOR cross attention"""
+    @torch.no_grad() 
+    def get_xattn(self, skip_reload=True) : 
+
+        for split_name in self.test_splits: 
+            run_config = self.config.run_cfg
+            print("run config", run_config)
+
+            ft_method = run_config.get("ft_method")
+            
+            print("datasets config key", self.config.datasets_cfg.keys())
+            ds_split_name = '_'.join([list(self.config.datasets_cfg.keys())[0], split_name])
+
+            folder = f"/coc/testnvme/chuang475/projects/vlm_robustness/ood_test/contextual_ood/xttn_results/{ft_method}/"
+            os.makedirs(folder, exist_ok=True)
+
+            output_dir = folder + f"{ds_split_name}.csv"
+            print("verify output_dir", output_dir)
+            
+            if os.path.exists(output_dir) : 
+                print("file already exists - skipping")
+                continue
+
+            data_loader = self.dataloaders.get(split_name, None)
+            assert data_loader, "data_loader for split {} is None.".format(split_name)
+            model = self.unwrap_dist_model(self.model)
+
+            model.eval()
+
+            results = self.task.get_xattn(model, data_loader) 
+
+            img_ratio = []
+            txt_ratio = []
+            instance_id = []
+            image_path = []
+            text = []
+            answer = []
+
+            for idx in results.keys() :
+                img_ratio.append(results[idx]['img_ratio'])
+                txt_ratio.append(results[idx]['txt_ratio'])
+                instance_id.append(int(idx))
+                image_path.append(results[idx]['image_path'])
+                text.append(results[idx]['text_input_raw'])
+                answer.append(results[idx]['multiple_choice_answer'])
+            
+            # reorder according to instance_id
+            img_ratio = [x for _, x in sorted(zip(instance_id, img_ratio))]
+            txt_ratio = [x for _, x in sorted(zip(instance_id, txt_ratio))]
+            image_path = [x for _, x in sorted(zip(instance_id, image_path))]
+            text = [x for _, x in sorted(zip(instance_id, text))]
+            answer = [x for _, x in sorted(zip(instance_id, answer))]
+            instance_id = sorted(instance_id)
+
+            df = pd.DataFrame({
+                "instance_id" : instance_id,
+                "image_path" : image_path,
+                "text" : text,
+                "answer" : answer,
+                "img_ratio" : img_ratio,
+                "txt_ratio" : txt_ratio,
+            })
+            df.to_csv(output_dir, index=True)
+
+            print(f"Successfully attention scores to {output_dir}")
+
 
     def unwrap_dist_model(self, model):
         if self.use_distributed:

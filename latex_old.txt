@@ -1,0 +1,337 @@
+
+$f_{\text{pt}}(v|q,a)$ &               
+    \multicolumn{1}{c|}{26.21} &
+    26.02 & 
+    \multicolumn{1}{c|}{27.21} &
+    \multicolumn{1}{c|}{26.45} &
+    \multicolumn{1}{c|}{26.06} &
+    \multicolumn{1}{c|}{26.54} &
+    \multicolumn{1}{c|}{26.15} &
+    26.40&
+    \multicolumn{1}{c}{29.67} &
+    \multicolumn{1}{c}{32.76} &
+    \multicolumn{1}{c|}{26.83}  &
+    \multicolumn{1}{c|}{29.75} &
+    27.52
+    \\
+
+$f_{\text{fft}}(v|q,a)$ &               
+    \multicolumn{1}{c|}{25.53} &
+    24.64 & 
+    \multicolumn{1}{c|}{25.91} &
+    \multicolumn{1}{c|}{25.79} &
+    \multicolumn{1}{c|}{25.40} &
+    \multicolumn{1}{c|}{26.03} &
+    \multicolumn{1}{c|}{25.56} &
+    25.56&
+    \multicolumn{1}{c}{31.97} &
+    \multicolumn{1}{c}{35.31} &
+    \multicolumn{1}{c|}{26.19}  &
+    \multicolumn{1}{c|}{31.16} &
+    27.42
+    \\
+
+$f_{\text{vanilla$\_$ft}}(v|q,a)$ &               
+    \multicolumn{1}{c|}{26.21} &
+    25.39 & 
+    \multicolumn{1}{c|}{26.46} &
+    \multicolumn{1}{c|}{26.43} &
+    \multicolumn{1}{c|}{26.09} &
+    \multicolumn{1}{c|}{26.59} &
+    \multicolumn{1}{c|}{26.15} &
+    26.18&
+    \multicolumn{1}{c}{31.36} &
+    \multicolumn{1}{c}{33.25} &
+    \multicolumn{1}{c|}{26.73}  &
+    \multicolumn{1}{c|}{30.45} &
+    27.61
+    \\
+
+$f_{\text{linear$\_$prob}}(v|q,a)$ &               
+    \multicolumn{1}{c|}{26.21} &
+    26.02 & 
+    \multicolumn{1}{c|}{27.21} &
+    \multicolumn{1}{c|}{26.45} &
+    \multicolumn{1}{c|}{26.06} &
+    \multicolumn{1}{c|}{26.54} &
+    \multicolumn{1}{c|}{26.15} &
+    26.40&
+    \multicolumn{1}{c}{29.67} &
+    \multicolumn{1}{c}{32.76} &
+    \multicolumn{1}{c|}{26.83}  &
+    \multicolumn{1}{c|}{29.75} &
+    27.52
+    \\
+
+$f_{\text{lp$\_$ft}}(v|q,a)$ &               
+    \multicolumn{1}{c|}{26.40} &
+    25.55 & 
+    \multicolumn{1}{c|}{26.56} &
+    \multicolumn{1}{c|}{26.53} &
+    \multicolumn{1}{c|}{26.19} &
+    \multicolumn{1}{c|}{26.72} &
+    \multicolumn{1}{c|}{26.23} &
+    26.30&
+    \multicolumn{1}{c}{31.05} &
+    \multicolumn{1}{c}{32.90} &
+    \multicolumn{1}{c|}{26.83}  &
+    \multicolumn{1}{c|}{30.26} &
+    27.62
+    \\
+
+$f_{\text{ftp}}(v|q,a)$ &               
+    \multicolumn{1}{c|}{25.25} &
+    24.47 & 
+    \multicolumn{1}{c|}{25.50} &
+    \multicolumn{1}{c|}{25.52} &
+    \multicolumn{1}{c|}{25.13} &
+    \multicolumn{1}{c|}{25.76} &
+    \multicolumn{1}{c|}{25.24} &
+    25.27&
+    \multicolumn{1}{c}{31.64} &
+    \multicolumn{1}{c}{34.34} &
+    \multicolumn{1}{c|}{25.91}  &
+    \multicolumn{1}{c|}{30.63} &
+    27.06
+    \\
+
+$f_{\text{spd}}(v|q,a)$ &               
+    \multicolumn{1}{c|}{26.06} &
+    25.25 & 
+    \multicolumn{1}{c|}{26.27} &
+    \multicolumn{1}{c|}{26.28} &
+    \multicolumn{1}{c|}{25.95} &
+    \multicolumn{1}{c|}{26.44} &
+    \multicolumn{1}{c|}{26.01} &
+    26.03&
+    \multicolumn{1}{c}{30.95} &
+    \multicolumn{1}{c}{32.69} &
+    \multicolumn{1}{c|}{26.58}  &
+    \multicolumn{1}{c|}{30.07} &
+    27.38
+    \\
+\hline
+$f_{\text{pt}}(q|v,a)$ &               
+    \multicolumn{1}{c|}{39.76} &
+    38.79 & 
+    \multicolumn{1}{c|}{36.72} &
+    \multicolumn{1}{c|}{39.94} &
+    \multicolumn{1}{c|}{39.65} &
+    \multicolumn{1}{c|}{41.31} &
+    \multicolumn{1}{c|}{39.68} &
+    39.35&
+    \multicolumn{1}{c}{50.38} &
+    \multicolumn{1}{c}{48.53} &
+    \multicolumn{1}{c|}{42.40}  &
+    \multicolumn{1}{c|}{47.10} &
+    41.93
+    \\
+
+$f_{\text{fft}}(q|v,a)$ &               
+    \multicolumn{1}{c|}{33.96} &
+    32.02 & 
+    \multicolumn{1}{c|}{28.80} &
+    \multicolumn{1}{c|}{34.88} &
+    \multicolumn{1}{c|}{33.73} &
+    \multicolumn{1}{c|}{37.17} &
+    \multicolumn{1}{c|}{36.79} &
+    33.90&
+    \multicolumn{1}{c}{52.89} &
+    \multicolumn{1}{c}{49.07} &
+    \multicolumn{1}{c|}{40.72}  &
+    \multicolumn{1}{c|}{47.56} &
+    38.45
+    \\
+
+$f_{\text{vanilla$\_$ft}}(q|v,a)$ &               
+    \multicolumn{1}{c|}{34.81} &
+    32.91 & 
+    \multicolumn{1}{c|}{29.55} &
+    \multicolumn{1}{c|}{35.26} &
+    \multicolumn{1}{c|}{34.81} &
+    \multicolumn{1}{c|}{37.10} &
+    \multicolumn{1}{c|}{34.97} &
+    34.10&
+    \multicolumn{1}{c}{45.72} &
+    \multicolumn{1}{c}{45.69} &
+    \multicolumn{1}{c|}{40.91}  &
+    \multicolumn{1}{c|}{44.11} &
+    37.44
+    \\
+
+$f_{\text{linear$\_$prob}}(q|v,a)$ &               
+    \multicolumn{1}{c|}{37.05} &
+    35.14 & 
+    \multicolumn{1}{c|}{31.67} &
+    \multicolumn{1}{c|}{38.38} &
+    \multicolumn{1}{c|}{37.09} &
+    \multicolumn{1}{c|}{39.05} &
+    \multicolumn{1}{c|}{37.40} &
+    36.46&
+    \multicolumn{1}{c}{50.59} &
+    \multicolumn{1}{c}{48.89} &
+    \multicolumn{1}{c|}{43.02}  &
+    \multicolumn{1}{c|}{47.50} &
+    40.14
+    \\
+
+$f_{\text{lp$\_$ft}}(q|v,a)$ &               
+    \multicolumn{1}{c|}{37.62} &
+    36.38 & 
+    \multicolumn{1}{c|}{32.87} &
+    \multicolumn{1}{c|}{39.44} &
+    \multicolumn{1}{c|}{37.51} &
+    \multicolumn{1}{c|}{39.40} &
+    \multicolumn{1}{c|}{39.04} &
+    37.44&
+    \multicolumn{1}{c}{50.07} &
+    \multicolumn{1}{c}{48.59} &
+    \multicolumn{1}{c|}{43.12}  &
+    \multicolumn{1}{c|}{47.26} &
+    40.71
+    \\
+
+$f_{\text{ftp}}(q|v,a)$ &               
+    \multicolumn{1}{c|}{35.03} &
+    32.38 & 
+    \multicolumn{1}{c|}{28.29} &
+    \multicolumn{1}{c|}{35.51} &
+    \multicolumn{1}{c|}{34.94} &
+    \multicolumn{1}{c|}{38.24} &
+    \multicolumn{1}{c|}{35.71} &
+    34.18&
+    \multicolumn{1}{c}{49.97} &
+    \multicolumn{1}{c}{48.39} &
+    \multicolumn{1}{c|}{42.19}  &
+    \multicolumn{1}{c|}{46.85} &
+    38.40
+    \\
+
+$f_{\text{spd}}(q|v,a)$ &               
+    \multicolumn{1}{c|}{34.58} &
+    32.82 & 
+    \multicolumn{1}{c|}{29.12} &
+    \multicolumn{1}{c|}{35.02} &
+    \multicolumn{1}{c|}{34.59} &
+    \multicolumn{1}{c|}{36.97} &
+    \multicolumn{1}{c|}{34.89} &
+    33.90&
+    \multicolumn{1}{c}{45.72} &
+    \multicolumn{1}{c}{45.39} &
+    \multicolumn{1}{c|}{40.86}  &
+    \multicolumn{1}{c|}{43.99} &
+    37.27
+    \\
+\hline
+$f_{\text{pt}}(v,q,a)$ &               
+    \multicolumn{1}{c|}{36.94} &
+    36.36 & 
+    \multicolumn{1}{c|}{29.26} &
+    \multicolumn{1}{c|}{38.92} &
+    \multicolumn{1}{c|}{38.04} &
+    \multicolumn{1}{c|}{38.33} &
+    \multicolumn{1}{c|}{38.63} &
+    36.59&
+    \multicolumn{1}{c}{47.97} &
+    \multicolumn{1}{c}{42.39} &
+    \multicolumn{1}{c|}{44.86}  &
+    \multicolumn{1}{c|}{45.08} &
+    39.42
+    \\
+
+$f_{\text{fft}}(v,q,a)$ &               
+    \multicolumn{1}{c|}{37.44} &
+    35.42 & 
+    \multicolumn{1}{c|}{25.39} &
+    \multicolumn{1}{c|}{40.16} &
+    \multicolumn{1}{c|}{36.53} &
+    \multicolumn{1}{c|}{38.88} &
+    \multicolumn{1}{c|}{41.14} &
+    36.25&
+    \multicolumn{1}{c}{52.94} &
+    \multicolumn{1}{c}{50.95} &
+    \multicolumn{1}{c|}{48.75}  &
+    \multicolumn{1}{c|}{50.88} &
+    41.13
+    \\
+
+$f_{\text{vanilla$\_$ft}}(v,q,a)$ &               
+    \multicolumn{1}{c|}{38.70} &
+    37.08 & 
+    \multicolumn{1}{c|}{28.70} &
+    \multicolumn{1}{c|}{40.84} &
+    \multicolumn{1}{c|}{38.84} &
+    \multicolumn{1}{c|}{40.19} &
+    \multicolumn{1}{c|}{40.68} &
+    37.72&
+    \multicolumn{1}{c}{47.10} &
+    \multicolumn{1}{c}{46.25} &
+    \multicolumn{1}{c|}{48.20}  &
+    \multicolumn{1}{c|}{47.18} &
+    40.87
+    \\
+
+$f_{\text{linear$\_$prob}}(v,q,a)$ &               
+    \multicolumn{1}{c|}{37.25} &
+    35.83 & 
+    \multicolumn{1}{c|}{28.31} &
+    \multicolumn{1}{c|}{39.32} &
+    \multicolumn{1}{c|}{38.20} &
+    \multicolumn{1}{c|}{39.32} &
+    \multicolumn{1}{c|}{37.38} &
+    36.39&
+    \multicolumn{1}{c}{44.75} &
+    \multicolumn{1}{c}{41.76} &
+    \multicolumn{1}{c|}{44.81}  &
+    \multicolumn{1}{c|}{43.77} &
+    38.85
+    \\
+
+$f_{\text{lp$\_$ft}}(v,q,a)$ &               
+    \multicolumn{1}{c|}{39.41} &
+    38.09 & 
+    \multicolumn{1}{c|}{30.01} &
+    \multicolumn{1}{c|}{42.69} &
+    \multicolumn{1}{c|}{39.58} &
+    \multicolumn{1}{c|}{40.32} &
+    \multicolumn{1}{c|}{41.70} &
+    38.73&
+    \multicolumn{1}{c}{48.38} &
+    \multicolumn{1}{c}{44.61} &
+    \multicolumn{1}{c|}{47.48}  &
+    \multicolumn{1}{c|}{46.82} &
+    41.43
+    \\
+
+$f_{\text{ftp}}(v,q,a)$ &               
+    \multicolumn{1}{c|}{36.01} &
+    33.81 & 
+    \multicolumn{1}{c|}{24.74} &
+    \multicolumn{1}{c|}{38.00} &
+    \multicolumn{1}{c|}{35.65} &
+    \multicolumn{1}{c|}{37.78} &
+    \multicolumn{1}{c|}{37.96} &
+    34.66&
+    \multicolumn{1}{c}{47.46} &
+    \multicolumn{1}{c}{45.19} &
+    \multicolumn{1}{c|}{46.25}  &
+    \multicolumn{1}{c|}{46.30} &
+    38.54
+    \\
+
+$f_{\text{spd}}(v,q,a)$ &               
+    \multicolumn{1}{c|}{38.38} &
+    36.53 & 
+    \multicolumn{1}{c|}{27.61} &
+    \multicolumn{1}{c|}{40.49} &
+    \multicolumn{1}{c|}{38.46} &
+    \multicolumn{1}{c|}{40.01} &
+    \multicolumn{1}{c|}{40.19} &
+    37.22&
+    \multicolumn{1}{c}{47.36} &
+    \multicolumn{1}{c}{46.39} &
+    \multicolumn{1}{c|}{48.24}  &
+    \multicolumn{1}{c|}{47.33} &
+    40.59
+    \\
+\hline

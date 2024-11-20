@@ -8,6 +8,8 @@
 from lavis.common.registry import registry
 from tasks.classifier_vqa_task import ClassifierVQATask
 from tasks.classifier_vqa_followup_task import ClassifierVQAFollowupTask
+# registry.unregister("vqa")
+from tasks.vqa import VQATask
 
 
 def setup_task(cfg):
@@ -23,4 +25,5 @@ def setup_task(cfg):
 __all__ = [
     "ClassifierVQATask",
     "ClassifierVQAFollowupTask",
+    "VQATask",
 ]

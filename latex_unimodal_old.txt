@@ -1,0 +1,34 @@
+
+$f(v)$ &
+                                
+    \multicolumn{1}{c|}{27.66} &
+    26.55 & 
+    \multicolumn{1}{c|}{27.80} &
+    \multicolumn{1}{c|}{28.09} &
+    \multicolumn{1}{c|}{27.37} &
+    \multicolumn{1}{c|}{28.17} &
+    \multicolumn{1}{c|}{28.03} &
+    27.67&
+    \multicolumn{1}{c}{34.81} &
+    \multicolumn{1}{c}{35.88} &
+    \multicolumn{1}{c|}{28.84}  &
+    \multicolumn{1}{c|}{33.18} &
+    29.50
+    \\
+
+$f(q)$ &
+                                
+    \multicolumn{1}{c|}{27.07} &
+    27.02 & 
+    \multicolumn{1}{c|}{21.55} &
+    \multicolumn{1}{c|}{31.78} &
+    \multicolumn{1}{c|}{27.17} &
+    \multicolumn{1}{c|}{26.46} &
+    \multicolumn{1}{c|}{29.36} &
+    27.22&
+    \multicolumn{1}{c}{34.07} &
+    \multicolumn{1}{c}{36.51} &
+    \multicolumn{1}{c|}{33.12}  &
+    \multicolumn{1}{c|}{34.57} &
+    29.67
+    \\

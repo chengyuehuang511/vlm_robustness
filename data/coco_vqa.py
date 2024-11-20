@@ -252,12 +252,15 @@ class COCOVQAEvalDataset_Raw(VQAEvalDataset, __DisplMixin):
 
         image_path = os.path.join(self.vis_root, ann["image"])
         image_raw = Image.open(image_path).convert("RGB")
+        multiple_choice_answer = max(set(ann["answer"]), key=ann["answer"].count)
 
         return {
             "question_id": ann["question_id"],
             "instance_id": ann["instance_id"],
             "image_raw": image_raw,
+            "image_path": image_path,
             "text_input_raw": ann["question"],
+            "multiple_choice_answer": multiple_choice_answer,
         }
     
 

@@ -1,0 +1,47 @@
+model:
+  arch: paligemma_vqa
+  model_type: paligemma-3b-ft-vqav2-448
+  load_pretrained: True
+  pretrained: 'https://huggingface.co/google/paligemma-3b-ft-vqav2-448'
+
+
+datasets:
+  coco_vqa_vs: # name of the dataset builder
+    vis_processor:
+        eval:
+          name: "blip_image_eval"
+          image_size: 384
+    text_processor:
+        eval:
+          name: "blip_question"
+
+run:
+  task: vqa
+
+  # optimization-specific
+  batch_size_train: 8
+  batch_size_eval: 8
+  num_workers: 4
+
+  # inference-specific
+  max_len: 10
+  min_len: 1
+  num_beams: 5
+  num_ans_candidates: 128
+  inference_method: "generate"
+  prompt: "Question: {} Answer:"
+
+  seed: 42
+  output_dir: "output/PALIGEMMA/VQAVS/FT"
+
+  evaluate: True
+  train_splits: ["train"]
+  valid_splits: ["val"]
+  # test_splits: ["test", "ko", "kop", "kw", "kw_ko","kwp", "qt", "qt_ko", "qt_kw", "qt_kw_ko"]
+  test_splits: ["test"]
+
+  # distribution-specific
+  device: "cuda"
+  world_size: 1
+  dist_url: "env://"
+  distributed: True

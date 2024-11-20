@@ -1,0 +1,5 @@
+model:
+  arch: llava_vqa
+  model_type: llava-1.5-7b-hf
+  load_pretrained: True
+  pretrained: 'https://huggingface.co/llava-hf/llava-1.5-7b-hf'

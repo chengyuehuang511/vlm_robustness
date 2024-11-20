@@ -76,7 +76,9 @@ ans_label_map = {}
 
 
 #don't forget to put model to device 
-model_id = "google/paligemma-3b-ft-vqav2-224"
+# model_id = "google/paligemma-3b-ft-vqav2-224"
+model_id = "google/paligemma-3b-pt-224"
+# print("model_id", model_id)
 
 # model = PaliGemmaForConditionalGeneration.from_pretrained(model_id, 
 #                                                         device_map ="auto",
@@ -94,6 +96,9 @@ class MeasureAttnDataset(Dataset) :
         self.data = data #list of dictionary elements 
         self.ds_name = ds_name 
         self.vis_root = ds_2_img[ds_name]
+
+        for idx, ann in enumerate(self.data):
+            ann["instance_id"] = str(idx)
 
     def __len__(self):
         return len(self.data)
@@ -123,6 +128,7 @@ class MeasureAttnDataset(Dataset) :
             "image_raw": image_raw,
             "text_input_raw": ann["question"],
             "image_path": image_path,
+            "instance_id": ann["instance_id"],
         }
     
     def collate_fn(self, samples):
@@ -136,6 +142,7 @@ class MeasureAttnDataset(Dataset) :
 
         num_answers = []
         image_path_list = []
+        instance_id_list = []
 
         for sample in samples:
             image_raw_list.append(sample["image_raw"])
@@ -151,6 +158,8 @@ class MeasureAttnDataset(Dataset) :
             answer_list.extend(answers)
             num_answers.append(len(answers))
 
+            instance_id_list.append(sample["instance_id"])
+
         return {
             "image_raw": image_raw_list,
             "image_path": image_path_list,
@@ -159,6 +168,7 @@ class MeasureAttnDataset(Dataset) :
             "weight": weight_list,
             "n_answers": torch.LongTensor(num_answers),
             "multiple_choice_answer": multiple_choice_answer_list,
+            "instance_id": instance_id_list,
         }
     
 
@@ -177,6 +187,7 @@ splits =[
     #vqav2 train with all others
     #train_stuff = sample[0], test_stuff = sample[1]
     # [("vqa_v2","train"), ("vqa_v2","train")],
+
     [("vqa_v2","train"), ("vqa_v2","val")], 
     [("vqa_v2","train"), ("advqa", "test")],
     [("vqa_v2","train"), ("cvvqa", "test")], 
@@ -186,8 +197,8 @@ splits =[
     [("vqa_v2","train"), ("vizwiz", "test")], 
     [("vqa_v2","train"), ("vqa_cp", "test")], 
     [("vqa_v2","train"), ("vqa_ce", "test")], 
-    
     [("vqa_v2","train"), ("vqa_rephrasings", "test")],
+
     # [("vqa_v2","train"), ("vqa_vs", "id_val")], 
     # [("vqa_v2","train"), ("vqa_v2","test")],
 
@@ -228,6 +239,7 @@ if __name__ == "__main__" :
         img_ratio = []
         txt_ratio = []
         image_path, question, answer = [], [], []
+        instance_id = []
 
         for batch in tqdm(dataloader) : 
             img_ratio_batch, txt_ratio_batch = model.attn_scores(batch)
@@ -236,11 +248,13 @@ if __name__ == "__main__" :
             image_path += batch["image_path"]
             question += batch["text_input_raw"]
             answer += batch["multiple_choice_answer"]
+            instance_id += batch["instance_id"]
         
         # save the two lists to a csv file in /coc/testnvme/chuang475/projects/vlm_robustness/ood_test/contextual_ood/xttn_results
-        csv_file = f"/coc/testnvme/chuang475/projects/vlm_robustness/ood_test/contextual_ood/xttn_results/{test_ds_split}.csv"
+        csv_file = f"/coc/testnvme/chuang475/projects/vlm_robustness/ood_test/contextual_ood/xttn_results/instance_{test_ds_split}.csv"
         
         df = pd.DataFrame({
+            "instance_id" : instance_id,
             "image_path" : image_path,
             "question" : question,
             "answer" : answer,

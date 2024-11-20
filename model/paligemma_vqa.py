@@ -1,3 +1,6 @@
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 import logging
 from PIL import Image
 import requests
@@ -8,7 +11,6 @@ from lavis.models.base_model import BaseModel
 from lavis.common.utils import get_abs_path, is_url, download_cached_file
 import numpy as np
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
-import os
 import contextlib
 import copy
 from tasks.vqa_task_utils import QAOutput
@@ -94,6 +96,7 @@ class PaliGemma_VQA(BaseModel):  # TODO
         return {"loss": loss}
     
     def return_all_outputs(self, samples, **kwargs):
+        print(samples.keys())
         model_inputs = self.processor(text=samples["text_input_raw"], images=samples["image_raw"], suffix=samples["multiple_choice_answer"], return_tensors="pt", padding="longest").to(self.dtype).to(self.device)
         outputs = self.model(**model_inputs, output_attentions=True)
         return model_inputs, outputs
@@ -106,10 +109,19 @@ class PaliGemma_VQA(BaseModel):  # TODO
         txt_ratio = []
         for i in range(len(samples['image_raw'])):
             attn = outputs.attentions[-1][i].mean(dim=0)  #-1: lastlayer (batch_size, num_heads, seq_len, seq_len) -> (batch_size, seq_len, seq_len)
+            attn = attn.float()
 
             img_token_idx = tokens['input_ids'][i] == 257152
             suffix_token_idx = tokens['token_type_ids'][i] == 1
             prefix_token_idx = (img_token_idx == False) & (suffix_token_idx == False)
+
+            img_sum = (attn[img_token_idx][:, prefix_token_idx].sum(dim=1) + attn[img_token_idx][:, img_token_idx].sum(dim=1)).cpu().numpy()
+            txt_sum = (attn[prefix_token_idx][:, prefix_token_idx].sum(dim=1) + attn[prefix_token_idx][:, img_token_idx].sum(dim=1)).cpu().numpy()
+            # img_sum and txt_sum are all one value
+            print("img_sum", img_sum)
+            print("txt_sum", txt_sum)
+            assert np.allclose(img_sum, np.ones_like(img_sum), atol=1e-2), "Elements are not within the tolerance"
+            assert np.allclose(txt_sum, np.ones_like(txt_sum), atol=1e-2), "Elements are not within the tolerance"
 
             img_ratio.append((attn[img_token_idx][:, prefix_token_idx].sum(dim=1) / attn[img_token_idx][:, img_token_idx].sum(dim=1)).mean().item())
             txt_ratio.append((attn[prefix_token_idx][:, prefix_token_idx].sum(dim=1) / attn[prefix_token_idx][:, img_token_idx].sum(dim=1)).mean().item())
@@ -406,9 +418,12 @@ if __name__ == "__main__":
 
     samples = {
         "image_raw": [image, image],
-        "text_input_raw": ["caption es", "caption es: "],
+        "text_input_raw": ["What is the color of the car", "What is the brand of the car"],
+        "multiple_choice_answer": ["red", "Toyota"],
     }
     with torch.inference_mode():
         model = PaliGemma_VQA(model_id=model_id, dtype=dtype).to(device)
-        output = model.predict_answers(samples)
-        print(output)
+        # output = model.predict_answers(samples)
+        # print(output)
+        loss = model(samples)
+        print(loss)
