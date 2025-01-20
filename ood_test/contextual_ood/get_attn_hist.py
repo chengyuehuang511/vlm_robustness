@@ -173,7 +173,7 @@ right_region = {
     'textvqa_test': (-28.957500457763672,0),
     'okvqa_test': (-23.5,0)
 }
-concept = "joint"
+concept = "img_final"  # dict_keys(['image', 'joint', 'ques_ft', 'img_final'])
 
 tensor_path = "/coc/pskynet4/bmaneech3/vlm_robustness/result_output/contextual_ood/indiv_result/advqa_test_joint_image.pth"
 

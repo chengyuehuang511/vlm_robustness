@@ -294,9 +294,11 @@ class AdamP(Optimizer):
         i_with_grad = 0
         for i, (param, name) in enumerate(zip(group['params'],group['name'])):
             if self.use_lora:
+                pre_cpu = None
                 pre = None
             else:
-                pre = group['pre'][i]
+                pre_cpu = group['pre'][i]
+                pre = pre_cpu.to(param.device)
 
             if param.grad is None: 
                 continue
@@ -334,5 +336,9 @@ class AdamP(Optimizer):
             if new_p is None :
                 new_p = param - d_p
             param.copy_(new_p)
+
+            if pre_cpu is not None:
+                del pre
+                torch.cuda.empty_cache()
 
             i_with_grad += 1

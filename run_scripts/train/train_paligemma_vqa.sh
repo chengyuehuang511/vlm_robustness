@@ -2,10 +2,10 @@
 
 #SBATCH --partition="kira-lab"
 #SBATCH --nodes=1
-#SBATCH --cpus-per-gpu=6
-#SBATCH --gpus-per-node="a40:1"
+#SBATCH --cpus-per-gpu=16
+#SBATCH --gpus-per-node="a40:8"
 #SBATCH --qos="short"
-#SBATCH -x shakey,nestor,voltron,chappie,puma,randotron,cheetah,baymax,tachikoma,uniblab,optimistprime,hk47,xaea-12,dave,kitt,gundam,megazord,perseverance
+##SBATCH -x shakey,nestor,voltron,chappie,puma,randotron,cheetah,baymax,tachikoma,uniblab,optimistprime,hk47,xaea-12,dave,kitt,gundam,megazord,perseverance
 #SBATCH --mem-per-gpu=45G
 
 cd /coc/testnvme/chuang475/projects/vlm_robustness/
@@ -15,4 +15,4 @@ export PYTHONHASHSEED=42
 export TOKENIZERS_PARALLELISM=false
 
 # /nethome/chuang475/flash/miniconda3/envs/lavis
-srun -u /coc/testnvme/chuang475/miniconda3/envs/lavis_same/bin/python -m torch.distributed.run --nproc_per_node=1 train.py --cfg-path configs/paligemma/vqav2_train.yaml
+srun -u /coc/testnvme/chuang475/miniconda3/envs/lavis_same/bin/python -m torch.distributed.run --nproc_per_node=8 train.py --cfg-path configs/paligemma/vqav2_train.yaml

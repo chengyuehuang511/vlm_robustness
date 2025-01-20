@@ -4,20 +4,25 @@
  # For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
 
 model:
-  arch: paligemma_vqa
-  model_type: paligemma-3b-pt-224
+  arch: llava_vqa
+  model_type: llava-1.5-7b-hf
   load_pretrained: True
-  pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
+  pretrained: 'https://huggingface.co/llava-hf/llava-1.5-7b-hf'
   load_finetuned: True
-  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/spcg_1e-3_mu1e-2/20240917114/checkpoint_best.pth'
+  finetuned_lp: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/Llava/VQA/lp/20241121171/checkpoint_best.pth
+  finetuned: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/Llava/VQA/lpft/20241122212/checkpoint_best.pth
+  # /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/Llava/VQA/lpft/20241122212/checkpoint_best.pth
+  # /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/Llava/VQA/adamp/20241121170/checkpoint_best.pth
+  # /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/Llava/VQA/digrap_0.01/20241122092/checkpoint_best.pth
+  # /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/Llava/VQA/adam/20241121114/checkpoint_best.pth
 
   # lora
   use_lora: 1
-  target_modules: "q_proj k_proj v_proj o_proj"
-  lora_rank: 8
+  target_modules: "q_proj v_proj"
+  lora_rank: 4
 
   # wise
-  wise: 0
+  wise: 1
 
 
 datasets:
@@ -47,7 +52,7 @@ run:
   prompt: "Question: {} Answer:"
 
   seed: 42
-  output_dir: "output/PALIGEMMA/VQA_REP"
+  output_dir: "output/Llava/VQA_REP"
 
   evaluate: True
   test_splits: ["val"]

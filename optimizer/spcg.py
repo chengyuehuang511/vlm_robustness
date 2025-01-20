@@ -179,9 +179,9 @@ class SPCG(Optimizer):
                 grad += lamb * condition
             
             # print("weight_decay: ", weight_decay.data)
-            print("lamb: ", lamb.data.item())
-            print("exp_avg.shape: ", exp_avg.shape)
-            print("grad.shape: ", grad.shape)
+            # print("lamb: ", lamb.data.item())
+            # print("exp_avg.shape: ", exp_avg.shape)
+            # print("grad.shape: ", grad.shape)
             
             exp_avg.mul_(beta1).add_(grad, alpha=1 - beta1)
             exp_avg_sq.mul_(beta2).addcmul_(grad, grad, value=1 - beta2)
@@ -217,7 +217,7 @@ class TPCGrad(object):
         self.j = 0 # Buffer counter
 
         # AdamUtil parameteres
-        self.mu = 5e-1
+        self.mu = 1e-2
         self.kappa = 1
         print("mu: ", self.mu)
         print("kappa:", self.kappa)

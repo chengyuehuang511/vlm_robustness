@@ -89,10 +89,12 @@ class BaseModel(nn.Module):
         load_finetuned = cfg.get("load_finetuned", True)
         if load_finetuned:
             finetune_path = cfg.get("finetuned", None)
+            finetune_lp_path = cfg.get("finetuned_lp", None)
+            print("finetune_path", finetune_path)
             assert (
                 finetune_path is not None
             ), "Found load_finetuned is True, but finetune_path is None."
-            self.load_checkpoint(url_or_filename=finetune_path)
+            self.load_checkpoint(url_or_filename=finetune_path, lp=finetune_lp_path)
         else:
             load_pretrained = cfg.get("load_pretrained", True)
             if load_pretrained:

@@ -308,7 +308,8 @@ class PaliGemma_VQA(BaseModel):  # TODO
         
         # WiSE
         wise = int(cfg.get("wise", 0))
-        if wise == 1:
+        assert wise >= 0 and wise <= 1, "WiSE should be in [0, 1]"
+        if wise > 0:
             assert load_finetuned, "WiSE requires load_finetuned=True"
             w0 = {key: value.to('cpu') for key, value in model.state_dict().items()}
             w0 = copy.deepcopy(w0)
@@ -325,10 +326,10 @@ class PaliGemma_VQA(BaseModel):  # TODO
             #         adapters_weights = torch.load(checkpoint_name, weights_only=True)
             #         model = set_peft_model_state_dict(model, adapters_weights)
         
-        if wise == 1:
+        if wise > 0:
             w1 = {key: value.to('cpu') for key, value in model.state_dict().items()}
             # alpha * w0 + (1 - alpha) * w1
-            alpha = 0.5
+            alpha = wise
             wise = {key: (alpha * w0[key] + (1 - alpha) * w1[key]).to(model.device) for key in w1.keys()}
             model.load_state_dict(wise)
             logging.info("WiSE: load finetuned model and apply WiSE")
@@ -336,6 +337,14 @@ class PaliGemma_VQA(BaseModel):  # TODO
 
         print("Final Model before runner", model)
         # print("and it's device", model.device)
+
+        i = 0
+        for name, param in model.named_parameters():
+            if param.requires_grad:
+                print("layer number: ", i, "name: ", name)
+                i += 1
+
+
         return model
     
     def load_from_pretrained(self, url_or_filename):

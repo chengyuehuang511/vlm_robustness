@@ -4,8 +4,7 @@ model:
   load_pretrained: True
   pretrained: 'https://huggingface.co/llava-hf/llava-1.5-7b-hf'
   load_finetuned: False
-  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/DomainNet-Real/tpcgrad_1e-3_1e-4_mu1e-2_100/20240911152/checkpoint_best.pth'
-  # lp: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/DomainNet-Real/lp_1e-3/20240824012/checkpoint_best.pth
+  finetuned: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/Llava/DomainNet-Real/lp/20241121011/checkpoint_best.pth
 
   # lora
   use_lora: 1
@@ -22,7 +21,7 @@ datasets:
 run:
   task: classifier_vqa
   # optimizer
-  opt: "adam"
+  opt: "spcg"
   proj_term: "both"
   pcgrad_strength: 1.0
   adamh_ortho: False
@@ -51,7 +50,7 @@ run:
   prompt: "Question: {} Short answer:"
 
   seed: 42
-  output_dir: "output/Llava/DomainNet-Real/ft"
+  output_dir: "output/Llava/DomainNet-Real/digrap_0.01"
 
   amp: False
 

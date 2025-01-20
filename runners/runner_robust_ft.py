@@ -838,6 +838,9 @@ class RunnerRobustFT(RunnerBase):
                                     'name': params_to_opt_name}]
                 else:
                     params_anchor = copy.deepcopy(params_to_opt)
+                    # put params_anchor to cpu
+                    for p in params_anchor:
+                        p.data = p.data.cpu()
                     param_group = [{'params':params_to_opt,
                                     'pre': params_anchor, 
                                     'name': params_to_opt_name}]
@@ -849,13 +852,16 @@ class RunnerRobustFT(RunnerBase):
                     "weight_decay": weight_decay, #args.weight_decay, 1
                     "use_lora": use_lora,
                     "norm_type": "l2",
-                    "ortho": self.config.run_cfg.get("adamh_ortho", False),
+                    # "ortho": self.config.run_cfg.get("adamh_ortho", False),
                 } 
                 params_to_opt = [x[1] for x in self._model.named_parameters() if x[1].requires_grad]
                 if use_lora:
                     param_group = [{'params':params_to_opt}]
                 else:
                     params_anchor = copy.deepcopy(params_to_opt)
+                    # put params_anchor to cpu
+                    for p in params_anchor:
+                        p.data = p.data.cpu()
                     param_group = [{'params':params_to_opt,
                                     'pre': params_anchor}]
                 self._optimizer = AdamH(param_group,**optimizer_params)

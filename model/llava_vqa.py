@@ -392,7 +392,11 @@ class Llava_VQA(BaseModel):  # TODO
             #     if os.path.isfile(cfg):
             #         checkpoint_name = torch.load(url_or_filename, map_location="cpu", weights_only=True)
             #         adapters_weights = torch.load(checkpoint_name, weights_only=True)
-            #         model = set_peft_model_state_dict(model, adapters_weights)
+            #         model = set_peft_model_state_dict(model, adapters_weights) 
+        finetune_lp_path = cfg.get("finetuned_lp", None)
+        if finetune_lp_path is not None:
+            model.load_checkpoint(finetune_lp_path)
+            logging.info("load linear probe checkpoint from %s" % finetune_lp_path)
         
         if wise == 1:
             w1 = {key: value.to('cpu') for key, value in model.state_dict().items()}

@@ -4,7 +4,7 @@ model:
   load_pretrained: True
   pretrained: 'https://huggingface.co/google/paligemma-3b-pt-224'
   load_finetuned: True
-  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/spcg_1e-3_mu0.5/20240918154/checkpoint_best.pth'
+  finetuned: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/1e-3/20240721224/checkpoint_best.pth'
   # domainnet-real, adamh: adamh_1e-3/0.5/20240822015
   # domainnet-real: '/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/DomainNet-Real/1e-3/20240821234/checkpoint_best.pth'
   # adamp:/coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/20240715010/checkpoint_best.pth'
@@ -15,6 +15,12 @@ model:
   # adamp/1e-3_wd1e-4_new/20240730190 --> adamp/1e-3_wd1e-4_nopre_k0/20240804121
   # linear_probe_1e-3/20240730233
   # lpft_1e-3/20240801003
+  # fft /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/fft/20250107224/checkpoint_best.pth
+  # adamh_fft: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/adamh_fft/20250110172/checkpoint_best.pth
+  # lp_fft: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/lp_fft/20250109194/checkpoint_best.pth
+  # lpft_fft: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/lpft_fft/20250112003/checkpoint_best.pth
+  # adamp_fft: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/adamp_fft/20250111133/checkpoint_best.pth
+  # lora_fft: /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/lora_fft/20250108193/checkpoint_best.pth
 
   # VQA/tpcgrad_1e-3_1e-4_mu1e-1/20240911143
   # tpcgrad_1e-3_1e-4_mu1e-2/20240910111

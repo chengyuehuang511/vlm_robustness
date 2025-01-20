@@ -34,7 +34,9 @@ def setup_seeds(seed):
 
     torch.use_deterministic_algorithms(True)
 
-setup_seeds(42)
+seed = 0
+print("Setting seed to ", seed)
+setup_seeds(seed)
 
 import lavis.tasks as tasks
 from lavis.common.config import Config
