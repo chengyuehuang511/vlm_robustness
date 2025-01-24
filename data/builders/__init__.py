@@ -39,6 +39,7 @@ __all__ = [
     'DomainNetQuickdrawVQABuilder',
     'DomainNetRealVQABuilder',
     'DomainNetSketchVQABuilder',
+    'GQABuilder_Raw',
 ]
 
 

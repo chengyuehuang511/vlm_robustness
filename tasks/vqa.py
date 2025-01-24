@@ -24,7 +24,7 @@ from lavis.common.dist_utils import get_rank, get_world_size, is_main_process, i
 from lavis.datasets.data_utils import prepare_sample
 
 
-@registry.register_task("vqa")  # here i go to lavis an unregistered original vqa
+@registry.register_task("vqa")  # here i go to lavis and unregistered original vqa
 class VQATask(BaseTask):
     def __init__(
         self,

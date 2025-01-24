@@ -9,6 +9,7 @@ from lavis.datasets.builders.base_dataset_builder import BaseDatasetBuilder
 
 from lavis.common.registry import registry
 from data.coco_vqa import *
+from data.gqa_datasets import *
 from data.classifier_vqa_dataset import ClassifierVQADataset
 from pathlib import Path
 import warnings
@@ -22,6 +23,16 @@ class COCOVQABuilder_Raw(BaseDatasetBuilder):
     DATASET_CONFIG_DICT = {
         "default": "/coc/testnvme/chuang475/projects/vlm_robustness/data/configs/defaults_vqa_raw.yaml",
         "eval": "/coc/testnvme/chuang475/projects/vlm_robustness/data/configs/eval_vqa_raw.yaml",
+    }
+
+@registry.register_builder("gqa_raw")
+class GQABuilder_Raw(BaseDatasetBuilder):
+    train_dataset_cls = GQADataset_Raw
+    eval_dataset_cls = GQAEvalDataset_Raw
+
+    DATASET_CONFIG_DICT = {
+        "default": "/coc/testnvme/chuang475/projects/vlm_robustness/data/configs/gqa/defaults_gqa_raw.yaml",
+        "eval": "/coc/testnvme/chuang475/projects/vlm_robustness/data/configs/gqa/defaults_gqa_raw.yaml"
     }
 
 
