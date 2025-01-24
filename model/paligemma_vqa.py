@@ -15,6 +15,8 @@ import contextlib
 import copy
 from tasks.vqa_task_utils import QAOutput
 
+from model_stock.notebooks.model_stock import compute_angle, compute_ratio, merge
+
 # from llm_adapters.peft.src.peft import (  # noqa: E402
 #     BottleneckConfig,
 #     PrefixTuningConfig,
@@ -313,6 +315,19 @@ class PaliGemma_VQA(BaseModel):  # TODO
             assert load_finetuned, "WiSE requires load_finetuned=True"
             w0 = {key: value.to('cpu') for key, value in model.state_dict().items()}
             w0 = copy.deepcopy(w0)
+
+        # Model Stock
+        model_stock = int(cfg.get("model_stock", 0))
+        if model_stock == 1:
+            assert wise == 0, "WiSE and Model Stock cannot be used together"
+            w0 = {key: value.to('cpu') for key, value in model.state_dict().items()}
+            w0 = copy.deepcopy(w0)
+            finetuned_2 = cfg.get("finetuned_2", None)  # /coc/pskynet4/chuang475/projects/LAVIS/lavis/output/PALIGEMMA/VQA/ft_seed_20/20250119133/checkpoint_best.pth
+            assert finetuned_2 is not None, "finetuned_2 is required for model_stock"
+            model.load_checkpoint(finetuned_2)
+            logging.info("load finetuned_2 model from %s" % finetuned_2)
+            w2 = {key: value.to('cpu') for key, value in model.state_dict().items()}
+            w2 = copy.deepcopy(w2)
         
         if load_finetuned:
             model.load_checkpoint_from_config(cfg)
@@ -325,6 +340,17 @@ class PaliGemma_VQA(BaseModel):  # TODO
             #         checkpoint_name = torch.load(url_or_filename, map_location="cpu", weights_only=True)
             #         adapters_weights = torch.load(checkpoint_name, weights_only=True)
             #         model = set_peft_model_state_dict(model, adapters_weights)
+        
+        if model_stock == 1:
+            w1 = {key: value.to('cpu') for key, value in model.state_dict().items()}
+            angle = compute_angle(w1, w2, w0)
+            ratio = compute_ratio(angle)
+            # print the dict ratio
+            for key, value in ratio.items():
+                print(key, value)
+            merged_weight = merge(w1, w2, w0, ratio)
+            model.load_state_dict(merged_weight)
+            logging.info("Model Stock: merge pretrained, finetuned_1, and finetuned_2 models")
         
         if wise > 0:
             w1 = {key: value.to('cpu') for key, value in model.state_dict().items()}
