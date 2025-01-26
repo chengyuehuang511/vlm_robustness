@@ -60,7 +60,36 @@ class GQADataset(VQADataset, __DisplMixin):
 # 1
 class GQA_Raw(BaseDataset):
     def __init__(self, vis_processor, text_processor, vis_root, ann_paths):
-        super().__init__(vis_processor, text_processor, vis_root, ann_paths)
+        # super().__init__(vis_processor, text_processor, vis_root, ann_paths)
+        """
+        vis_root (string): Root directory of images (e.g. coco/images/)
+        ann_root (string): directory to store the annotation file
+        """
+        self.vis_root = vis_root
+        self.annotation = []
+        for ann_path in ann_paths:
+            if any(ext in ann_path for ext in ['csv', 'tsv']):
+                df = pd.read_csv(ann_path)
+                self.annotation.extend(df.to_dict(orient="records"))
+                
+            elif 'jsonl' in ann_path:
+                with open(ann_path, "r") as f:
+                    self.annotation.extend([json.loads(line) for line in f])
+
+            else:
+                with open(ann_path, "r") as f:
+                    loaded = json.load(f)
+                    if isinstance(loaded, list):
+                        self.annotation.extend(loaded)
+                    elif isinstance(loaded, dict):
+                       self.annotation.extend([{"question_id": k, **v} if isinstance(v, dict) else {"question_id": k, "data": v} for k, v in loaded.items()])
+                       self.annotation = [{**ann, "image": ann["imageId"] + ".jpg"} for ann in self.annotation]
+
+
+        self.vis_processor = vis_processor
+        self.text_processor = text_processor
+
+        self._add_instance_ids()
 
     def collater(self, samples):
         # Filter out None samples
@@ -100,7 +129,6 @@ class GQA_Raw(BaseDataset):
 class GQADataset_Raw(GQA_Raw, __DisplMixin):
     def __init__(self, vis_processor, text_processor, vis_root, ann_paths):
         super().__init__(vis_processor, text_processor, vis_root, ann_paths)
-        self.annotation = [{**ann, "image": ann["imageId"] + ".jpg"} for ann in self.annotation]
 
     def __getitem__(self, index):
         ann = self.annotation[index]
@@ -192,7 +220,7 @@ class GQAEvalDataset(VQAEvalDataset, __DisplMixin):
     
 
 # 3
-class GQAEvalDataset_Raw(GQAEvalDataset, __DisplMixin):
+class GQAEvalDataset_Raw(VQAEvalDataset, __DisplMixin):
     def __init__(self, vis_processor, text_processor, vis_root, ann_paths):
         """
         vis_root (string): Root directory of images (e.g. coco/images/)
@@ -222,11 +250,6 @@ class GQAEvalDataset_Raw(GQAEvalDataset, __DisplMixin):
 
         self.vis_processor = vis_processor
         self.text_processor = text_processor
-
-        # print(self.annotation)
-        # for idx, ann in enumerate(self.annotation):
-        #     print(ann)
-        #     print(str(idx))
         
         self._add_instance_ids()
 
@@ -237,6 +260,16 @@ class GQAEvalDataset_Raw(GQAEvalDataset, __DisplMixin):
         image_raw = Image.open(image_path).convert("RGB")
         multiple_choice_answer = max(set(ann["answer"]), key=ann["answer"].count)
 
+        answer_weight = {}
+        for answer in ann["answer"]:
+            if answer in answer_weight.keys():
+                answer_weight[answer] += 1 / len(ann["answer"])
+            else:
+                answer_weight[answer] = 1 / len(ann["answer"])
+
+        answers = list(answer_weight.keys())
+        weights = list(answer_weight.values())
+
         return {
             "question_id": ann["question_id"],
             "instance_id": ann["instance_id"],
@@ -244,4 +277,45 @@ class GQAEvalDataset_Raw(GQAEvalDataset, __DisplMixin):
             "image_path": image_path,
             "text_input_raw": ann["question"],
             "multiple_choice_answer": multiple_choice_answer,
+            "answers": answers,
+            "weights": weights,
+        }
+
+    def collater(self, samples):
+        # Filter out None samples
+        samples = [s for s in samples if s is not None]
+        # Check if samples is empty after filtering
+        if not samples:
+            return None
+        answer_list, weight_list = [], []
+        image_raw_list, question_raw_list, multiple_choice_answer_list = [], [], []
+        num_answers = []
+
+        question_id_list, instance_id_list = [], []
+
+        for sample in samples:
+            image_raw_list.append(sample["image_raw"])
+            question_raw_list.append(sample["text_input_raw"])
+
+            multiple_choice_answer_list.append(sample["multiple_choice_answer"])
+
+            weight_list.extend(sample["weights"])
+
+            answers = sample["answers"]
+
+            answer_list.extend(answers)
+            num_answers.append(len(answers))
+
+            question_id_list.append(sample["question_id"])
+            instance_id_list.append(sample["instance_id"])
+
+        return {
+            "image_raw": image_raw_list,
+            "text_input_raw": question_raw_list,
+            "answer": answer_list,
+            "weight": weight_list,
+            "n_answers": torch.LongTensor(num_answers),
+            "multiple_choice_answer": multiple_choice_answer_list,
+            "question_id": question_id_list,
+            "instance_id": instance_id_list,
         }
