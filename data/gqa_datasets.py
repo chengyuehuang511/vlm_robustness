@@ -9,6 +9,7 @@ import os
 import json
 import random
 import torch
+import pandas as pd
 
 from PIL import Image
 
@@ -137,18 +138,11 @@ class GQADataset_Raw(GQA_Raw, __DisplMixin):
         image_path = os.path.join(self.vis_root, ann["image"])
         image_raw = Image.open(image_path).convert("RGB")
 
-        answer_weight = {}
-        for answer in ann["answer"]:
-            if answer in answer_weight.keys():
-                answer_weight[answer] += 1 / len(ann["answer"])
-            else:
-                answer_weight[answer] = 1 / len(ann["answer"])
-
-        answers = list(answer_weight.keys())
-        weights = list(answer_weight.values())
+        answers = [ann["answer"]]
+        weights = [1]
 
         # select the most frequent multiple_choice_answer in the list - ann["answer"]
-        multiple_choice_answer = max(set(ann["answer"]), key=ann["answer"].count)
+        multiple_choice_answer = ann["answer"]
 
         return {
             "answers": answers,
@@ -258,17 +252,10 @@ class GQAEvalDataset_Raw(VQAEvalDataset, __DisplMixin):
 
         image_path = os.path.join(self.vis_root, ann["image"])
         image_raw = Image.open(image_path).convert("RGB")
-        multiple_choice_answer = max(set(ann["answer"]), key=ann["answer"].count)
+        multiple_choice_answer = ann["answer"]
 
-        answer_weight = {}
-        for answer in ann["answer"]:
-            if answer in answer_weight.keys():
-                answer_weight[answer] += 1 / len(ann["answer"])
-            else:
-                answer_weight[answer] = 1 / len(ann["answer"])
-
-        answers = list(answer_weight.keys())
-        weights = list(answer_weight.values())
+        answers = [ann["answer"]]
+        weights = [1]
 
         return {
             "question_id": ann["question_id"],
